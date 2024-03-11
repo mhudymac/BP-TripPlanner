@@ -53,7 +53,7 @@ class KmmLibraryConventionPlugin : Plugin<Project> {
             }
 
             extensions.configure<KotlinMultiplatformExtension> {
-                android()
+                androidTarget()
                 kmm(
                     project = project,
                     nativeName = ProjectConstants.iosShared,
