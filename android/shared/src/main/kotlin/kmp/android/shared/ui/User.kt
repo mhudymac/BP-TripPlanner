@@ -4,8 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -18,7 +18,7 @@ import kmp.shared.domain.model.User
 fun UserProfileImage(
     user: User,
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colors.primary,
+    color: Color = MaterialTheme.colorScheme.primary,
 ) {
     Box(
         modifier
@@ -29,12 +29,12 @@ fun UserProfileImage(
         if (user.firstName.isNotBlank() && user.lastName.isNotBlank()) {
             Text(
                 "${user.firstName[0]}${user.lastName[0]}",
-                style = MaterialTheme.typography.h3,
+                style = MaterialTheme.typography.headlineMedium,
             )
         } else {
             Text( // Render something so Box ha size
                 "AA",
-                style = MaterialTheme.typography.h3,
+                style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.alpha(0f),
             )
         }

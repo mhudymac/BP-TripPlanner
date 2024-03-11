@@ -10,4 +10,5 @@ dependencies {
     implementation(project(":shared"))
 
     implementation(libs.googlePlayServices.location)
+    implementation(libs.material3)
 }

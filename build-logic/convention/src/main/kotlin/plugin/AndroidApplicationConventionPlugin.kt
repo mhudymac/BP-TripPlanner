@@ -60,7 +60,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             configureTwine()
 
             dependencies {
-                implementation(libs.material)
+                implementation(libs.material3)
                 implementation(libs.androidX.core)
                 implementation(libs.lifecycle.runtime)
                 implementation(libs.bundles.sqlDelight.common)

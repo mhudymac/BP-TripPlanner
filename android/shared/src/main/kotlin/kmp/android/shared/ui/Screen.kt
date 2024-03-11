@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,7 +28,7 @@ import kmp.android.shared.style.Values
 fun ScreenTitle(
     @StringRes title: Int,
     modifier: Modifier = Modifier,
-    background: Color = MaterialTheme.colors.background,
+    background: Color = MaterialTheme.colorScheme.background,
     showFade: Boolean = true,
     statusBarPadding: Boolean = true,
     content: @Composable RowScope.() -> Unit = {},
@@ -62,7 +62,7 @@ fun ScreenTitle(
         ) {
             Text(
                 stringResource(title),
-                style = MaterialTheme.typography.h4,
+                style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier
                     .padding(start = Values.Space.medium)
                     .align(Alignment.Top),

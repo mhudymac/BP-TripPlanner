@@ -67,7 +67,7 @@ private fun RecipesScreen(openTarget: (RecipesTarget) -> Unit, modifier: Modifie
     Column(modifier = modifier) {
         ScreenTitle(R.string.recipes_view_toolbar_title)
 
-        val items = RecipesTarget.values()
+        val items = RecipesTarget.entries.toTypedArray()
 
         var expandedItem by remember { mutableStateOf<Int?>(null) }
 

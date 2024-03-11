@@ -15,7 +15,7 @@ class MainActivity : BaseActivity() {
         GlobalContext.getOrNull()
             ?: initDependencyInjection() // Init only if there is no context already
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowCompat.setDecorFitsSystemWindows(window, true)
     }
 
     override fun onStart() {

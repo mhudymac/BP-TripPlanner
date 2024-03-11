@@ -25,7 +25,7 @@ internal fun Project.configureComposeDependencies() {
         implementation(libs.androidX.core)
         implementation(libs.compose.ui)
         implementation(libs.compose.foundation)
-        implementation(libs.compose.material)
+        implementation(libs.compose.material3)
         implementation(libs.compose.materialIconsCore)
         implementation(libs.compose.uiTooling)
         implementation(libs.constraintLayout.compose)
