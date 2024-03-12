@@ -89,25 +89,8 @@ internal object HttpClient {
             }
         }
     }
-
-    private fun PipelineContext<HttpResponseContainer, HttpClientCall>.interceptTokenResponse(
-        authDao: AuthDao,
-    ) {
-        with(context) {
-            val isSuccessfulLoginResponse =
-                request.url.encodedPath == AuthPaths.login &&
-                    response.status == HttpStatusCode.OK
-
-            if (isSuccessfulLoginResponse) {
-                val res = subject.response as? LoginDto
-                if (res != null) {
-                    authDao.saveToken(res.token)
-                    authDao.saveUserId(res.userId)
-                }
-            }
-        }
-    }
 }
+
 
 @ThreadLocal
 val globalJson = JsonConfig {

@@ -2,6 +2,7 @@ package kmp.android.shared.navigation
 
 import android.net.Uri
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
@@ -141,6 +142,7 @@ fun NavGraphBuilder.composableDestination(
         content(navBackstackEntry)
     },
 )
+
 
 @OptIn(ExperimentalMaterialNavigationApi::class)
 fun NavGraphBuilder.bottomSheetDestination(
