@@ -39,24 +39,12 @@ fun Root(modifier: Modifier = Modifier) {
         bottomBar = { BottomBar(navController) },
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
-            NavHost(
-                navController,
-                startDestination = TripGraph.rootPath // if (showLogin) LoginDestination.route else UsersGraph.rootPath
-            ) {
-//                    loginNavGraph(
-//                        navHostController = navController,
-//                        navigateToUsers = { navController.navigate(UsersGraph.rootPath) },
-//                    )
-//                    usersNavGraph(navController)
-//                    profileNavGraph(
-//                        navHostController = navController,
-//                        navigateToLogin = { navController.navigate(LoginDestination.route) },
-//                    )
-//                    recipesNavGraph(navController)
-//                    booksNavGraph(navController)
+                NavHost(
+                    navController,
+                    startDestination = TripGraph.rootPath // if (showLogin) LoginDestination.route else UsersGraph.rootPath
+                ) {
                     tripNavGraph(navController)
-
-            }
+                }
         }
     }
 }
@@ -66,30 +54,28 @@ private fun BottomBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    NavigationBar(
-        modifier = Modifier.navigationBarsPadding(),
-    ) {
-        NavBarFeature.entries.forEach { screen ->
-            NavigationBarItem(
-                icon = {
-                    when (screen) {
-//                                NavBarFeature.Users -> Icon(Icons.AutoMirrored.Filled.List, "")
-//                                NavBarFeature.Profile -> Icon(Icons.Filled.Person, "")
-//                                NavBarFeature.Recipes -> Icon(Icons.Filled.Build, "")
-//                                NavBarFeature.Books -> Icon(Icons.Filled.Build, "")
-                        NavBarFeature.Home -> Icon(Icons.Filled.Home, "")
-                        NavBarFeature.TripsList -> Icon(Icons.AutoMirrored.Filled.List, "")
-                    }
-                },
-                label = { Text(stringResource(screen.titleRes)) },
-                selected = currentRoute?.equals(screen.route) ?: false,
-                onClick = {
-                    navController.navigate(screen.route) {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
-                },
-            )
+    if(currentRoute?.equals(TripGraph.Home.route) == true || currentRoute?.equals(TripGraph.List.route) == true) {
+        NavigationBar(
+            modifier = Modifier.navigationBarsPadding(),
+        ) {
+            NavBarFeature.entries.forEach { screen ->
+                NavigationBarItem(
+                    icon = {
+                        when (screen) {
+                            NavBarFeature.Home -> Icon(Icons.Filled.Home, "")
+                            NavBarFeature.TripsList -> Icon(Icons.AutoMirrored.Filled.List, "")
+                        }
+                    },
+                    label = { Text(stringResource(screen.titleRes)) },
+                    selected = (currentRoute == screen.route),
+                    onClick = {
+                        navController.navigate(screen.route) {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
+                    },
+                )
+            }
         }
     }
 }

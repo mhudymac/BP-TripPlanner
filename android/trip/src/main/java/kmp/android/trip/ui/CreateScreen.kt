@@ -13,6 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import com.google.accompanist.navigation.material.bottomSheet
+import kmp.android.shared.navigation.bottomSheetDestination
+import kmp.android.shared.navigation.composableDestination
 import kmp.android.shared.navigation.dialogDestination
 import kmp.android.trip.navigation.TripGraph
 
@@ -21,7 +24,7 @@ fun NavController.navigateToCreateScreen() {
 }
 
 internal fun NavGraphBuilder.createScreenRoute() {
-    dialogDestination(
+    composableDestination(
         destination = TripGraph.Create,
     ) {
         CreateScreen()
