@@ -7,7 +7,8 @@ internal data class PlaceDto(
     val place_id: String,
     val name: String,
     val formatted_address: String,
-    val geometry: Geometry
+    val geometry: Geometry,
+    val photos: List<Photo>?
 ) {
     @Serializable
     internal data class Geometry(
@@ -18,5 +19,10 @@ internal data class PlaceDto(
     internal data class Location(
         val lat: Double,
         val lng: Double
+    )
+
+    @Serializable
+    internal data class Photo(
+        val photo_reference: String
     )
 }

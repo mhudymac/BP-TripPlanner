@@ -31,9 +31,8 @@ import co.touchlab.kermit.Logger as KermitLogger
 import kotlinx.serialization.json.Json as JsonConfig
 
 internal object HttpClient {
-    private val unauthorizedEndpoints = listOf("/api/auth/login", "/api/auth/registration")
 
-    fun init(authDao: AuthDao, config: Config, engine: HttpClientEngine) = HttpClient(engine) {
+    fun init( config: Config, engine: HttpClientEngine, apiKey: String) = HttpClient(engine) {
         expectSuccess = true
         developmentMode = !config.isRelease
         followRedirects = false
@@ -56,37 +55,10 @@ internal object HttpClient {
         defaultRequest {
             url {
                 protocol = URLProtocol.HTTPS
-                host = "devstack-server-production.up.railway.app"
+                host = "maps.googleapis.com"
+                parameters.append("key", apiKey)
             }
             contentType(ContentType.Application.Json)
-        }
-
-        install("auth_interceptor") {
-            requestPipeline.intercept(HttpRequestPipeline.Phases.Before) {
-                interceptTokenAuth(authDao)
-            }
-            responsePipeline.intercept(HttpResponsePipeline.Phases.After) {
-                interceptTokenResponse(authDao)
-            }
-        }
-    }
-
-    private suspend fun PipelineContext<Any, HttpRequestBuilder>.interceptTokenAuth(authDao: AuthDao) {
-        val token = authDao.retrieveToken()
-
-        with(context) {
-            // Proceed without changes if destination does not need authentication
-            when {
-                unauthorizedEndpoints.any(url.encodedPath::equals) -> proceedWith(subject)
-                // Append token if
-                token != null -> {
-                    headers {
-                        append(HttpHeaders.Authorization, "Bearer $token")
-                    }
-                }
-                // (if token is null and destination needs authentication, throw [NoTokenException])
-                else -> throw NoTokenException(url.build())
-            }
         }
     }
 }
@@ -98,5 +70,3 @@ val globalJson = JsonConfig {
     coerceInputValues = true
     useAlternativeNames = false
 }
-
-class NoTokenException(url: Url) : Exception("No token provided for route ${url.fullPath}")

@@ -7,6 +7,7 @@ import kmp.shared.data.repository.BookRepositoryImpl
 import kmp.shared.data.repository.UserRepositoryImpl
 import kmp.shared.data.source.AuthSource
 import kmp.shared.data.source.BookLocalSource
+import kmp.shared.data.source.PlaceRemoteSource
 import kmp.shared.data.source.UserLocalSource
 import kmp.shared.data.source.UserRemoteSource
 import kmp.shared.domain.repository.AuthRepository
@@ -47,13 +48,11 @@ import kmp.shared.domain.usecase.user.UserCacheChangeFlowUseCaseImpl
 import kmp.shared.infrastructure.local.AuthDao
 import kmp.shared.infrastructure.local.AuthDaoImpl
 import kmp.shared.infrastructure.local.createDatabase
-import kmp.shared.infrastructure.remote.AuthService
 import kmp.shared.infrastructure.remote.HttpClient
-import kmp.shared.infrastructure.remote.UserService
-import kmp.shared.infrastructure.source.AuthSourceImpl
+import kmp.shared.infrastructure.remote.PlaceService
 import kmp.shared.infrastructure.source.BookLocalSourceImpl
+import kmp.shared.infrastructure.source.PlaceRemoteSourceImpl
 import kmp.shared.infrastructure.source.UserLocalSourceImpl
-import kmp.shared.infrastructure.source.UserRemoteSourceImpl
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -105,8 +104,7 @@ private val commonModule = module {
     single<UserRepository> { UserRepositoryImpl(get(), get(), get()) }
 
     // Sources
-    single<AuthSource> { AuthSourceImpl(get(), get()) }
-    single<UserRemoteSource> { UserRemoteSourceImpl(get()) }
+    single<PlaceRemoteSource> { PlaceRemoteSourceImpl(get()) }
     single<UserLocalSource> { UserLocalSourceImpl(get(), get()) }
     single<BookLocalSource> { BookLocalSourceImpl(get()) }
 
@@ -114,8 +112,7 @@ private val commonModule = module {
     single<AuthDao> { AuthDaoImpl(get()) }
 
     // Http Services
-    single { AuthService(get()) }
-    single { UserService(get()) }
+    single { PlaceService(get()) }
 
     // Database
     single { createDatabase(get()) }

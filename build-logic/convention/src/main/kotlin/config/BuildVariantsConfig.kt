@@ -9,8 +9,6 @@ import org.gradle.kotlin.dsl.extra
 internal fun <T : BuildType> CommonExtension<*, T, *, *, *>.configureBuildVariants() {
     buildTypes {
         debug {
-            splits.abi.isEnable = false
-            splits.density.isEnable = false
             (this as ExtensionAware).extra["alwaysUpdateBuildId"] = false
         }
         create(ProjectConstants.Variant.alpha) {
