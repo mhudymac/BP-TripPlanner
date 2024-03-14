@@ -4,6 +4,7 @@ import com.russhwolf.settings.Settings
 import kmp.Database
 import kmp.shared.data.repository.AuthRepositoryImpl
 import kmp.shared.data.repository.BookRepositoryImpl
+import kmp.shared.data.repository.PlaceRepositoryImpl
 import kmp.shared.data.repository.UserRepositoryImpl
 import kmp.shared.data.source.AuthSource
 import kmp.shared.data.source.BookLocalSource
@@ -12,6 +13,7 @@ import kmp.shared.data.source.UserLocalSource
 import kmp.shared.data.source.UserRemoteSource
 import kmp.shared.domain.repository.AuthRepository
 import kmp.shared.domain.repository.BookRepository
+import kmp.shared.domain.repository.PlaceRepository
 import kmp.shared.domain.repository.UserRepository
 import kmp.shared.domain.usecase.DeleteAuthDataUseCase
 import kmp.shared.domain.usecase.DeleteAuthDataUseCaseImpl
@@ -23,6 +25,8 @@ import kmp.shared.domain.usecase.book.GetBooksUseCase
 import kmp.shared.domain.usecase.book.GetBooksUseCaseImpl
 import kmp.shared.domain.usecase.book.RefreshBooksUseCase
 import kmp.shared.domain.usecase.book.RefreshBooksUseCaseImpl
+import kmp.shared.domain.usecase.place.SearchPlacesUseCase
+import kmp.shared.domain.usecase.place.SearchPlacesUseCaseImpl
 import kmp.shared.domain.usecase.user.GetLocalUsersUseCase
 import kmp.shared.domain.usecase.user.GetLocalUsersUseCaseImpl
 import kmp.shared.domain.usecase.user.GetLoggedInUserUseCase
@@ -77,10 +81,13 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}): KoinApplication {
 private val commonModule = module {
 
     // General
+    single { "AIzaSyCm23vlG0GFw6CE9U94peD-2HaSzkPZhGk" }
     single { HttpClient.init(get(), get(), get()) }
     single { Settings() }
 
     // UseCases
+    factory<SearchPlacesUseCase> { SearchPlacesUseCaseImpl(get()) }
+
     factory<LoginUseCase> { LoginUseCaseImpl(get()) }
     factory<DeleteAuthDataUseCase> { DeleteAuthDataUseCaseImpl(get()) }
     factory<RegisterUseCase> { RegisterUseCaseImpl(get()) }
@@ -99,12 +106,15 @@ private val commonModule = module {
     factory<RefreshBooksUseCase> { RefreshBooksUseCaseImpl(get()) }
 
     // Repositories
+    single<PlaceRepository> { PlaceRepositoryImpl(get()) }
+
     single<AuthRepository> { AuthRepositoryImpl(get()) }
     single<BookRepository> { BookRepositoryImpl(get()) }
     single<UserRepository> { UserRepositoryImpl(get(), get(), get()) }
 
     // Sources
     single<PlaceRemoteSource> { PlaceRemoteSourceImpl(get()) }
+
     single<UserLocalSource> { UserLocalSourceImpl(get(), get()) }
     single<BookLocalSource> { BookLocalSourceImpl(get()) }
 

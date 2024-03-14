@@ -15,4 +15,6 @@ dependencies {
     //implementation(project(":android:recipes"))
     //implementation(project(":android:books"))
     implementation(project(":android:trip"))
+    implementation(project(":android:login"))
+    implementation(project(":android:login"))
 }

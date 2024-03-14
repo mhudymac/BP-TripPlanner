@@ -6,7 +6,7 @@ import kmp.shared.domain.repository.BookRepository
 
 interface GetBooksUseCase : UseCaseFlowNoParams<List<Book>>
 
-internal class GetBooksUseCaseImpl constructor(
+internal class GetBooksUseCaseImpl(
     private val repository: BookRepository,
 ) : GetBooksUseCase {
 

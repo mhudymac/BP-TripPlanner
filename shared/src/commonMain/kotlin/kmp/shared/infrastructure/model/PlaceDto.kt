@@ -3,12 +3,16 @@ package kmp.shared.infrastructure.model
 import kotlinx.serialization.Serializable
 
 @Serializable
+internal data class GoogleResponseDto(
+    val results: Array<PlaceDto>?
+)
+@Serializable
 internal data class PlaceDto(
     val place_id: String,
     val name: String,
     val formatted_address: String,
     val geometry: Geometry,
-    val photos: List<Photo>?
+    val photos: Array<Photo>?
 ) {
     @Serializable
     internal data class Geometry(

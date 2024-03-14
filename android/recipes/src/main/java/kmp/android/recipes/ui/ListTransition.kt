@@ -17,9 +17,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,16 +70,16 @@ private val headerMinHeight by lazy { 64.dp }
 private fun ListTransitionRecipe(modifier: Modifier = Modifier) {
     LazyColumnWithCollapsingToolbar(
         title = "Title",
-        modifier = modifier.background(MaterialTheme.colors.background),
+        modifier = modifier.background(MaterialTheme.colorScheme.background),
     ) {
         repeat(51) {
             item {
                 Text(
                     "Item $it",
                     Modifier.fillMaxWidth(),
-                    style = MaterialTheme.typography.h5,
+                    style = MaterialTheme.typography.headlineMedium,
                 )
-                Divider()
+                HorizontalDivider()
             }
         }
     }
@@ -102,7 +102,7 @@ private fun LazyColumnWithCollapsingToolbar(
 
     var titleParentSize by remember { mutableStateOf(IntSize.Zero) }
     var titleSize by remember { mutableStateOf(IntSize.Zero) }
-    val titleBaseSize = MaterialTheme.typography.h5.fontSize.value
+    val titleBaseSize = MaterialTheme.typography.headlineMedium.fontSize.value
 
     val titleFontSize by scrollTransition.animateFloat(label = "titleFontSize") { progress ->
         titleBaseSize + (progress * 24f)
@@ -148,7 +148,7 @@ private fun LazyColumnWithCollapsingToolbar(
             Modifier
                 .fillMaxWidth()
                 .requiredHeight(headerHeight)
-                .background(MaterialTheme.colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
                 .onSizeChanged { titleParentSize = it },
         ) {
             Text(

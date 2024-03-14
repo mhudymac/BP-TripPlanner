@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,9 +64,9 @@ private fun RopeRecipe(modifier: Modifier = Modifier) {
     val ball2 by animateOffsetAsState(ball1 + ballSpacingPx)
     val ball3 by animateOffsetAsState(ball2 + ballSpacingPx)
 
-    val lineColor = MaterialTheme.colors.onBackground
+    val lineColor = MaterialTheme.colorScheme.onBackground
     val ballCenterOffset = remember { Offset(ballSizePx / 2, ballSizePx) }
-    Box(modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
+    Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Canvas(Modifier.fillMaxSize()) {
             drawLine(
                 lineColor,
@@ -108,7 +108,7 @@ private fun Ball(offset: Offset) {
         Modifier
             .offset { offset.round() }
             .requiredSize(ballSizeDp)
-            .background(MaterialTheme.colors.primary, CircleShape),
+            .background(MaterialTheme.colorScheme.primary, CircleShape),
     ) {
         Column(Modifier.align(Alignment.Center)) {
             Text(text = "X: ${offset.x.roundToInt()}")

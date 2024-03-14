@@ -5,6 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.navigation
 import kmp.android.trip.ui.createScreenRoute
 import kmp.android.trip.ui.navigateToCreateScreen
+import kmp.android.trip.ui.navigateToSearchScreen
+import kmp.android.trip.ui.searchScreenRoute
 import kmp.android.trip.ui.tripHomeRoute
 import kmp.android.trip.ui.tripListRoute
 
@@ -17,6 +19,7 @@ fun NavGraphBuilder.tripNavGraph(
     ) {
         tripHomeRoute()
         tripListRoute { navHostController.navigateToCreateScreen() }
-        createScreenRoute()
+        createScreenRoute{ navHostController.navigateToSearchScreen() }
+        searchScreenRoute()
     }
 }

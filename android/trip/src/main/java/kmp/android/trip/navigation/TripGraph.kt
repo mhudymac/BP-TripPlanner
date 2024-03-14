@@ -15,6 +15,7 @@ object TripGraph : FeatureGraph(parent = null) {
     object Create : Destination(parent = this) {
         override val routeDefinition: String = "create"
     }
-
-
+    object Search : Destination(parent = this) {
+        override val routeDefinition: String = "search"
+    }
 }

@@ -5,6 +5,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import kmp.shared.base.Result
 import kmp.shared.base.error.util.runCatchingCommonNetworkExceptions
+import kmp.shared.infrastructure.model.GoogleResponseDto
 import kmp.shared.infrastructure.model.PlaceDto
 
 internal object PlacePaths {
@@ -15,7 +16,7 @@ internal object PlacePaths {
 
 internal class PlaceService(private val client: HttpClient) {
 
-    suspend fun searchPlaces( query: String ): Result<List<PlaceDto>> {
+    suspend fun searchPlaces( query: String ): Result<GoogleResponseDto> {
         return runCatchingCommonNetworkExceptions {
             client.get(PlacePaths.textSearch) {
                 url {
