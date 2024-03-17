@@ -1,6 +1,10 @@
 package kmp.shared.domain.model
 
-class Trip {
-    val name: String = ""
-    val date: Date = Date()
-}
+import kotlinx.datetime.LocalDateTime
+
+data class Trip(
+    val name: String,
+    val date: LocalDateTime,
+    val start: Place,
+    val itinerary: List<Place>,
+)

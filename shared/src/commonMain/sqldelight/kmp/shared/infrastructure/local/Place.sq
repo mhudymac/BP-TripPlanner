@@ -1,0 +1,6 @@
+CREATE TABLE PlaceEntity (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    tripId INTEGER NOT NULL,
+    FOREIGN KEY(name) REFERENCES TripEntity(name)
+);

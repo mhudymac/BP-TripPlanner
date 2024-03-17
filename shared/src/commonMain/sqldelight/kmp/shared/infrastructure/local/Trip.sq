@@ -1,0 +1,5 @@
+CREATE TABLE TripEntity (
+    name TEXT PRIMARY KEY,
+    date TEXT NOT NULL,
+    start TEXT NOT NULL
+);

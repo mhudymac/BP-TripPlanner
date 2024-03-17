@@ -12,7 +12,7 @@ internal data class PlaceDto(
     val name: String,
     val formatted_address: String,
     val geometry: Geometry,
-    val photos: Array<Photo>?
+    val photos: Array<Photo>? = null
 ) {
     @Serializable
     internal data class Geometry(
