@@ -1,6 +1,10 @@
 CREATE TABLE PlaceEntity (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
-    tripId INTEGER NOT NULL,
-    FOREIGN KEY(name) REFERENCES TripEntity(name)
+    lat REAL NOT NULL,
+    lng REAL NOT NULL,
+    address TEXT NOT NULL,
+    photo TEXT,
+    trip_name TEXT NOT NULL,
+    FOREIGN KEY(trip_name) REFERENCES TripEntity(name)
 );

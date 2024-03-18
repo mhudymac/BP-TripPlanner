@@ -20,6 +20,13 @@ class SearchViewModel(
         }
     }
 
+    fun clear(){
+        update { copy(
+            places = emptyList(),
+            searchedQuery = ""
+        )}
+    }
+
     fun changeQuery(query: String) {
         update { copy(searchedQuery = query) }
     }

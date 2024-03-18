@@ -4,18 +4,22 @@ package kmp.android.trip.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import kmp.android.shared.core.util.get
-import kmp.android.shared.navigation.composableDestination
 import kmp.android.shared.navigation.dialogDestination
 import kmp.android.trip.navigation.TripGraph
 import kmp.android.trip.vm.SearchViewModel
@@ -52,13 +56,23 @@ internal fun SearchScreen(
         onQueryChange = {newQuery -> viewModel.changeQuery(newQuery)},
         onSearch = {searchQuery -> viewModel.search(searchQuery)},
         active = true,
-        onActiveChange = {}
+        onActiveChange = {},
+        trailingIcon = {
+            Icon(
+                Icons.Filled.Clear,
+                contentDescription = "Clear",
+                modifier = Modifier.clickable(
+                    onClick = { viewModel.changeQuery("") }
+                )
+            )
+        },
+        placeholder = { Text("Search") },
     ) {
-        LazyColumn {
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             items(places) { place ->
-                Button(onClick = { onPlaceSelected(place) }) {
-                    Text(place.name)
-                }
+                Text(text = place.name, modifier = Modifier.clickable { onPlaceSelected(place); viewModel.clear() })
             }
         }
     }

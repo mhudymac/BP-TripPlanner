@@ -2,16 +2,23 @@ package kmp.android.trip.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -24,9 +31,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import kmp.android.shared.core.util.get
@@ -64,12 +72,25 @@ private fun CreateScreen(
     val error by viewModel[State::error].collectAsState(null)
 
     var showDatePicker by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
+    ) {
+        Button(onClick = { }) {
+            Text("Create Trip")
+        }
+    }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         TextField(
             value = name,
             onValueChange = { viewModel.updateName(it) },
@@ -82,37 +103,27 @@ private fun CreateScreen(
         }
 
         if(showDatePicker) {
-            MyDatePickerDialog(
+            SelectDate(
                 onDateSelected = { viewModel.updateDate(it) },
                 onDismiss = { showDatePicker = false}
             )
         }
-
-
-        var showDialog by remember { mutableStateOf(false) }
 
         Button(onClick = { showDialog = true}) {
             Text("Add Place")
         }
 
         if (showDialog) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                title = { Text("Search for a place") },
-                text = {
-                    SearchScreen(
-                        onPlaceSelected = { selectedPlace ->
-                            viewModel.addPlace(selectedPlace)
-                            showDialog = false
-                        }
-                    )
-                },
-                confirmButton = {
-                    Button(onClick = { showDialog = false }) {
-                        Text("Confirm")
+            CardDialog(
+                onDismiss = { showDialog = false }
+            ) {
+                SearchScreen(
+                    onPlaceSelected = { selectedPlace ->
+                        viewModel.addPlace(selectedPlace)
+                        showDialog = false
                     }
-                }
-            )
+                )
+            }
         }
 
         LazyColumn {
@@ -120,17 +131,30 @@ private fun CreateScreen(
                 Text(place.name)
             }
         }
+    }
+}
 
-        Button(onClick = {  }) {
-            Text("Create Trip")
+@Composable
+fun CardDialog(
+    onDismiss: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(LocalConfiguration.current.screenHeightDp.dp * 0.66f),
+            shape = RoundedCornerShape(16.dp),
+
+            ) {
+            content()
         }
-
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyDatePickerDialog(
+fun SelectDate(
     onDateSelected: (LocalDateTime) -> Unit,
     onDismiss: () -> Unit
 ) {

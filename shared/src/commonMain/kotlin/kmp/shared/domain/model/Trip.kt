@@ -7,4 +7,5 @@ data class Trip(
     val date: LocalDateTime,
     val start: Place,
     val itinerary: List<Place>,
+    val completed: Boolean = false,
 )

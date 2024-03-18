@@ -21,6 +21,10 @@ class CreateViewModel(
         update { copy(date = date) }
     }
 
+    fun saveTrip() {
+
+    }
+
     data class ViewState(
         val name: String = "",
         val date: LocalDateTime? = null,
