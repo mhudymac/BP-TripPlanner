@@ -26,3 +26,13 @@ internal val Place.asEntity : (tripName: String) -> PlaceEntity
             tripName
         )
     }
+
+internal val PlaceEntity.asDomain
+    get() = Place(
+        id,
+        name,
+        lat,
+        lng,
+        address,
+        photo
+    )
