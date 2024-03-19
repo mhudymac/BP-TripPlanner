@@ -7,8 +7,10 @@ android {
 }
 
 sqldelight {
-    database("Database") {
-        packageName = "kmp"
+    databases {
+        create("Database") {
+            packageName.set("kmp")
+        }
     }
 }
 

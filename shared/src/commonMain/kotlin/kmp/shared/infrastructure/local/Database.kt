@@ -1,6 +1,6 @@
 package kmp.shared.infrastructure.local
 
-import com.squareup.sqldelight.db.SqlDriver
+import app.cash.sqldelight.db.SqlDriver
 import kmp.Database
 
 internal expect class DriverFactory {

@@ -1,14 +1,16 @@
 package kmp.shared.infrastructure.source
 
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToList
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import kmp.shared.data.source.UserLocalSource
 import kmp.shared.data.source.UserPagingRequest
 import kmp.shared.infrastructure.local.UserCache
 import kmp.shared.infrastructure.local.UserCacheQueries
 import kmp.shared.infrastructure.local.UserEntity
 import kmp.shared.infrastructure.local.UserQueries
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
@@ -20,7 +22,7 @@ internal class UserLocalSourceImpl(
 ) : UserLocalSource {
 
     override fun getUsers(): Flow<List<UserEntity>> {
-        return userQueries.getAllUsers().asFlow().mapToList()
+        return userQueries.getAllUsers().asFlow().mapToList(Dispatchers.IO)
     }
 
     override suspend fun getUser(id: String): UserEntity? =
@@ -45,7 +47,7 @@ internal class UserLocalSourceImpl(
         userCacheQueries
             .getUsersPaginated(paging.limit.toLong(), paging.offset.toLong())
             .asFlow()
-            .mapToList()
+            .mapToList(Dispatchers.IO)
 
     override suspend fun getPagingCacheCount(): Long =
         userCacheQueries.getUserCount().executeAsOne()
@@ -56,11 +58,10 @@ internal class UserLocalSourceImpl(
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun onPagingCacheChanged(): Flow<Unit> = userCacheQueries
         .getCache()
         .asFlow()
-        .mapToList()
+        .mapToList(Dispatchers.IO)
         .distinctUntilChanged()
         .map { }
         .drop(1)

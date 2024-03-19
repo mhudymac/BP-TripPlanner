@@ -9,4 +9,6 @@ android {
 dependencies {
     implementation(project(":shared"))
     implementation(project(":android:shared"))
+
+    ktlintRuleset(libs.ktlint.composeRules)
 }

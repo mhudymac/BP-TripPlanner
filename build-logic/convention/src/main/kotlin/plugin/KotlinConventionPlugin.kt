@@ -9,8 +9,11 @@ import extensions.libs
 import extensions.pluginManager
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("unused")
@@ -35,11 +38,12 @@ class KotlinConventionPlugin : Plugin<Project> {
             }
 
             tasks.withType<KotlinCompile> {
-                kotlinOptions {
-                    jvmTarget = ProjectConstants.javaVersion.toString()
-                    freeCompilerArgs = freeCompilerArgs + listOf(
+                kotlinOptions.jvmTarget = ProjectConstants.javaVersion.toString()
+                compilerOptions {
+                    freeCompilerArgs = listOf(
                         "-Xallow-jvm-ir-dependencies",
                         "-opt-in=kotlin.RequiresOptIn",
+                        "-Xexpect-actual-classes"
                     )
                 }
             }

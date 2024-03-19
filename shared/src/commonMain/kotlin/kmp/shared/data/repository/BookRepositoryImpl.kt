@@ -15,7 +15,7 @@ import kotlin.random.nextLong
 internal class BookRepositoryImpl(
     private val source: BookLocalSource,
 ) : BookRepository {
-    override fun getAllBooks(): Flow<List<Book>> {
+    override suspend fun getAllBooks(): Flow<List<Book>> {
         return source.getAll().map { it.map(BookEntity::asDomain) }
     }
 

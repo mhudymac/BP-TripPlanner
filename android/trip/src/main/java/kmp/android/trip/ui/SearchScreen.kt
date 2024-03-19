@@ -58,13 +58,15 @@ internal fun SearchScreen(
         active = true,
         onActiveChange = {},
         trailingIcon = {
-            Icon(
-                Icons.Filled.Clear,
-                contentDescription = "Clear",
-                modifier = Modifier.clickable(
-                    onClick = { viewModel.changeQuery("") }
+            if(searchedQuery.isNotEmpty()) {
+                Icon(
+                    Icons.Filled.Clear,
+                    contentDescription = "Clear",
+                    modifier = Modifier.clickable(
+                        onClick = { viewModel.changeQuery("") }
+                    )
                 )
-            )
+            }
         },
         placeholder = { Text("Search") },
     ) {

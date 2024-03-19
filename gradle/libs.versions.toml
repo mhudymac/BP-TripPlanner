@@ -2,7 +2,7 @@
 sdk-min = "26"
 sdk-target = "34"
 sdk-compile = "34"
-kotlin = "1.9.10"
+kotlin = "1.9.22"
 gradlePlugin = "8.2.2"
 coroutines = "1.7.3"
 dateTime = "0.4.0"
@@ -14,7 +14,7 @@ lifecycle = "2.7.0"
 paging = "3.2.1"
 pagingCompose = "3.2.1"
 compose = "1.6.3"
-composeCompilerExtensionVersion = "1.5.3"
+composeCompilerExtensionVersion = "1.5.10"
 activity = "1.8.2"
 navigation = "2.7.7"
 constraintLayout = "1.0.1"
@@ -22,7 +22,7 @@ accompanist = "0.30.0"
 ktor = "2.3.5"
 kermit = "2.0.1"
 settings = "1.1.0"
-sqlDelight = "1.5.5"
+sqlDelight = "2.0.1"
 googlePlayServices = "21.2.0"
 ktLintRules = "0.3.0"
 kotlinxImmutableCollections = "0.3.6"
@@ -32,8 +32,6 @@ junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.6.1"
 material3 = "1.2.1"
-maps = "18.2.0"
-secrets = "2.0.1"
 
 [libraries]
 # Kotlin
@@ -96,10 +94,10 @@ settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "set
 settings-noArg = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "settings" }
 settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "settings" }
 # SqlDelight
-sqlDelight-runtime = { module = "com.squareup.sqldelight:runtime", version.ref = "sqlDelight" }
-sqlDelight-coroutinesExtension = { module = "com.squareup.sqldelight:coroutines-extensions", version.ref = "sqlDelight" }
-sqlDelight-androidDriver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqlDelight" }
-sqlDelight-iosDriver = { module = "com.squareup.sqldelight:native-driver", version.ref = "sqlDelight" }
+sqlDelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqlDelight" }
+sqlDelight-coroutinesExtension = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqlDelight" }
+sqlDelight-androidDriver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight" }
+sqlDelight-iosDriver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
 # Google Play Services
 googlePlayServices-location = { module = "com.google.android.gms:play-services-location", version.ref = "googlePlayServices" }
 # KtLint rules
@@ -143,7 +141,7 @@ android-library = { id = "com.android.library", version.ref = "gradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-sqlDelight = { id = "com.squareup.sqldelight", version.ref = "sqlDelight" }
+sqlDelight = { id = "app.cash.sqldelight", version.ref = "sqlDelight" }
 versionCatalogUpdate = "nl.littlerobots.version-catalog-update:0.8.1"
 versions = "com.github.ben-manes.versions:0.49.0"
 ktlint = "org.jlleitschuh.gradle.ktlint:11.6.0"

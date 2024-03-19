@@ -5,7 +5,7 @@ import kmp.shared.domain.model.Book
 import kotlinx.coroutines.flow.Flow
 
 internal interface BookRepository {
-    fun getAllBooks(): Flow<List<Book>>
+    suspend fun getAllBooks(): Flow<List<Book>>
 
     suspend fun reloadAllBooks(): Result<Unit>
 }
