@@ -1,10 +1,12 @@
 package kmp.shared.domain.model
 
 data class Place (
-    val id: String,
     val name: String,
-    val lat: Double,
-    val lng: Double,
-    val address: String,
-    val photo: String?
+    val id: String,
+    val formattedAddress: String,
+    val latitude: Double,
+    val longitude: Double,
+    val googleMapsUri: String,
+    val photoName: String?,
+    val photoUri: String? = null
 )

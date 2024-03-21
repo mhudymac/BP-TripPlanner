@@ -3,26 +3,33 @@ package kmp.shared.infrastructure.remote
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.headers
+import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import kmp.shared.base.Result
 import kmp.shared.base.error.util.runCatchingCommonNetworkExceptions
-import kmp.shared.infrastructure.model.GoogleResponseDto
+import kmp.shared.infrastructure.model.PhotoResponse
+import kmp.shared.infrastructure.model.TextSearchResponse
 import kmp.shared.infrastructure.model.PlaceDto
+import kmp.shared.infrastructure.model.TextSearchRequestBody
+import kmp.shared.infrastructure.model.searchFieldMask
 
 internal object PlacePaths {
-    private const val root = "/maps/api/place"
-    const val textSearch = "$root/textsearch/json"
-    const val details = "$root/details/json"
-    const val photo = "/maps/api/place/photo"
+    private const val root = "/v1"
+    const val textSearch = "$root/places:searchText"
+    const val details = "$root/places/"
+    val photo : (name: String) -> String
+        get() = { name -> "$root/$name/media" }
 }
 
 internal class PlaceService(private val client: HttpClient) {
 
-    suspend fun searchPlaces( query: String ): Result<GoogleResponseDto> {
+    suspend fun searchPlaces( query: String, maxResultCount: Int = 16 ): Result<TextSearchResponse> {
         return runCatchingCommonNetworkExceptions {
-            client.get(PlacePaths.textSearch) {
-                url {
-                    parameters["query"] = query
-                }
+            client.post(PlacePaths.textSearch) {
+                headers.append("X-Goog-FieldMask", searchFieldMask())
+                setBody(TextSearchRequestBody( query, maxResultCount))
             }.body()
         }
     }
@@ -36,13 +43,13 @@ internal class PlaceService(private val client: HttpClient) {
         }
     }
 
-    suspend fun getPhoto(photoReference: String, maxWidth: Int, maxHeight: Int): Result<ByteArray> {
+    suspend fun getPhoto(photoName: String, maxHeightPx: Int = 500, maxWidthPx: Int = 500): Result<PhotoResponse> {
         return runCatchingCommonNetworkExceptions {
-            client.get(PlacePaths.photo) {
+            client.get(PlacePaths.photo(photoName)) {
                 url {
-                    parameters["maxwidth"] = maxWidth.toString()
-                    parameters["maxheight"] = maxHeight.toString()
-                    parameters["photo_reference"] = photoReference
+                    parameters["maxHeightPx"] = maxHeightPx.toString()
+                    parameters["maxWidthPx"] = maxWidthPx.toString()
+                    parameters["skipHttpRedirect"] = true.toString()
                 }
             }.body()
         }

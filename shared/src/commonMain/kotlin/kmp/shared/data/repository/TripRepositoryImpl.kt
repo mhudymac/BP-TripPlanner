@@ -1,0 +1,36 @@
+package kmp.shared.data.repository
+
+import kmp.shared.data.source.TripLocalSource
+import kmp.shared.domain.model.Trip
+import kmp.shared.domain.repository.TripRepository
+import kmp.shared.extension.asDomain
+import kmp.shared.extension.asEntity
+import kmp.shared.infrastructure.local.TripEntity
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
+internal class TripRepositoryImpl(
+    private val source: TripLocalSource
+) : TripRepository {
+
+    override suspend fun getAllTrips(): Flow<List<Trip>> {
+        return source.getAllTrips().map { it.map(TripEntity::asDomain) }
+    }
+
+    override suspend fun getTripByName(name: String): Trip? {
+        return source.getTripByName(name)?.asDomain
+    }
+
+    override suspend fun deleteTripByName(name: String) {
+        source.deleteTripByName(name)
+    }
+
+    override suspend fun deleteAllTrips() {
+        source.deleteAllTrips()
+    }
+
+    override suspend fun insertOrReplace(trips: List<Trip>) {
+        source.updateOrInsert(trips.map(Trip::asEntity))
+    }
+
+}

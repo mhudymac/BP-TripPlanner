@@ -6,33 +6,38 @@ import kmp.shared.infrastructure.model.PlaceDto
 
 internal val PlaceDto.asDomain
     get() = Place(
-        place_id,
-        name,
-        geometry.location.lat,
-        geometry.location.lng,
-        formatted_address,
-        photos?.firstOrNull()?.photo_reference
+        name = displayName.text,
+        id = id,
+        formattedAddress = formattedAddress,
+        latitude = location.latitude,
+        longitude = location.longitude,
+        googleMapsUri = googleMapsUri,
+        photoName = photos?.firstOrNull()?.name
     )
 
 internal val Place.asEntity : (tripName: String) -> PlaceEntity
     get() = { tripName ->
         PlaceEntity(
-            id,
-            name,
-            lat,
-            lng,
-            address,
-            photo,
-            tripName
+            name = name,
+            id = id,
+            formattedAddress = formattedAddress,
+            lat = latitude,
+            lng = longitude,
+            googleMapsUri = googleMapsUri,
+            photo = photoName,
+            photoUri = photoUri,
+            trip_name = tripName
         )
     }
 
 internal val PlaceEntity.asDomain
     get() = Place(
-        id,
-        name,
-        lat,
-        lng,
-        address,
-        photo
+        name = name,
+        id = id,
+        formattedAddress = formattedAddress,
+        latitude = lat,
+        longitude = lng,
+        googleMapsUri = googleMapsUri,
+        photoName = photo,
+        photoUri = photoUri
     )

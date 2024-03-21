@@ -13,9 +13,7 @@ java {
 }
 
 kotlin {
-    kotlinDslPluginOptions {
-        jvmTarget.set(JavaVersion.VERSION_17.toString())
-    }
+    jvmToolchain(17)
 }
 
 dependencies {

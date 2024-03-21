@@ -11,19 +11,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,41 +51,49 @@ fun NavController.navigateToCreateScreen() {
     navigate(TripGraph.Create())
 }
 
-internal fun NavGraphBuilder.createScreenRoute(navigateToSearchScreen: () -> Unit) {
+internal fun NavGraphBuilder.createScreenRoute(navigateUp: () -> Unit) {
     composableDestination(
         destination = TripGraph.Create,
     ) {
-        CreateScreen(navigateToSearchScreen = navigateToSearchScreen)
+        CreateScreen(navigateUp = navigateUp)
     }
 }
 
 @Composable
 private fun CreateScreen(
     viewModel: CreateViewModel = getViewModel(),
-    navigateToSearchScreen: () -> Unit,
+    navigateUp: () -> Unit
 ) {
     val name by viewModel[State::name].collectAsState("")
     val date by viewModel[State::date].collectAsState(null)
     val start by viewModel[State::start].collectAsState(null)
     val itinerary by viewModel[State::itinerary].collectAsState(emptyList())
     val loading by viewModel[State::isLoading].collectAsState(false)
-    val error by viewModel[State::error].collectAsState(null)
+    val error by viewModel[State::error].collectAsState(Pair("",0))
 
     var showDatePicker by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
+    val snackHost = remember { SnackbarHostState() }
+
+    if(error.first.isNotEmpty()){
+        LaunchedEffect(error) {
+            snackHost.showSnackbar(error.first)
+        }
+    }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End
     ) {
-        Button(onClick = { }) {
+        Button(onClick = { viewModel.saveTrip(); navigateUp() }) {
             Text("Create Trip")
         }
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -99,7 +107,7 @@ private fun CreateScreen(
         )
 
         Button(onClick = { showDatePicker = true }) {
-            Text(text = date?.format(  DateTimeFormatter.ofPattern("dd.MM.yyyy") ) ?: "Select Date")
+            Text(text =  date?.format(  DateTimeFormatter.ofPattern("dd.MM.yyyy") ) ?: "Select Date")
         }
 
         if(showDatePicker) {
@@ -127,10 +135,15 @@ private fun CreateScreen(
         }
 
         LazyColumn {
+            item{
+                ImageAndText(onclick =  {}, text = start?.name ?: "Start", imageUrl = start?.photoUri)
+            }
             items(itinerary) { place ->
-                Text(place.name)
+                ImageAndText(onclick =  {}, text = place.name, imageUrl = place.photoUri)
             }
         }
+
+        SnackbarHost(snackHost, modifier = Modifier.align(Alignment.CenterHorizontally))
     }
 }
 

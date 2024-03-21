@@ -12,8 +12,6 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 @Suppress("unused")
@@ -41,7 +39,6 @@ class KotlinConventionPlugin : Plugin<Project> {
                 kotlinOptions.jvmTarget = ProjectConstants.javaVersion.toString()
                 compilerOptions {
                     freeCompilerArgs = listOf(
-                        "-Xallow-jvm-ir-dependencies",
                         "-opt-in=kotlin.RequiresOptIn",
                         "-Xexpect-actual-classes"
                     )

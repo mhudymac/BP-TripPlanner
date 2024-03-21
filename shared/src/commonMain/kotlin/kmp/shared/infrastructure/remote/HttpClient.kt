@@ -55,8 +55,11 @@ internal object HttpClient {
         defaultRequest {
             url {
                 protocol = URLProtocol.HTTPS
-                host = "maps.googleapis.com"
-                parameters.append("key", apiKey)
+                host = "places.googleapis.com"
+                headers {
+                    append("X-Goog-Api-Key", apiKey)
+                    append("Content-Type", "application/json")
+                }
             }
             contentType(ContentType.Application.Json)
         }

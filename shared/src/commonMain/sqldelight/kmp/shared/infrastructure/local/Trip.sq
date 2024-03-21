@@ -3,3 +3,18 @@ CREATE TABLE TripEntity (
     date TEXT NOT NULL,
     completed INTEGER NOT NULL
 );
+
+getTrip:
+SELECT * FROM TripEntity WHERE name = ?;
+
+getAllTrips:
+SELECT * FROM TripEntity;
+
+insertOrReplace:
+INSERT OR REPLACE INTO TripEntity VALUES ?;
+
+delete:
+DELETE FROM TripEntity WHERE name = ?;
+
+deleteAll:
+DELETE FROM TripEntity;

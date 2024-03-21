@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import kmp.android.shared.navigation.composableDestination
 import kmp.android.trip.navigation.TripGraph
+import org.koin.androidx.compose.getViewModel
+
 
 
 internal fun NavGraphBuilder.tripHomeRoute() {
@@ -26,6 +28,8 @@ internal fun HomeScreenRoute(){
 }
 
 @Composable
-private fun HomeScreen(){
+private fun HomeScreen(
+){
+
     FullScreenText(text = "Home")
 }

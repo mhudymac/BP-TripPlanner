@@ -2,6 +2,8 @@ package kmp.android.trip.ui
 
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -19,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import coil.compose.AsyncImage
 import kmp.android.shared.core.util.get
 import kmp.android.shared.navigation.dialogDestination
 import kmp.android.trip.navigation.TripGraph
@@ -74,8 +77,23 @@ internal fun SearchScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(places) { place ->
-                Text(text = place.name, modifier = Modifier.clickable { onPlaceSelected(place); viewModel.clear() })
+                ImageAndText(onclick = { onPlaceSelected(place); viewModel.clear() }, text = place.name, imageUrl = place.photoUri)
             }
         }
+    }
+}
+
+@Composable
+internal fun ImageAndText(onclick: () -> Unit, text: String, imageUrl: String?) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onclick() }
+    ){
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = null
+        )
+        Text(text = text)
     }
 }

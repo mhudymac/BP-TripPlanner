@@ -9,12 +9,13 @@ import kmp.shared.base.error.ErrorMessageProvider
 import kmp.shared.base.error.getMessage
 import kotlinx.coroutines.flow.Flow
 import org.koin.androidx.compose.get
+import org.koin.compose.koinInject
 
 @SuppressLint("ComposableNaming")
 @Suppress("konsist.every internal or public compose function has a modifier")
 @Composable
 infix fun Flow<ErrorResult>.showIn(snackHost: SnackbarHostState) {
-    val errorMessageProvider: ErrorMessageProvider = get()
+    val errorMessageProvider: ErrorMessageProvider = koinInject()
     LaunchedEffect(this, snackHost) {
         collect { error ->
             snackHost.showSnackbar(errorMessageProvider.getMessage(error))

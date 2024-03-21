@@ -8,4 +8,4 @@ internal expect class DriverFactory {
 }
 
 internal fun createDatabase(driverFactory: DriverFactory): Database =
-    Database(driverFactory.createDriver("kmp.db"))
+    Database(driverFactory.createDriver("trip.db"))

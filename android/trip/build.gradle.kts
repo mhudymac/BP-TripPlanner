@@ -10,5 +10,7 @@ dependencies {
     implementation(project(":shared"))
     implementation(project(":android:shared"))
 
+    implementation(libs.coil)
+    implementation(libs.dateTime)
     ktlintRuleset(libs.ktlint.composeRules)
 }
