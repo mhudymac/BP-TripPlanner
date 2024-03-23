@@ -60,12 +60,6 @@ val DarkColors = darkColorScheme(
 
 val typography = Typography()
 
-val shapes = Shapes(
-    small = RoundedCornerShape(Values.Radius.large),
-    medium = RoundedCornerShape(Values.Radius.medium),
-    large = RoundedCornerShape(Values.Radius.small),
-)
-
 @Composable
 fun AppTheme(darkTheme: Boolean = isSystemInDarkTheme(),
              content: @Composable () -> Unit
@@ -83,8 +77,6 @@ fun AppTheme(darkTheme: Boolean = isSystemInDarkTheme(),
 
     MaterialTheme(
         colorScheme = colors,
-        typography = typography,
-        shapes = shapes,
         content = content,
     )
 }

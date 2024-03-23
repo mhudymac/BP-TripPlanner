@@ -16,7 +16,7 @@ internal class SaveTripUseCaseImpl internal constructor(
 ) : SaveTripUseCase {
     override suspend fun invoke(params: Trip): Result<Unit> {
         tripRepository.insertOrReplace( listOf(params) )
-        params.itinerary.firstOrNull()?.let { placeRepository.insertOrReplace(it, params.name) }
+        params.itinerary.let { placeRepository.insertOrReplace(it) }
 
         return Result.Success(Unit)
     }

@@ -1,6 +1,7 @@
 CREATE TABLE TripEntity (
     name TEXT PRIMARY KEY,
     date TEXT NOT NULL,
+    place_order TEXT NOT NULL,
     completed INTEGER NOT NULL
 );
 
@@ -18,3 +19,6 @@ DELETE FROM TripEntity WHERE name = ?;
 
 deleteAll:
 DELETE FROM TripEntity;
+
+getNearestTrip:
+SELECT * FROM TripEntity ORDER BY date ASC LIMIT 1;

@@ -15,9 +15,8 @@ internal val PlaceDto.asDomain
         photoName = photos?.firstOrNull()?.name
     )
 
-internal val Place.asEntity : (tripName: String) -> PlaceEntity
-    get() = { tripName ->
-        PlaceEntity(
+internal val Place.asEntity
+    get() = PlaceEntity(
             name = name,
             id = id,
             formattedAddress = formattedAddress,
@@ -26,9 +25,8 @@ internal val Place.asEntity : (tripName: String) -> PlaceEntity
             googleMapsUri = googleMapsUri,
             photo = photoName,
             photoUri = photoUri,
-            trip_name = tripName
         )
-    }
+
 
 internal val PlaceEntity.asDomain
     get() = Place(

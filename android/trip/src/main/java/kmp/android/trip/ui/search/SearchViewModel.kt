@@ -1,23 +1,26 @@
-package kmp.android.trip.vm
+package kmp.android.trip.ui.search
 
 import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
 import kmp.shared.domain.model.Place
 import kmp.shared.domain.usecase.place.SearchPlacesUseCase
 import kmp.shared.base.Result
+import kmp.shared.domain.usecase.place.SearchPlacesWithBiasUseCase
 import kmp.shared.domain.usecase.place.UpdatePhotoUrlUseCase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 
 class SearchViewModel(
     private val searchPlaces: SearchPlacesUseCase,
+    private val searchPlacesWithBias: SearchPlacesWithBiasUseCase,
     private val updatePhotoUrl: UpdatePhotoUrlUseCase
 ) : BaseStateViewModel<SearchViewModel.ViewState>(ViewState()){
 
+    var latLng: Pair<Double,Double>? = null
     fun search(query: String) {
         launch {
             loading = true
-            when (val res = searchPlaces(query)) {
+            when (val res = latLng?.let { searchPlacesWithBias(Triple(query, it.first, it.second)) }?: searchPlaces(query)) {
                 is Result.Success -> {
                     val photoResults = res.data.map { place ->
                         async { updatePhotoUrl(place) }
@@ -57,6 +60,6 @@ class SearchViewModel(
         val searchedQuery: String = "",
         val places: List<Place> = emptyList(),
         val isLoading: Boolean = false,
-        val error: String? = null
+        val error: String? = null,
     ) : State
 }

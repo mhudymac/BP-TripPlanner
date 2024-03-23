@@ -21,26 +21,41 @@ internal data class PlaceDto(
     val photos: Array<Photo>? = null
 ) {
     @Serializable
-    internal data class LocalizedText(
+    data class LocalizedText(
         val text: String
-    )
-    @Serializable
-    internal data class LatLng(
-        val latitude: Double,
-        val longitude: Double
     )
 
     @Serializable
-    internal data class Photo(
+    data class Photo(
         val name: String
     )
 }
 
 @Serializable
-data class TextSearchRequestBody(
-    val textQuery: String,
-    val maxResultCount: Int
+internal data class LatLng(
+    val latitude: Double,
+    val longitude: Double
 )
+
+@Serializable
+internal data class TextSearchRequestBody(
+    val textQuery: String,
+    val maxResultCount: Int,
+    val locationBias: LocationBias? = null
+){
+    constructor(textQuery: String, maxResultCount: Int, latitude: Double, longitude: Double, radius: Int)
+        : this(textQuery, maxResultCount, LocationBias(Circle(LatLng(latitude, longitude), radius)))
+    @Serializable
+    data class LocationBias(
+        val circle: Circle
+    )
+
+    @Serializable
+    data class Circle(
+        val center: LatLng,
+        val radius: Int
+    )
+}
 
 internal fun searchFieldMask(): String {
     val fieldNames = listOf(

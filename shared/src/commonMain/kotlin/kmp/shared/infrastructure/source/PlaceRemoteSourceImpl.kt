@@ -11,6 +11,10 @@ internal class PlaceRemoteSourceImpl(private val service: PlaceService) : PlaceR
     override suspend fun searchPlaces(query: String): Result<TextSearchResponse> =
         service.searchPlaces(query)
 
+    override suspend fun searchPlacesWithBias(query: String, lat: Double, lng: Double, ): Result<TextSearchResponse> =
+        service.searchPlaces(query, lat = lat, lng = lng)
+
+
     override suspend fun getPhoto(photoName: String): Result<PhotoResponse> =
         service.getPhoto(photoName)
 

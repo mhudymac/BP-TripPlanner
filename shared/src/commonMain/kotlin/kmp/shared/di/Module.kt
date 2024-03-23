@@ -11,10 +11,16 @@ import kmp.shared.domain.repository.PlaceRepository
 import kmp.shared.domain.repository.TripRepository
 import kmp.shared.domain.usecase.place.SearchPlacesUseCase
 import kmp.shared.domain.usecase.place.SearchPlacesUseCaseImpl
+import kmp.shared.domain.usecase.place.SearchPlacesWithBiasUseCase
+import kmp.shared.domain.usecase.place.SearchPlacesWithBiasUseCaseImpl
 import kmp.shared.domain.usecase.place.UpdatePhotoUrlUseCase
 import kmp.shared.domain.usecase.place.UpdatePhotoUrlUseCaseImpl
-import kmp.shared.domain.usecase.trip.GetAllTripsUseCase
-import kmp.shared.domain.usecase.trip.GetAllTripsUseCaseImpl
+import kmp.shared.domain.usecase.trip.GetAllTripsWithoutPlacesUseCase
+import kmp.shared.domain.usecase.trip.GetAllTripsWithoutPlacesUseCaseImpl
+import kmp.shared.domain.usecase.trip.GetNearestTripUseCase
+import kmp.shared.domain.usecase.trip.GetNearestTripUseCaseImpl
+import kmp.shared.domain.usecase.trip.GetTripUseCase
+import kmp.shared.domain.usecase.trip.GetTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.SaveTripUseCase
 import kmp.shared.domain.usecase.trip.SaveTripUseCaseImpl
 import kmp.shared.infrastructure.local.createDatabase
@@ -53,10 +59,13 @@ private val commonModule = module {
 
     // UseCases
     factory<SearchPlacesUseCase> { SearchPlacesUseCaseImpl(get()) }
+    factory<SearchPlacesWithBiasUseCase> { SearchPlacesWithBiasUseCaseImpl(get()) }
     factory<UpdatePhotoUrlUseCase> { UpdatePhotoUrlUseCaseImpl(get()) }
 
     factory<SaveTripUseCase> { SaveTripUseCaseImpl(get(),get()) }
-    factory<GetAllTripsUseCase> { GetAllTripsUseCaseImpl(get(),get()) }
+    factory<GetAllTripsWithoutPlacesUseCase> { GetAllTripsWithoutPlacesUseCaseImpl(get()) }
+    factory<GetTripUseCase> { GetTripUseCaseImpl(get(), get()) }
+    factory<GetNearestTripUseCase> { GetNearestTripUseCaseImpl(get(), get()) }
 
 
     // Repositories

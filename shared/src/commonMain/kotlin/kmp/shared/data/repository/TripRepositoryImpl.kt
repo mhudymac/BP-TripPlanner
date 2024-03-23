@@ -6,7 +6,9 @@ import kmp.shared.domain.repository.TripRepository
 import kmp.shared.extension.asDomain
 import kmp.shared.extension.asEntity
 import kmp.shared.infrastructure.local.TripEntity
+import kmp.shared.system.Log
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 internal class TripRepositoryImpl(
@@ -17,8 +19,8 @@ internal class TripRepositoryImpl(
         return source.getAllTrips().map { it.map(TripEntity::asDomain) }
     }
 
-    override suspend fun getTripByName(name: String): Trip? {
-        return source.getTripByName(name)?.asDomain
+    override suspend fun getTripByName(name: String): Flow<Trip?> {
+        return source.getTripByName(name).map { it?.asDomain }
     }
 
     override suspend fun deleteTripByName(name: String) {
@@ -31,6 +33,10 @@ internal class TripRepositoryImpl(
 
     override suspend fun insertOrReplace(trips: List<Trip>) {
         source.updateOrInsert(trips.map(Trip::asEntity))
+    }
+
+    override suspend fun getNearestTrip(): Flow<Trip?> {
+        return source.getNearestTrip().map { it?.asDomain }
     }
 
 }

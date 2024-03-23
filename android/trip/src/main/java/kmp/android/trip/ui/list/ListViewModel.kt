@@ -1,13 +1,13 @@
-package kmp.android.trip.vm
+package kmp.android.trip.ui.list
 
 import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
 import kmp.shared.domain.model.Trip
-import kmp.shared.domain.usecase.trip.GetAllTripsUseCase
+import kmp.shared.domain.usecase.trip.GetAllTripsWithoutPlacesUseCase
 
 
 class ListViewModel(
-    private val getAllTripsUseCase: GetAllTripsUseCase
+    private val getAllTripsWithoutPlacesUseCase: GetAllTripsWithoutPlacesUseCase
 ) : BaseStateViewModel<ListViewModel.ViewState>(ViewState()) {
 
     init {
@@ -17,7 +17,7 @@ class ListViewModel(
     private fun loadTrips() {
         launch {
             update { copy(isLoading = true) }
-            getAllTripsUseCase().collect { trips ->
+            getAllTripsWithoutPlacesUseCase().collect { trips ->
                 update { copy(trips = trips, isLoading = false) }
             }
         }

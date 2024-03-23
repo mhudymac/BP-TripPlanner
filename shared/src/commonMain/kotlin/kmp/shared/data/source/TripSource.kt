@@ -10,7 +10,9 @@ internal interface TripLocalSource {
 
     fun deleteAllTrips()
 
-    fun getTripByName(name: String): TripEntity?
+    fun getTripByName(name: String): Flow<TripEntity?>
 
     fun deleteTripByName(name: String)
+
+    fun getNearestTrip(): Flow<TripEntity?>
 }

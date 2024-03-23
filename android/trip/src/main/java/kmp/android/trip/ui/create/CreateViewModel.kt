@@ -1,13 +1,12 @@
-package kmp.android.trip.vm
+package kmp.android.trip.ui.create
 
 import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
 import kmp.shared.domain.model.Place
 import kmp.shared.domain.model.Trip
 import kmp.shared.domain.usecase.trip.SaveTripUseCase
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.datetime.toKotlinLocalDateTime
-import java.time.LocalDateTime
+import kotlinx.datetime.toKotlinLocalDate
+import java.time.LocalDate
 
 
 import kotlin.random.Random
@@ -25,7 +24,7 @@ class CreateViewModel(
         update { copy(name = name) }
     }
 
-    fun updateDate(date: LocalDateTime) {
+    fun updateDate(date: LocalDate) {
         update { copy(date = date) }
     }
 
@@ -43,12 +42,14 @@ class CreateViewModel(
                 val trip = lastState().let { state ->
                     Trip(
                         name = state.name,
-                        date = state.date!!.toKotlinLocalDateTime(),
-                        itinerary = flowOf(state.itinerary),
+                        date = state.date!!.toKotlinLocalDate(),
+                        itinerary = listOf(state.start!!) + state.itinerary,
+                        order = (listOf(state.start) + state.itinerary).map { it.id },
                     )
                 }
 
                 saveTripUseCase(trip)
+                update{ copy(saveSuccess = true) }
             }
         }
     }
@@ -59,11 +60,12 @@ class CreateViewModel(
 
     data class ViewState(
         val name: String = "",
-        val date: LocalDateTime? = null,
+        val date: LocalDate? = null,
         val start: Place? = null,
         val itinerary: List<Place> = emptyList(),
         val isLoading: Boolean = false,
-        val error: Pair<String,Int> = Pair("",0)
+        val error: Pair<String,Int> = Pair("",0),
+        val saveSuccess: Boolean = false
     ) : State
 
 }

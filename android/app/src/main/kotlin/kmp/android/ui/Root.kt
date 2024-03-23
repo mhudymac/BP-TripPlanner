@@ -1,12 +1,5 @@
 package kmp.android.ui
 
-//import kmp.android.books.navigation.booksNavGraph
-//import kmp.android.login.navigation.LoginDestination
-//import kmp.android.login.navigation.loginNavGraph
-//import kmp.android.profile.navigation.profileNavGraph
-//import kmp.android.recipes.navigation.recipesNavGraph
-//import kmp.android.users.navigation.UsersGraph
-//import kmp.android.users.navigation.usersNavGraph
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
