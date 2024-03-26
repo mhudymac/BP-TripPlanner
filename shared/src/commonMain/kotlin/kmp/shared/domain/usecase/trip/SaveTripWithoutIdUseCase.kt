@@ -6,15 +6,15 @@ import kmp.shared.domain.model.Trip
 import kmp.shared.domain.repository.PlaceRepository
 import kmp.shared.domain.repository.TripRepository
 
-interface SaveTripUseCase : UseCaseResult<Trip, Unit>
+interface SaveTripWithoutIdUseCase : UseCaseResult<Trip, Unit>
 
-internal class SaveTripUseCaseImpl internal constructor(
+internal class SaveTripWithoutIdUseCaseImpl internal constructor(
     private val tripRepository: TripRepository,
     private val placeRepository: PlaceRepository
-) : SaveTripUseCase {
+) : SaveTripWithoutIdUseCase {
     override suspend fun invoke(params: Trip): Result<Unit> {
-        tripRepository.insertOrReplace( listOf(params) )
-        params.itinerary.let { placeRepository.insertOrReplace(it, tripId = params.id) }
+        val tripId = tripRepository.insertWithoutId( params )
+        params.itinerary.let { placeRepository.insertOrReplace(it, tripId = tripId) }
 
         return Result.Success(Unit)
     }

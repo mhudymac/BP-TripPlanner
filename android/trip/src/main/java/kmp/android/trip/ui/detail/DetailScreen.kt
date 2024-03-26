@@ -1,5 +1,6 @@
 package kmp.android.trip.ui.detail
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +23,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -39,14 +39,15 @@ fun NavController.navigateToDetailScreen(tripId: String) {
     navigate(TripGraph.Detail(tripId))
 }
 
-internal fun NavGraphBuilder.detailScreenRoute(navigateUp: () -> Unit){
+internal fun NavGraphBuilder.detailScreenRoute(navigateUp: () -> Unit, navigateToEdit: (String) -> Unit){
     composableDestination(
         destination = TripGraph.Detail
     ) { navBackStackEntry ->
         val args = TripGraph.Detail.Args(navBackStackEntry.arguments)
         DetailRoute(
             tripId = args.tripId,
-            navigateUp = navigateUp
+            navigateUp = navigateUp,
+            navigateToEdit = navigateToEdit
         )
     }
 }
@@ -55,7 +56,7 @@ internal fun NavGraphBuilder.detailScreenRoute(navigateUp: () -> Unit){
 internal fun DetailRoute(
     tripId: String,
     navigateUp: () -> Unit,
-    onEditClick: () -> Unit = {},
+    navigateToEdit: (String) -> Unit = {},
     viewModel: DetailViewModel = getViewModel(),
 ) {
     val snackHost = remember { SnackbarHostState() }
@@ -70,8 +71,11 @@ internal fun DetailRoute(
     Scaffold(
         snackbarHost = { SnackbarHost(snackHost) },
         topBar = {
-            TopBar(title = trip?.name?: "", onBackArrow = navigateUp) {
-                IconButton(onClick = onEditClick ) {
+            TopBar(
+                title = trip?.name?: "",
+                onBackArrow = navigateUp
+            ) {
+                IconButton(onClick = { navigateToEdit(tripId) }) {
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = ""
@@ -81,10 +85,7 @@ internal fun DetailRoute(
         },
     ) {
         trip?.let { trip ->
-            DetailScreen(
-                trip = trip,
-                padding = it
-            )
+            DetailScreen(trip, it)
         }
     }
 }
@@ -95,14 +96,16 @@ internal fun DetailScreen(trip: Trip, padding: PaddingValues) {
         modifier = Modifier
             .fillMaxSize()
             .padding(padding)
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 8.dp)
     ) {
         Text(text = "${trip.date.dayOfMonth}.${trip.date.monthNumber}.${trip.date.year} ")
+
         LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(trip.itinerary) { place ->
-                PlaceCard(place = place)
+            items(trip.itinerary, key = { it.id }) { place ->
+                PlaceCard(place)
             }
         }
     }
@@ -113,16 +116,19 @@ internal fun DetailScreen(trip: Trip, padding: PaddingValues) {
 internal fun TopBar(
     title: String,
     onBackArrow: () -> Unit,
+    showBackArrow: Boolean = true,
     actions: @Composable () -> Unit
 ) {
     CenterAlignedTopAppBar(
         title = { Text(title) },
         navigationIcon = {
-            IconButton(onClick = onBackArrow) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = ""
-                )
+            if (showBackArrow) {
+                IconButton(onClick = onBackArrow) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = ""
+                    )
+                }
             }
         },
         actions = { actions() }

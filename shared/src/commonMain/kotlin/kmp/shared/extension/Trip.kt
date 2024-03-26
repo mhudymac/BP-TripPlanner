@@ -6,8 +6,9 @@ import kotlinx.datetime.LocalDate
 
 internal val Trip.asEntity
     get() = TripEntity(
-        name,
-        date.toString(),
+        id = id,
+        name = name,
+        date = date.toString(),
         place_order = itinerary.map { it.id }.joinToString(separator = ",") { it },
         completed = if(completed) 1 else 0,
     )
@@ -15,8 +16,9 @@ internal val Trip.asEntity
 
 internal val TripEntity.asDomain
     get() = Trip(
-            name,
-            LocalDate.parse(date),
+            id = id,
+            name = name,
+            date = LocalDate.parse(date),
             itinerary = emptyList(),
             order = place_order.split(",").toList(),
             completed = (completed.toInt() == 1),

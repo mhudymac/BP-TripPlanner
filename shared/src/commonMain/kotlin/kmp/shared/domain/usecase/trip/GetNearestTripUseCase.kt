@@ -18,11 +18,12 @@ internal class GetNearestTripUseCaseImpl(
     override suspend fun invoke(): Flow<Result<Trip>> {
         return tripRepository.getNearestTrip().map { trip ->
             if (trip != null) {
+                val places = placeRepository.getPlacesByTripID(trip.id)
                 Result.Success(
                     trip.copy(
-                        itinerary = trip.order.map { placeId ->
-                            placeRepository.getPlacesById(placeId)
-                        }.flatten()
+                        itinerary = trip.order.map { order ->
+                            places.firstOrNull { it.id == order } ?: throw IllegalStateException("Place not found")
+                        }
                     )
                 )
             } else

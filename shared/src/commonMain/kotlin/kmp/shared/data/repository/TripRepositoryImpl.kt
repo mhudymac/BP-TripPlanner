@@ -39,4 +39,8 @@ internal class TripRepositoryImpl(
         return source.getNearestTrip().map { it?.asDomain }
     }
 
+    override suspend fun insertWithoutId(trip: Trip): Long {
+        return source.insertWithoutId(trip.asEntity)
+    }
+
 }

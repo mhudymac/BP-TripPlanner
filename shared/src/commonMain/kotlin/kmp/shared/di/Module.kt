@@ -21,8 +21,12 @@ import kmp.shared.domain.usecase.trip.GetNearestTripUseCase
 import kmp.shared.domain.usecase.trip.GetNearestTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.GetTripUseCase
 import kmp.shared.domain.usecase.trip.GetTripUseCaseImpl
+import kmp.shared.domain.usecase.trip.RemoveTripUseCase
+import kmp.shared.domain.usecase.trip.RemoveTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.SaveTripUseCase
 import kmp.shared.domain.usecase.trip.SaveTripUseCaseImpl
+import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCase
+import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCaseImpl
 import kmp.shared.infrastructure.local.createDatabase
 import kmp.shared.infrastructure.remote.HttpClient
 import kmp.shared.infrastructure.remote.PlaceService
@@ -63,9 +67,11 @@ private val commonModule = module {
     factory<UpdatePhotoUrlUseCase> { UpdatePhotoUrlUseCaseImpl(get()) }
 
     factory<SaveTripUseCase> { SaveTripUseCaseImpl(get(),get()) }
+    factory<SaveTripWithoutIdUseCase> { SaveTripWithoutIdUseCaseImpl(get(),get()) }
     factory<GetAllTripsWithoutPlacesUseCase> { GetAllTripsWithoutPlacesUseCaseImpl(get()) }
     factory<GetTripUseCase> { GetTripUseCaseImpl(get(), get()) }
     factory<GetNearestTripUseCase> { GetNearestTripUseCaseImpl(get(), get()) }
+    factory<RemoveTripUseCase> { RemoveTripUseCaseImpl(get()) }
 
 
     // Repositories

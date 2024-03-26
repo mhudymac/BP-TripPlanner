@@ -1,6 +1,9 @@
 package kmp.android.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -31,7 +34,11 @@ fun Root(modifier: Modifier = Modifier) {
         modifier = modifier,
         bottomBar = { BottomBar(navController) },
     ) { padding ->
-        Box(modifier = Modifier.padding(padding)) {
+        Box(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize(),
+        ) {
                 NavHost(
                     navController,
                     startDestination = TripGraph.rootPath // if (showLogin) LoginDestination.route else UsersGraph.rootPath

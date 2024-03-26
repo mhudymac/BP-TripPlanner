@@ -22,11 +22,12 @@ internal class GetTripUseCaseImpl(
 
         return tripRepository.getTripByName(params).map { trip ->
             if (trip != null) {
+                val places = placeRepository.getPlacesByTripID(trip.id)
                 Result.Success(
                     trip.copy(
-                        itinerary = trip.order.map { placeId ->
-                            placeRepository.getPlacesById(placeId)
-                        }.flatten()
+                        itinerary = trip.order.map { order ->
+                            places.firstOrNull { it.id == order } ?: throw IllegalStateException("Place not found")
+                        }
                     )
                 )
             } else

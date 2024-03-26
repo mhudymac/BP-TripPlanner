@@ -25,4 +25,6 @@ internal interface PlaceLocalSource {
     suspend fun deleteById(id: String)
 
     suspend fun deleteAllPlaces()
+
+    suspend fun getPlacesByTripID(tripID: Long): List<PlaceEntity>
 }

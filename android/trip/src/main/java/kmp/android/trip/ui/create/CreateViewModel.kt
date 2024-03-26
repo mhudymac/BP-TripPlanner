@@ -5,6 +5,7 @@ import kmp.android.shared.core.system.State
 import kmp.shared.domain.model.Place
 import kmp.shared.domain.model.Trip
 import kmp.shared.domain.usecase.trip.SaveTripUseCase
+import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCase
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
 
@@ -12,7 +13,7 @@ import java.time.LocalDate
 import kotlin.random.Random
 
 class CreateViewModel(
-    private val saveTripUseCase: SaveTripUseCase
+    private val saveTripUseCase: SaveTripWithoutIdUseCase
 ) : BaseStateViewModel<CreateViewModel.ViewState>(ViewState()) {
 
     fun addPlace(place: Place) {
@@ -41,6 +42,7 @@ class CreateViewModel(
             else{
                 val trip = lastState().let { state ->
                     Trip(
+                        id = 0,
                         name = state.name,
                         date = state.date!!.toKotlinLocalDate(),
                         itinerary = listOf(state.start!!) + state.itinerary,

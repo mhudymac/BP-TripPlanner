@@ -1,19 +1,28 @@
 CREATE TABLE PlaceEntity (
-    id TEXT PRIMARY KEY,
+    id TEXT NOT NULL ,
     name TEXT NOT NULL,
     formattedAddress TEXT NOT NULL,
     lat REAL NOT NULL,
     lng REAL NOT NULL,
     googleMapsUri TEXT NOT NULL,
     photo TEXT,
-    photoUri TEXT
+    photoUri TEXT,
+    trip_id INTEGER,
+    FOREIGN KEY(trip_id) REFERENCES TripEntity(id),
+    PRIMARY KEY(id, trip_id)
 );
 
 getById:
 SELECT * FROM PlaceEntity WHERE id = ?;
 
+getByTripId:
+SELECT * FROM PlaceEntity WHERE trip_id = ?;
+
 deleteById:
 DELETE FROM PlaceEntity WHERE id = ?;
+
+deleteByTripId:
+DELETE FROM PlaceEntity WHERE trip_id = ?;
 
 deleteAll:
 DELETE FROM PlaceEntity;

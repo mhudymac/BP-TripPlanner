@@ -17,8 +17,21 @@ object TripGraph : FeatureGraph(parent = null) {
     object Create : Destination(parent = this) {
         override val routeDefinition: String = "create"
     }
-    object Search : Destination(parent = this) {
-        override val routeDefinition: String = "search"
+    object Edit : Destination(parent = this) {
+        override val routeDefinition: String = "edit"
+        internal const val tripIdArg = "tripId"
+
+        override val arguments = listOf(
+            navArgument(tripIdArg) { type = NavType.StringType }
+        )
+
+        internal class Args(
+            val tripId: String
+        ) {
+            constructor(arguments: android.os.Bundle?) : this(
+                requireNotNull(arguments?.getString(tripIdArg))
+            )
+        }
     }
 
     object Detail : Destination(parent = this) {

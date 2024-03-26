@@ -1,6 +1,6 @@
 package kmp.android.trip.ui.create
 
-import android.os.SystemClock.sleep
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
@@ -48,7 +49,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -141,7 +141,7 @@ private fun CreateRoute(
 }
 
 @Composable
-fun CreateScreen(
+internal fun CreateScreen(
     name: String,
     date: LocalDate?,
     start: Place?,
@@ -149,7 +149,7 @@ fun CreateScreen(
     padding: PaddingValues,
     onNameChange: (String) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
-    onAddPlace: (Place) -> Unit
+    onAddPlace: (Place) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -195,9 +195,7 @@ fun CreateScreen(
             Text("Itinerary:", modifier = Modifier.padding(top = 16.dp))
             LazyColumn {
                 item {
-                    EmptyPlaceCard {
-                        showSearchDialog = true
-                    }
+                    EmptyPlaceCard { showSearchDialog = true }
                 }
                 items(itinerary.reversed()) { place ->
                     PlaceCard(place = place)
@@ -230,7 +228,7 @@ fun CreateScreen(
 }
 
 @Composable
-private fun OutlinedTextFieldLikeButton(
+internal fun OutlinedTextFieldLikeButton(
     text: String,
     onClick: () -> Unit
 ) {
@@ -322,7 +320,8 @@ private fun SelectDate(
 @Composable
 internal fun PlaceCard(
     place: Place,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    trailingIcon: @Composable () -> Unit = {},
 ) {
     ElevatedCard(
         modifier = Modifier
@@ -350,7 +349,7 @@ internal fun PlaceCard(
 
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .weight(1f)
                     .padding(8.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start,
@@ -364,6 +363,9 @@ internal fun PlaceCard(
                     style = MaterialTheme.typography.bodySmall
                 )
             }
+
+            trailingIcon()
+
         }
     }
 }

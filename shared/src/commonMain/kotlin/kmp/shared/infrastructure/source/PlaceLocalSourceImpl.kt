@@ -22,4 +22,8 @@ internal class PlaceLocalSourceImpl(
     override suspend fun deleteAllPlaces() {
         queries.deleteAll()
     }
+
+    override suspend fun getPlacesByTripID(tripID: Long): List<PlaceEntity> {
+        return queries.getByTripId(tripID).executeAsList()
+    }
 }

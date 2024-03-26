@@ -12,5 +12,6 @@ dependencies {
 
     implementation(libs.coil)
     implementation(libs.dateTime)
+    implementation(libs.reorderable)
     ktlintRuleset(libs.ktlint.composeRules)
 }

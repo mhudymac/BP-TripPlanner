@@ -24,7 +24,6 @@ internal class PlaceRepositoryImpl(
     }
 
     override suspend fun searchPlacesWithBias(query: String, lat: Double, lng: Double): Result<List<Place>> {
-        Log.d("DOBREEE", "ESTE LEEEEEEEEEEEEEEEEEEEEEEEEEEEEPSIE")
         return remoteSource.searchPlacesWithBias(query, lat, lng).map {
             it.places?.map(PlaceDto::asDomain) ?: emptyList()
         }
@@ -46,13 +45,17 @@ internal class PlaceRepositoryImpl(
         localSource.deleteById(id)
     }
 
-    override suspend fun insertOrReplace(places: List<Place>) {
-        localSource.insertOrReplace(places.map { it.asEntity })
+    override suspend fun insertOrReplace(places: List<Place>, tripId: Long) {
+        localSource.insertOrReplace(places.map { it.asEntity(tripId) })
     }
 
 
     override suspend fun deleteAllPlaces() {
         localSource.deleteAllPlaces()
+    }
+
+    override suspend fun getPlacesByTripID(tripID: Long): List<Place> {
+        return localSource.getPlacesByTripID(tripID).map { it.asDomain }
     }
 
 

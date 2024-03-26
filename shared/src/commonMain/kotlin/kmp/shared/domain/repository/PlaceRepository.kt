@@ -17,7 +17,9 @@ internal interface PlaceRepository {
 
     suspend fun deleteById(id: String)
 
-    suspend fun insertOrReplace(places: List<Place>)
+    suspend fun insertOrReplace(places: List<Place>, tripId: Long)
 
     suspend fun deleteAllPlaces()
+
+    suspend fun getPlacesByTripID(tripID: Long): List<Place>
 }

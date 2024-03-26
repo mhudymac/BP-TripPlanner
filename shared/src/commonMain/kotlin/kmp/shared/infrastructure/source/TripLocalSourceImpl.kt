@@ -36,4 +36,9 @@ class TripLocalSourceImpl(
     override fun getNearestTrip(): Flow<TripEntity?> {
         return tripQueries.getNearestTrip().asFlow().mapToOneOrNull(Dispatchers.IO)
     }
+
+    override fun insertWithoutId(item: TripEntity): Long {
+        tripQueries.insertWithoutId(item.name, item.date, item.place_order, item.completed)
+        return tripQueries.lastInsertedId().executeAsOne()
+    }
 }

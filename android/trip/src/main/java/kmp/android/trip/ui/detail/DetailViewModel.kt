@@ -3,6 +3,7 @@ package kmp.android.trip.ui.detail
 import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
 import kmp.shared.base.Result
+import kmp.shared.domain.model.Place
 import kmp.shared.domain.model.Trip
 import kmp.shared.domain.usecase.trip.GetTripUseCase
 import kmp.shared.system.Log
@@ -12,6 +13,8 @@ import kotlinx.coroutines.flow.map
 class DetailViewModel(
     private val getTripByName: GetTripUseCase
 ) : BaseStateViewModel<DetailViewModel.ViewState>(ViewState()) {
+
+
 
     fun getTrip(tripId: String) {
         launch {

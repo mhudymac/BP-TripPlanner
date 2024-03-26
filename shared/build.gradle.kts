@@ -21,3 +21,5 @@ ktlint {
         }
     }
 }
+
+task("testClasses").doLast{}

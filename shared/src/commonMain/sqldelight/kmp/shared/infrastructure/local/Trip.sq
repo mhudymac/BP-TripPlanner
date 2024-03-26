@@ -1,5 +1,6 @@
 CREATE TABLE TripEntity (
-    name TEXT PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
     date TEXT NOT NULL,
     place_order TEXT NOT NULL,
     completed INTEGER NOT NULL
@@ -13,6 +14,12 @@ SELECT * FROM TripEntity;
 
 insertOrReplace:
 INSERT OR REPLACE INTO TripEntity VALUES ?;
+
+insertWithoutId:
+INSERT INTO TripEntity (name, date, place_order, completed) VALUES (?, ?, ?, ?);
+
+lastInsertedId:
+SELECT last_insert_rowid();
 
 delete:
 DELETE FROM TripEntity WHERE name = ?;

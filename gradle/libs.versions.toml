@@ -33,6 +33,7 @@ espressoCore = "3.5.1"
 appcompat = "1.6.1"
 material3 = "1.2.1"
 coil = "2.6.0"
+reorderable = "1.3.3"
 
 [libraries]
 # Kotlin
@@ -111,6 +112,8 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 # Coil
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+# Reordable
+reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 
 [bundles]
 settings = [

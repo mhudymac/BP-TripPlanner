@@ -15,4 +15,5 @@ interface TripRepository {
     suspend fun insertOrReplace(trips: List<Trip>)
 
     suspend fun getNearestTrip(): Flow<Trip?>
+    suspend fun insertWithoutId(trip: Trip): Long
 }
