@@ -22,7 +22,7 @@ class EditViewModel(
 
     private var id: Long = 0
 
-    fun getTrip(tripId: String) {
+    fun getTrip(tripId: Long) {
         launch {
             update { copy(loading = true) }
             getTripByName(tripId).map {

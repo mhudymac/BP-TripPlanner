@@ -16,4 +16,8 @@ internal interface TripLocalSource {
 
     fun getNearestTrip(): Flow<TripEntity?>
     fun insertWithoutId( item: TripEntity): Long
+
+    fun getTripById(id: Long): Flow<TripEntity?>
+
+    fun deleteTripById(id: Long)
 }

@@ -23,6 +23,14 @@ internal class TripRepositoryImpl(
         return source.getTripByName(name).map { it?.asDomain }
     }
 
+    override suspend fun getTripById(id: Long): Flow<Trip?> {
+        return source.getTripById(id).map { it?.asDomain }
+    }
+
+    override suspend fun deleteTripById(id: Long) {
+        source.deleteTripById(id)
+    }
+
     override suspend fun deleteTripByName(name: String) {
         source.deleteTripByName(name)
     }

@@ -43,7 +43,7 @@ import kmp.android.trip.ui.list.ListViewModel.ViewState as State
 
 internal fun NavGraphBuilder.tripListRoute(
     navigateToCreateScreen: () -> Unit,
-    navigateToDetailScreen: (String) -> Unit
+    navigateToDetailScreen: (Long) -> Unit
 ) {
     composableDestination(
         destination = TripGraph.List
@@ -58,7 +58,7 @@ internal fun NavGraphBuilder.tripListRoute(
 @Composable
 internal fun TripListScreenRoute(
     navigateToCreateScreen: () -> Unit,
-    navigateToDetailScreen: (String) -> Unit
+    navigateToDetailScreen: (Long) -> Unit
 ) {
     TripListScreen(
         navigateToCreateScreen,
@@ -69,7 +69,7 @@ internal fun TripListScreenRoute(
 @Composable
 private fun TripListScreen(
     navigateToCreateScreen: () -> Unit,
-    navigateToDetailScreen: (String) -> Unit,
+    navigateToDetailScreen: (Long) -> Unit,
     viewModel: ListViewModel = getViewModel()
 ) {
     val loading by viewModel[State::isLoading].collectAsState(false)
@@ -124,12 +124,12 @@ private fun TripListScreen(
 }
 
 @Composable
-private fun NewTripsScreen(trips: List<Trip>, navigateToDetailScreen: (String) -> Unit) {
+private fun NewTripsScreen(trips: List<Trip>, navigateToDetailScreen: (Long) -> Unit) {
     LazyColumn(
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
         items(trips) { trip ->
-            TripCard(trip = trip, onClick = { navigateToDetailScreen(trip.name) })
+            TripCard(trip = trip, onClick = { navigateToDetailScreen(trip.id) })
         }
     }
 }

@@ -6,8 +6,14 @@ CREATE TABLE TripEntity (
     completed INTEGER NOT NULL
 );
 
-getTrip:
+getTripByName:
 SELECT * FROM TripEntity WHERE name = ?;
+
+getTripById:
+SELECT * FROM TripEntity WHERE id = ?;
+
+deleteById:
+DELETE FROM TripEntity WHERE id = ?;
 
 getAllTrips:
 SELECT * FROM TripEntity;

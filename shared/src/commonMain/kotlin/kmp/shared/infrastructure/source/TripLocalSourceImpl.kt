@@ -26,7 +26,7 @@ class TripLocalSourceImpl(
     }
 
     override fun getTripByName(name: String): Flow<TripEntity?> {
-        return tripQueries.getTrip(name).asFlow().mapToOneOrNull(Dispatchers.IO)
+        return tripQueries.getTripByName(name).asFlow().mapToOneOrNull(Dispatchers.IO)
     }
 
     override fun deleteTripByName(name: String) {
@@ -40,5 +40,13 @@ class TripLocalSourceImpl(
     override fun insertWithoutId(item: TripEntity): Long {
         tripQueries.insertWithoutId(item.name, item.date, item.place_order, item.completed)
         return tripQueries.lastInsertedId().executeAsOne()
+    }
+
+    override fun getTripById(id: Long): Flow<TripEntity?> {
+        return tripQueries.getTripById(id).asFlow().mapToOneOrNull(Dispatchers.IO)
+    }
+
+    override fun deleteTripById(id: Long) {
+        tripQueries.deleteById(id)
     }
 }

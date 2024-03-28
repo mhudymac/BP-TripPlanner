@@ -22,14 +22,14 @@ object TripGraph : FeatureGraph(parent = null) {
         internal const val tripIdArg = "tripId"
 
         override val arguments = listOf(
-            navArgument(tripIdArg) { type = NavType.StringType }
+            navArgument(tripIdArg) { type = NavType.LongType }
         )
 
         internal class Args(
-            val tripId: String
+            val tripId: Long
         ) {
             constructor(arguments: android.os.Bundle?) : this(
-                requireNotNull(arguments?.getString(tripIdArg))
+                requireNotNull(arguments?.getLong(tripIdArg))
             )
         }
     }
@@ -39,14 +39,14 @@ object TripGraph : FeatureGraph(parent = null) {
         internal const val tripIdArg = "tripId"
 
         override val arguments = listOf(
-            navArgument(tripIdArg) { type = NavType.StringType }
+            navArgument(tripIdArg) { type = NavType.LongType }
         )
 
         internal class Args(
-            val tripId: String
+            val tripId: Long
         ) {
             constructor(arguments: android.os.Bundle?) : this(
-                requireNotNull(arguments?.getString(tripIdArg))
+                requireNotNull(arguments?.getLong(tripIdArg))
             )
         }
     }

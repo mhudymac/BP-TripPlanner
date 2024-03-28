@@ -16,10 +16,9 @@ class DetailViewModel(
 
 
 
-    fun getTrip(tripId: String) {
+    fun getTrip(tripId: Long) {
         launch {
             update { copy(loading = true) }
-            Log.d("TRIP",tripId)
             getTripByName(tripId).map {
                 when (it) {
                     is Result.Success -> { update { copy(trip = it.data) }}

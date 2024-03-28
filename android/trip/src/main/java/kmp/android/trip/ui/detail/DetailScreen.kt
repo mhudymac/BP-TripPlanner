@@ -35,11 +35,11 @@ import kmp.shared.domain.model.Trip
 import org.koin.androidx.compose.getViewModel
 import kmp.android.trip.ui.detail.DetailViewModel.ViewState as State
 
-fun NavController.navigateToDetailScreen(tripId: String) {
+fun NavController.navigateToDetailScreen(tripId: Long) {
     navigate(TripGraph.Detail(tripId))
 }
 
-internal fun NavGraphBuilder.detailScreenRoute(navigateUp: () -> Unit, navigateToEdit: (String) -> Unit){
+internal fun NavGraphBuilder.detailScreenRoute(navigateUp: () -> Unit, navigateToEdit: (Long) -> Unit){
     composableDestination(
         destination = TripGraph.Detail
     ) { navBackStackEntry ->
@@ -54,9 +54,9 @@ internal fun NavGraphBuilder.detailScreenRoute(navigateUp: () -> Unit, navigateT
 
 @Composable
 internal fun DetailRoute(
-    tripId: String,
+    tripId: Long,
     navigateUp: () -> Unit,
-    navigateToEdit: (String) -> Unit = {},
+    navigateToEdit: (Long) -> Unit = {},
     viewModel: DetailViewModel = getViewModel(),
 ) {
     val snackHost = remember { SnackbarHostState() }

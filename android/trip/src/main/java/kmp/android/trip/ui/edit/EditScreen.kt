@@ -47,7 +47,7 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyColumnState
 import kmp.android.trip.ui.edit.EditViewModel.ViewState as State
 
-fun NavController.navigateToEditScreen(tripId: String, navigateUp: () -> Unit) {
+fun NavController.navigateToEditScreen(tripId: Long, navigateUp: () -> Unit) {
     navigate(TripGraph.Edit(tripId))
 }
 
@@ -65,7 +65,7 @@ internal fun NavGraphBuilder.editScreenRoute(navigateUp: () -> Unit) {
 
 @Composable
 internal fun DetailEditRoute (
-    tripId: String,
+    tripId: Long,
     navigateUp: () -> Unit,
     viewModel: EditViewModel = getViewModel()
 ) {

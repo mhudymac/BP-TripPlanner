@@ -8,6 +8,10 @@ interface TripRepository {
 
     suspend fun getTripByName(name: String): Flow<Trip?>
 
+    suspend fun getTripById(id: Long): Flow<Trip?>
+
+    suspend fun deleteTripById(id: Long)
+
     suspend fun deleteTripByName(name: String)
 
     suspend fun deleteAllTrips()
