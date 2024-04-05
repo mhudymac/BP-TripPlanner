@@ -9,6 +9,12 @@ import kmp.shared.data.source.PlaceRemoteSource
 import kmp.shared.data.source.TripLocalSource
 import kmp.shared.domain.repository.PlaceRepository
 import kmp.shared.domain.repository.TripRepository
+import kmp.shared.domain.usecase.location.GetLocationFlowUseCase
+import kmp.shared.domain.usecase.location.GetLocationFlowUseCaseImpl
+import kmp.shared.domain.usecase.location.GetLocationUseCase
+import kmp.shared.domain.usecase.location.GetLocationUseCaseImpl
+import kmp.shared.domain.usecase.place.GetPlaceByLocationUseCase
+import kmp.shared.domain.usecase.place.GetPlaceByLocationUseCaseImpl
 import kmp.shared.domain.usecase.place.SearchPlacesUseCase
 import kmp.shared.domain.usecase.place.SearchPlacesUseCaseImpl
 import kmp.shared.domain.usecase.place.SearchPlacesWithBiasUseCase
@@ -28,14 +34,17 @@ import kmp.shared.domain.usecase.trip.SaveTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCase
 import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCaseImpl
 import kmp.shared.infrastructure.local.createDatabase
-import kmp.shared.infrastructure.remote.HttpClient
-import kmp.shared.infrastructure.remote.PlaceService
+import kmp.shared.infrastructure.remote.geocoding.GeocodingClient
+import kmp.shared.infrastructure.remote.geocoding.GeocodingService
+import kmp.shared.infrastructure.remote.places.PlacesClient
+import kmp.shared.infrastructure.remote.places.PlaceService
 import kmp.shared.infrastructure.source.PlaceLocalSourceImpl
 import kmp.shared.infrastructure.source.PlaceRemoteSourceImpl
 import kmp.shared.infrastructure.source.TripLocalSourceImpl
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
@@ -58,7 +67,8 @@ private val commonModule = module {
 
     // General
     single { "AIzaSyCm23vlG0GFw6CE9U94peD-2HaSzkPZhGk" }
-    single { HttpClient.init(get(), get(), get()) }
+    single(named("PlacesClient")) { PlacesClient.init(get(), get(), get()) }
+    single(named("GeocodingClient")) { GeocodingClient.init(get(), get(), get()) }
     single { Settings() }
 
     // UseCases
@@ -66,6 +76,7 @@ private val commonModule = module {
     factory<SearchPlacesWithBiasUseCase> { SearchPlacesWithBiasUseCaseImpl(get()) }
     factory<UpdatePhotoUrlUseCase> { UpdatePhotoUrlUseCaseImpl(get()) }
 
+    // Trip UseCases
     factory<SaveTripUseCase> { SaveTripUseCaseImpl(get(),get()) }
     factory<SaveTripWithoutIdUseCase> { SaveTripWithoutIdUseCaseImpl(get(),get()) }
     factory<GetAllTripsWithoutPlacesUseCase> { GetAllTripsWithoutPlacesUseCaseImpl(get()) }
@@ -73,13 +84,17 @@ private val commonModule = module {
     factory<GetNearestTripUseCase> { GetNearestTripUseCaseImpl(get(), get()) }
     factory<RemoveTripUseCase> { RemoveTripUseCaseImpl(get()) }
 
+    // Place UseCases
+    factory<GetLocationFlowUseCase> { GetLocationFlowUseCaseImpl(get()) }
+    factory<GetLocationUseCase> { GetLocationUseCaseImpl(get()) }
+    factory<GetPlaceByLocationUseCase> { GetPlaceByLocationUseCaseImpl(get()) }
 
     // Repositories
     single<PlaceRepository> { PlaceRepositoryImpl(get(), get()) }
     single<TripRepository> { TripRepositoryImpl(get()) }
 
     // Sources
-    single<PlaceRemoteSource> { PlaceRemoteSourceImpl(get()) }
+    single<PlaceRemoteSource> { PlaceRemoteSourceImpl(get(), get()) }
     single<PlaceLocalSource> { PlaceLocalSourceImpl(get()) }
     single<TripLocalSource> { TripLocalSourceImpl(get()) }
 
@@ -87,7 +102,8 @@ private val commonModule = module {
 
 
     // Http Services
-    single { PlaceService(get()) }
+    single { PlaceService(get(named("PlacesClient"))) }
+    single { GeocodingService(get(named("GeocodingClient"))) }
 
     // Database
     single { createDatabase(get()) }

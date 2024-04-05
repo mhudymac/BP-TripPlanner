@@ -1,5 +1,6 @@
 package kmp.shared.data.repository
 
+import kmp.shared.base.ErrorResult
 import kmp.shared.base.util.extension.map
 import kmp.shared.data.source.PlaceRemoteSource
 import kmp.shared.domain.repository.PlaceRepository
@@ -7,10 +8,11 @@ import kmp.shared.domain.model.Place
 import kmp.shared.extension.asDomain
 import kmp.shared.infrastructure.model.PlaceDto
 import kmp.shared.base.Result
+import kmp.shared.base.util.extension.getOrNull
 import kmp.shared.data.source.PlaceLocalSource
+import kmp.shared.domain.model.Location
 import kmp.shared.extension.asEntity
 import kmp.shared.infrastructure.model.PhotoResponse
-import kmp.shared.system.Log
 
 
 internal class PlaceRepositoryImpl(
@@ -37,6 +39,14 @@ internal class PlaceRepositoryImpl(
         return remoteSource.getPlace(id).map(PlaceDto::asDomain)
     }
 
+    override suspend fun getPlaceByLocation(location: Location): Result<Place> {
+        val id = remoteSource.getPlaceByLocation(location).map { it.results.first().place_id }
+        return when(id) {
+            is Result.Success -> getPlace(id.data)
+            is Result.Error -> Result.Error(ErrorResult("No place found."))
+        }
+    }
+
     override suspend fun getPlacesById(id: String): List<Place> {
         return localSource.getById(id).map { it.asDomain }
     }
@@ -57,6 +67,5 @@ internal class PlaceRepositoryImpl(
     override suspend fun getPlacesByTripID(tripID: Long): List<Place> {
         return localSource.getPlacesByTripID(tripID).map { it.asDomain }
     }
-
 
 }

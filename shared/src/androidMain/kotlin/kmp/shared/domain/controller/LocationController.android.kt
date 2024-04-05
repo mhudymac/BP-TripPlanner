@@ -1,30 +1,35 @@
-package kmp.android.shared.device
+package kmp.shared.domain.controller
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
+import android.os.Build
 import android.os.Looper
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.Priority
-import kmp.android.shared.device.LocationControllerImpl.LocationUpdateCallback
-import kmp.android.shared.domain.controller.LocationController
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kmp.shared.domain.controller.LocationController.LocationUpdateCallback
+import kmp.shared.domain.model.Location
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 private const val UPDATE_INTERVAL = 1000L
 
-internal class LocationControllerImpl(
+
+@RequiresApi(Build.VERSION_CODES.S)
+internal actual class LocationController(
     private val context: Context,
     private val locationProvider: FusedLocationProviderClient,
-) : LocationController {
+) {
     fun interface LocationUpdateCallback {
         fun onLocationUpdate(location: Location)
     }
@@ -33,12 +38,12 @@ internal class LocationControllerImpl(
     private val locationListeners: MutableList<LocationUpdateCallback> = mutableListOf()
     private var locationCallback: LocationCallback? = null
 
-    override var lastLocation: Location? = null
+    actual var lastLocation: Location? = null
         private set
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val locationFlow = callbackFlow {
-        if (locationListeners.isEmpty() || (locationListeners.isNotEmpty() && !listening)) {
+    @RequiresApi(Build.VERSION_CODES.S)
+    actual val locationFlow = callbackFlow {
+        if (locationListeners.isEmpty() ||  !listening) {
             startListening()
         }
         this.trySend(lastLocation).isSuccess
@@ -52,33 +57,36 @@ internal class LocationControllerImpl(
         }
     }.filterNotNull()
 
+    @RequiresApi(Build.VERSION_CODES.S)
     @SuppressLint("MissingPermission")
     private fun startListening() {
         if (permissionGranted) {
             stopListening()
             listening = true
 
-            // Fetch last location as fast as possible
             locationProvider.lastLocation.addOnCompleteListener { task ->
-                lastLocation = task.result
+                lastLocation = task.result.let { Location(it.latitude, it.longitude) }
                 lastLocation?.let { location ->
                     locationListeners.forEach { it.onLocationUpdate(location) }
                 }
             }
 
             val request = LocationRequest.Builder(UPDATE_INTERVAL)
-                .setPriority(Priority.PRIORITY_HIGH_ACCURACY).build()
+                .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+                .build()
 
             val callback = object : LocationCallback() {
                 override fun onLocationResult(result: LocationResult) {
-                    lastLocation = result.lastLocation
+                    lastLocation = result.lastLocation.let { it?.let { it1 -> Location(it1.latitude, it.longitude) } }
                     lastLocation?.let { location ->
                         locationListeners.forEach { it.onLocationUpdate(location) }
                     }
                 }
             }.also { locationCallback = it }
 
-            locationProvider.requestLocationUpdates(request, callback, Looper.getMainLooper())
+            locationProvider.requestLocationUpdates(
+                request, callback, Looper.getMainLooper()
+            )
         }
     }
 

@@ -2,12 +2,18 @@ package kmp.shared.infrastructure.source
 
 import kmp.shared.base.Result
 import kmp.shared.data.source.PlaceRemoteSource
+import kmp.shared.domain.model.Location
+import kmp.shared.infrastructure.model.GeocodingDto
 import kmp.shared.infrastructure.model.PhotoResponse
 import kmp.shared.infrastructure.model.TextSearchResponse
 import kmp.shared.infrastructure.model.PlaceDto
-import kmp.shared.infrastructure.remote.PlaceService
+import kmp.shared.infrastructure.remote.geocoding.GeocodingService
+import kmp.shared.infrastructure.remote.places.PlaceService
 
-internal class PlaceRemoteSourceImpl(private val service: PlaceService) : PlaceRemoteSource {
+internal class PlaceRemoteSourceImpl(
+    private val service: PlaceService,
+    private val geoService: GeocodingService
+) : PlaceRemoteSource {
     override suspend fun searchPlaces(query: String): Result<TextSearchResponse> =
         service.searchPlaces(query)
 
@@ -21,4 +27,8 @@ internal class PlaceRemoteSourceImpl(private val service: PlaceService) : PlaceR
 
     override suspend fun getPlace(id: String): Result<PlaceDto> =
         service.getPlaceDetails(id)
+
+    override suspend fun getPlaceByLocation(location: Location): Result<GeocodingDto> =
+        geoService.getAddress(location)
+
 }

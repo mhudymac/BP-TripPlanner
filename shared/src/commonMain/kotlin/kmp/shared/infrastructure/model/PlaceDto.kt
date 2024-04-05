@@ -57,14 +57,14 @@ internal data class TextSearchRequestBody(
     )
 }
 
-internal fun searchFieldMask(): String {
+internal fun searchFieldMask(param: String = "places."): String {
     val fieldNames = listOf(
-        "places.displayName",
-        "places.id",
-        "places.formattedAddress",
-        "places.location",
-        "places.googleMapsUri",
-        "places.photos"
+        param + "displayName",
+        param + "id",
+        param + "formattedAddress",
+        param + "location",
+        param + "googleMapsUri",
+        param + "photos"
     )
     return fieldNames.joinToString(",")
 }

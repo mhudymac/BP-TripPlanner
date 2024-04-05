@@ -2,10 +2,15 @@ package kmp.android.trip.ui.create
 
 import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
+import kmp.shared.base.Result
 import kmp.shared.domain.model.Place
 import kmp.shared.domain.model.Trip
-import kmp.shared.domain.usecase.trip.SaveTripUseCase
+import kmp.shared.domain.usecase.location.GetLocationFlowUseCase
+import kmp.shared.domain.usecase.location.GetLocationUseCase
+import kmp.shared.domain.usecase.place.GetPlaceByLocationUseCase
 import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCase
+import kmp.shared.system.Log
+import kotlinx.coroutines.flow.first
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
 
@@ -13,7 +18,9 @@ import java.time.LocalDate
 import kotlin.random.Random
 
 class CreateViewModel(
-    private val saveTripUseCase: SaveTripWithoutIdUseCase
+    private val saveTripUseCase: SaveTripWithoutIdUseCase,
+    private val getLocationUseCase: GetLocationUseCase,
+    private val getPlaceByLocationUseCase: GetPlaceByLocationUseCase
 ) : BaseStateViewModel<CreateViewModel.ViewState>(ViewState()) {
 
     fun addPlace(place: Place) {
@@ -27,6 +34,20 @@ class CreateViewModel(
 
     fun updateDate(date: LocalDate) {
         update { copy(date = date) }
+    }
+
+    fun getLocation() {
+        launch {
+            when(val location = getLocationUseCase()){
+                is Result.Success -> {
+                    when(val place = getPlaceByLocationUseCase(location.data)){
+                        is Result.Success -> addPlace(place.data)
+                        is Result.Error -> update { copy(error = Pair("Error getting address", Random.nextInt())) }
+                    }
+                }
+                is Result.Error -> update { copy(error = Pair("Error getting location", Random.nextInt())) }
+            }
+        }
     }
 
     fun saveTrip() {

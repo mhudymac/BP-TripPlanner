@@ -11,7 +11,7 @@ import org.koin.dsl.module
 
 val tripModule = module {
     viewModel { SearchViewModel(get(), get(), get()) }
-    viewModel { CreateViewModel(get()) }
+    viewModel { CreateViewModel(get(), get(), get()) }
     viewModel { ListViewModel(get()) }
     viewModel { DetailViewModel(get()) }
     viewModel { HomeViewModel(get()) }

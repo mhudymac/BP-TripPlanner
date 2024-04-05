@@ -2,6 +2,7 @@ package kmp.shared.domain.repository
 
 import kmp.shared.domain.model.Place
 import kmp.shared.base.Result
+import kmp.shared.domain.model.Location
 
 
 internal interface PlaceRepository {
@@ -22,4 +23,6 @@ internal interface PlaceRepository {
     suspend fun deleteAllPlaces()
 
     suspend fun getPlacesByTripID(tripID: Long): List<Place>
+
+    suspend fun getPlaceByLocation(location: Location): Result<Place>
 }

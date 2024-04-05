@@ -2,7 +2,9 @@ package kmp.shared.data.source
 
 import kmp.shared.infrastructure.model.PlaceDto
 import kmp.shared.base.Result
+import kmp.shared.domain.model.Location
 import kmp.shared.infrastructure.local.PlaceEntity
+import kmp.shared.infrastructure.model.GeocodingDto
 import kmp.shared.infrastructure.model.PhotoResponse
 import kmp.shared.infrastructure.model.TextSearchResponse
 
@@ -15,6 +17,8 @@ internal interface PlaceRemoteSource {
     suspend fun getPhoto(photoName: String): Result<PhotoResponse>
 
     suspend fun getPlace(id: String): Result<PlaceDto>
+
+    suspend fun getPlaceByLocation(location: Location): Result<GeocodingDto>
 }
 
 internal interface PlaceLocalSource {

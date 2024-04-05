@@ -1,15 +1,12 @@
-package kmp.shared.infrastructure.remote
+package kmp.shared.infrastructure.remote.places
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import io.ktor.client.request.headers
-import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import kmp.shared.base.Result
 import kmp.shared.base.error.util.runCatchingCommonNetworkExceptions
-import kmp.shared.infrastructure.model.LatLng
 import kmp.shared.infrastructure.model.PhotoResponse
 import kmp.shared.infrastructure.model.TextSearchResponse
 import kmp.shared.infrastructure.model.PlaceDto
@@ -39,10 +36,8 @@ internal class PlaceService(private val client: HttpClient) {
     }
     suspend fun getPlaceDetails(placeId: String): Result<PlaceDto> {
         return runCatchingCommonNetworkExceptions {
-            client.get(PlacePaths.details) {
-                url {
-                    parameters["place_id"] = placeId
-                }
+            client.get(PlacePaths.details + placeId) {
+                headers.append("X-Goog-FieldMask", searchFieldMask(""))
             }.body()
         }
     }

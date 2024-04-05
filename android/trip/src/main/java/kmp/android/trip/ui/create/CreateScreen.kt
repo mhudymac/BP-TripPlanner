@@ -2,6 +2,7 @@ package kmp.android.trip.ui.create
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ElevatedCard
@@ -32,6 +34,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.SnackbarHost
@@ -48,8 +51,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -57,6 +63,10 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.ImagePainter
+import kmp.android.home.R
+import kmp.android.shared.core.ui.util.rememberLocationPermissionRequest
 import kmp.android.shared.core.util.get
 import kmp.android.shared.navigation.composableDestination
 import kmp.android.trip.navigation.TripGraph
@@ -97,6 +107,9 @@ private fun CreateRoute(
 
     val snackHost = remember { SnackbarHostState() }
 
+    val permissionHandler = rememberLocationPermissionRequest()
+    val locationPermissionGranted by permissionHandler.granted
+
     if(error.first.isNotEmpty()){
         LaunchedEffect(error) {
             snackHost.showSnackbar(error.first)
@@ -134,7 +147,15 @@ private fun CreateRoute(
             padding = paddingValues,
             onNameChange = { viewModel.updateName(it) },
             onDateSelected = { viewModel.updateDate(it) },
-            onAddPlace = { viewModel.addPlace(it) }
+            onAddPlace = { viewModel.addPlace(it) },
+            onCurrentLocationClick = {
+                if (locationPermissionGranted) {
+                    viewModel.getLocation()
+                } else {
+                    permissionHandler.requestPermission()
+                    viewModel.getLocation()
+                }
+            },
         )
     }
 
@@ -150,6 +171,7 @@ internal fun CreateScreen(
     onNameChange: (String) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     onAddPlace: (Place) -> Unit,
+    onCurrentLocationClick: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -164,41 +186,34 @@ internal fun CreateScreen(
         var showDatePicker by remember { mutableStateOf(false) }
         var showSearchDialog by remember { mutableStateOf(false) }
 
-        Text("Trip name:")
-        OutlinedTextField(
-            value = name,
-            onValueChange = { onNameChange(it) },
-            placeholder = { Text("Enter name") },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-            shape = MaterialTheme.shapes.medium,
-            textStyle = MaterialTheme.typography.bodyLarge,
-        )
+        TripNameComponent(name = name, onNameChange = onNameChange, focusManager = focusManager)
 
+        TripDateComponent(date = date, onShowDatePicker = { showDatePicker = true })
 
-        Text(text = "Trip date:", modifier = Modifier.padding(top = 16.dp))
-        OutlinedTextFieldLikeButton(
-            text = date?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) ?: "Select Date",
-            onClick = { showDatePicker = true }
-        )
-
-        Text("Start Place:", modifier = Modifier.padding(top = 16.dp))
-        if(start != null) {
-            PlaceCard(start)
-        } else {
-            EmptyPlaceCard {
-                showSearchDialog = true
+        ComponentWithLabel(label = "Start Place") {
+            if(start != null) {
+                PlaceCard(start)
+            } else {
+                Column {
+                    EmptyPlaceCard(onClick = { showSearchDialog = true })
+                        Button(
+                            onClick = onCurrentLocationClick
+                        ) {
+                        Text("Use Current Location")
+                    }
+                }
             }
         }
 
         start?.let {
-            Text("Itinerary:", modifier = Modifier.padding(top = 16.dp))
-            LazyColumn {
-                item {
-                    EmptyPlaceCard { showSearchDialog = true }
-                }
-                items(itinerary.reversed()) { place ->
-                    PlaceCard(place = place)
+            ComponentWithLabel(label = "Itinerary") {
+                LazyColumn {
+                    item {
+                        EmptyPlaceCard { showSearchDialog = true }
+                    }
+                    items(itinerary.reversed()) { place ->
+                        PlaceCard(place = place)
+                    }
                 }
             }
         }
@@ -224,7 +239,50 @@ internal fun CreateScreen(
             }
         }
     }
+}
 
+@Composable
+fun TripDateComponent(date: LocalDate?, onShowDatePicker: () -> Unit) {
+    ComponentWithLabel(label = "Trip date") {
+        OutlinedTextFieldLikeButton(
+            text = date?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) ?: "Select Date",
+            onClick = { onShowDatePicker() }
+        )
+    }
+}
+
+@Composable
+fun TripNameComponent(name: String, onNameChange: (String) -> Unit, focusManager: FocusManager) {
+    ComponentWithLabel("Trip name", padding = PaddingValues(0.dp)) {
+        OutlinedTextField(
+            value = name,
+            onValueChange = { onNameChange(it) },
+            placeholder = { Text("Enter name") },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+            shape = MaterialTheme.shapes.medium,
+            textStyle = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .height(52.dp)
+                .width(LocalConfiguration.current.screenWidthDp.dp),
+        )
+    }
+}
+
+@Composable
+internal fun ComponentWithLabel(
+    label: String,
+    padding: PaddingValues = PaddingValues(top = 16.dp),
+    content: @Composable () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start,
+    ) {
+        Text(text = "$label:", modifier = Modifier.padding(padding))
+        content()
+    }
 }
 
 @Composable
@@ -236,8 +294,8 @@ internal fun OutlinedTextFieldLikeButton(
         onClick = onClick,
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
-            .height(56.dp)
-            .width(280.dp),
+            .height(52.dp)
+            .width(LocalConfiguration.current.screenWidthDp.dp),
         contentPadding = PaddingValues(16.dp),
     ) {
         Row(
@@ -344,8 +402,10 @@ internal fun PlaceCard(
                     .size(112.dp)
                     .padding(8.dp)
                     .clip(MaterialTheme.shapes.large),
+                placeholder = painterResource(id = R.drawable.placeholder_view_vector),
+                error = painterResource(id = R.drawable.placeholder_view_vector),
 
-            )
+                )
 
             Column(
                 modifier = Modifier

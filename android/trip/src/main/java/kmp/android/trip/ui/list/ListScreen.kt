@@ -100,7 +100,7 @@ private fun TripListScreen(
                     onClick = { selectedTab = 0 },
                     text = { Text(
                         "New Trips",
-                        style = if (selectedTab == 0) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.bodyMedium,
+                        style = if (selectedTab == 0) MaterialTheme.typography.titleLarge else MaterialTheme.typography.bodyMedium,
                         fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.ExtraLight
                     )},
                 )
@@ -109,7 +109,7 @@ private fun TripListScreen(
                     onClick = { selectedTab = 1 },
                     text = { Text(
                         "Completed Trips",
-                        style = if (selectedTab == 1) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.bodyMedium,
+                        style = if (selectedTab == 1) MaterialTheme.typography.titleLarge else MaterialTheme.typography.bodyMedium,
                         fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.ExtraLight
                     )}
                 )
