@@ -65,7 +65,7 @@ internal actual class LocationController(
             listening = true
 
             locationProvider.lastLocation.addOnCompleteListener { task ->
-                lastLocation = task.result.let { Location(it.latitude, it.longitude) }
+                lastLocation = task.result?.let { Location(it.latitude, it.longitude) }
                 lastLocation?.let { location ->
                     locationListeners.forEach { it.onLocationUpdate(location) }
                 }
