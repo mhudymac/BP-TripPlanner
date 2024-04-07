@@ -19,11 +19,11 @@ internal data class DistanceMatrixDto(
 
     @Serializable
     internal data class Distance(
-        val value: Int
+        val value: Long
     )
 
     @Serializable
     internal data class Duration(
-        val value: Int
+        val value: Long
     )
 }

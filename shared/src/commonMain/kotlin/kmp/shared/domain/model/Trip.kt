@@ -12,8 +12,8 @@ data class Trip(
     val distances: Map<Pair<String, String>, Distance> = emptyMap(),
 ){
     data class Distance(
-        val meters: Int,
-        val duration: Int
+        val distance: Long,
+        val duration: Long
     )
 }
 

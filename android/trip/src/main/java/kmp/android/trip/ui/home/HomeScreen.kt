@@ -1,5 +1,6 @@
 package kmp.android.trip.ui.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -73,17 +74,27 @@ private fun HomeScreen(trip: Trip) {
             fontWeight = FontWeight.Bold
         )
 
-        var lastPlaceId = ""
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            items(trip.itinerary) { place ->
-                if(lastPlaceId.isNotEmpty()){
-                    Text(text = "${trip.distances[lastPlaceId to place.id]?.duration?.div(60)} minutes walking")
-                }
-                PlaceCard(place = place)
-                lastPlaceId = place.id
+        PlaceCardListWithDistances(trip = trip)
+    }
+}
+
+@Composable
+internal fun PlaceCardListWithDistances(
+    trip: Trip
+){
+    var lastPlaceId = ""
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(trip.itinerary) { place ->
+            if(lastPlaceId.isNotEmpty()){
+                Text(text = "${trip.distances[lastPlaceId to place.id]?.duration?.div(60)} minutes walking")
             }
+            PlaceCard(place = place)
+
+            lastPlaceId = place.id
         }
     }
 }

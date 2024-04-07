@@ -8,13 +8,11 @@ import kmp.shared.domain.model.Place
 import kmp.shared.extension.asDomain
 import kmp.shared.infrastructure.model.PlaceDto
 import kmp.shared.base.Result
-import kmp.shared.base.util.extension.getOrNull
 import kmp.shared.data.source.PlaceLocalSource
 import kmp.shared.domain.model.Location
 import kmp.shared.domain.model.Trip
 import kmp.shared.extension.asEntity
 import kmp.shared.infrastructure.local.DistanceEntity
-import kmp.shared.infrastructure.local.PlaceEntity
 import kmp.shared.infrastructure.model.PhotoResponse
 
 
@@ -50,19 +48,21 @@ internal class PlaceRepositoryImpl(
         }
     }
 
-    override suspend fun saveDistance(fromPlaceId: String, toPlaceId: String, distance: Int) {
-        localSource.insertOrReplaceDistance(DistanceEntity(fromPlaceId = fromPlaceId, toPlaceId = toPlaceId, distance = distance.toLong()))
+    override suspend fun saveDistance(fromPlaceId: String, toPlaceId: String, distance: Trip.Distance) {
+        localSource.insertOrReplaceDistance(DistanceEntity(fromPlaceId = fromPlaceId, toPlaceId = toPlaceId, distance = distance.distance, duration = distance.duration))
     }
 
-    override suspend fun getDistance(fromPlaceId: String, toPlaceId: String): Int {
-        return localSource.getDistance(fromPlaceId, toPlaceId)
+    override suspend fun getDistance(fromPlaceId: String, toPlaceId: String): Trip.Distance? {
+        return localSource.getDistance(fromPlaceId, toPlaceId).let {
+            it?.let { it1 -> Trip.Distance(distance = it1.distance, duration = it.duration) }
+        }
     }
 
     override suspend fun getDistanceMatrix(places: List<String>): Result<List<List<Trip.Distance>>> {
         return remoteSource.getDistanceMatrix(places).map {
             it.rows.map { row -> row.elements.map { column ->
                 Trip.Distance(
-                    meters = column.distance.value,
+                    distance = column.distance.value,
                     duration = column.duration.value
                 )
             } }

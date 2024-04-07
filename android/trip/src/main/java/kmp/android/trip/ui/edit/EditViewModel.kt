@@ -6,8 +6,8 @@ import kmp.shared.base.Result
 import kmp.shared.domain.model.Place
 import kmp.shared.domain.model.Trip
 import kmp.shared.domain.usecase.trip.GetTripUseCase
-import kmp.shared.domain.usecase.trip.RemoveTripUseCase
 import kmp.shared.domain.usecase.trip.SaveTripUseCase
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.toJavaLocalDate
@@ -16,11 +16,11 @@ import java.time.LocalDate
 
 class EditViewModel(
     private val getTripByName: GetTripUseCase,
-    private val saveTripUseCase: SaveTripUseCase,
-    private val removeTrip: RemoveTripUseCase
+    private val saveTripUseCase: SaveTripUseCase
 ) : BaseStateViewModel<EditViewModel.ViewState>(ViewState()) {
 
     private var id: Long = 0
+    private var wasPlaceAdded = false
 
     fun getTrip(tripId: Long) {
         launch {
@@ -64,8 +64,10 @@ class EditViewModel(
                     )
                 }
 
-                saveTripUseCase(trip)
-                update{ copy(saveSuccess = true) }
+                when(val saved = saveTripUseCase(Pair(trip, wasPlaceAdded))) {
+                    is Result.Success -> update { copy(saveSuccess = true) }
+                    is Result.Error -> update { copy(error = saved.error.message ?: "An error occurred while saving") }
+                }
             }
         }
     }
@@ -84,6 +86,7 @@ class EditViewModel(
 
     fun onAddPlace(place: Place) {
         update { copy(itinerary = itinerary.plus(place)) }
+        wasPlaceAdded = true
     }
 
     fun onRemovePlace(place: Place) {

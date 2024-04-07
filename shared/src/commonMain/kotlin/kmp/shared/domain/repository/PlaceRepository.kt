@@ -29,7 +29,7 @@ internal interface PlaceRepository {
 
     suspend fun getPlacesByTripID(tripID: Long): List<Place>
 
-    suspend fun saveDistance(fromPlaceId: String, toPlaceId: String, distance: Int)
+    suspend fun saveDistance(fromPlaceId: String, toPlaceId: String, distance: Trip.Distance)
 
-    suspend fun getDistance(fromPlaceId: String, toPlaceId: String): Int
+    suspend fun getDistance(fromPlaceId: String, toPlaceId: String): Trip.Distance?
 }

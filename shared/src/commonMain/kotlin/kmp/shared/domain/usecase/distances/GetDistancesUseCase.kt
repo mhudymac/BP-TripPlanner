@@ -13,15 +13,16 @@ internal class GetDistancesUseCaseImpl(
     override suspend fun invoke(params: Trip): Result<Trip> {
         return when(val distances = placeRepository.getDistanceMatrix(params.order)){
             is Result.Success -> {
-                val map = mutableMapOf<Pair<String, String>, Trip.Distance>()
-                for (i in params.order.indices) {
-                    for (j in params.order.indices) {
-                        map[Pair(params.order[i], params.order[j])] = distances.data[i][j]
-                    }
-                }
-                Result.Success(params.copy(distances = map.toMap()))
+                Result.Success(params.copy(
+                    distances =
+                        params.order.indices.mapIndexed { i, originIndex ->
+                            params.order.indices.mapIndexed { j, destinationIndex ->
+                                Pair(params.order[originIndex], params.order[destinationIndex]) to distances.data[i][j]
+                           }
+                        }.flatten().toMap()
+                    )
+                )
             }
-
             is Result.Error -> Result.Error(distances.error)
         }
     }

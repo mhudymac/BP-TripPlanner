@@ -38,6 +38,6 @@ internal interface PlaceLocalSource {
 
     suspend fun insertOrReplaceDistance(distance: DistanceEntity)
 
-    suspend fun getDistance(fromPlaceId: String, toPlaceId: String): Int
+    suspend fun getDistance(fromPlaceId: String, toPlaceId: String): DistanceEntity?
 
 }

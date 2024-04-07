@@ -9,7 +9,6 @@ import kmp.shared.domain.usecase.trip.GetNearestTripUseCase
 
 class HomeViewModel(
     private val getNearestTripUseCase: GetNearestTripUseCase,
-    private val getDistancesUseCase: GetDistancesUseCase
 ) : BaseStateViewModel<HomeViewModel.ViewState>(ViewState()) {
 
 
@@ -19,19 +18,7 @@ class HomeViewModel(
             getNearestTripUseCase().collect { result ->
                 when (result) {
                     is Result.Success -> {
-                        if(result.data.distances.isEmpty()){
-                            val trip = getDistancesUseCase(result.data)
-                            when(trip){
-                                is Result.Success -> {
-                                    update { copy(trip = trip.data) }
-                                }
-                                is Result.Error -> {
-                                    update { copy(error = trip.error.message?: "An error occurred") }
-                                }
-                            }
-                        } else {
-                            update { copy(trip = result.data) }
-                        }
+                        update { copy(trip = result.data) }
                     }
                     is Result.Error -> {
                         update { copy(error = result.error.message?: "An error occurred") }

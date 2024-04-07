@@ -32,7 +32,7 @@ internal class PlaceLocalSourceImpl(
         queries.insertOrReplaceDistance(distance)
     }
 
-    override suspend fun getDistance(fromPlaceId: String, toPlaceId: String): Int {
-        return queries.getDistance(fromPlaceId, toPlaceId).executeAsOne().distance.toInt()
+    override suspend fun getDistance(fromPlaceId: String, toPlaceId: String): DistanceEntity? {
+        return queries.getDistance(fromPlaceId, toPlaceId).executeAsOneOrNull()
     }
 }

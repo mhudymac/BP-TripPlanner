@@ -74,8 +74,8 @@ private val commonModule = module {
     single { Settings() }
 
     // Trip UseCases
-    factory<SaveTripUseCase> { SaveTripUseCaseImpl(get(),get()) }
-    factory<SaveTripWithoutIdUseCase> { SaveTripWithoutIdUseCaseImpl(get(),get()) }
+    factory<SaveTripUseCase> { SaveTripUseCaseImpl(get(),get(), get()) }
+    factory<SaveTripWithoutIdUseCase> { SaveTripWithoutIdUseCaseImpl(get(),get(),get()) }
     factory<GetAllTripsWithoutPlacesUseCase> { GetAllTripsWithoutPlacesUseCaseImpl(get()) }
     factory<GetTripUseCase> { GetTripUseCaseImpl(get(), get()) }
     factory<GetNearestTripUseCase> { GetNearestTripUseCaseImpl(get(), get()) }
