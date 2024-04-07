@@ -4,10 +4,12 @@ import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
 import kmp.shared.base.Result
 import kmp.shared.domain.model.Trip
+import kmp.shared.domain.usecase.distances.GetDistancesUseCase
 import kmp.shared.domain.usecase.trip.GetNearestTripUseCase
 
 class HomeViewModel(
-    private val getNearestTripUseCase: GetNearestTripUseCase
+    private val getNearestTripUseCase: GetNearestTripUseCase,
+    private val getDistancesUseCase: GetDistancesUseCase
 ) : BaseStateViewModel<HomeViewModel.ViewState>(ViewState()) {
 
 
@@ -17,7 +19,19 @@ class HomeViewModel(
             getNearestTripUseCase().collect { result ->
                 when (result) {
                     is Result.Success -> {
-                        update { copy(trip = result.data) }
+                        if(result.data.distances.isEmpty()){
+                            val trip = getDistancesUseCase(result.data)
+                            when(trip){
+                                is Result.Success -> {
+                                    update { copy(trip = trip.data) }
+                                }
+                                is Result.Error -> {
+                                    update { copy(error = trip.error.message?: "An error occurred") }
+                                }
+                            }
+                        } else {
+                            update { copy(trip = result.data) }
+                        }
                     }
                     is Result.Error -> {
                         update { copy(error = result.error.message?: "An error occurred") }

@@ -12,6 +12,14 @@ CREATE TABLE PlaceEntity (
     PRIMARY KEY(id, trip_id)
 );
 
+CREATE TABLE DistanceEntity (
+  fromPlaceId TEXT NOT NULL,
+  toPlaceId TEXT NOT NULL,
+  distance INTEGER NOT NULL,
+  FOREIGN KEY (fromPlaceId) REFERENCES PlaceEntity(id),
+  FOREIGN KEY (toPlaceId) REFERENCES PlaceEntity(id)
+);
+
 getById:
 SELECT * FROM PlaceEntity WHERE id = ?;
 
@@ -29,3 +37,9 @@ DELETE FROM PlaceEntity;
 
 insertOrReplace:
 INSERT OR REPLACE INTO PlaceEntity VALUES ?;
+
+insertOrReplaceDistance:
+INSERT OR REPLACE INTO DistanceEntity VALUES ?;
+
+getDistance:
+SELECT * FROM DistanceEntity WHERE fromPlaceId = ? AND toPlaceId = ?;

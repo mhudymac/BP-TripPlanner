@@ -21,11 +21,9 @@ import kmp.android.trip.navigation.TripGraph
 import kmp.android.trip.ui.create.PlaceCard
 import kmp.shared.domain.model.Trip
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.daysUntil
-import kotlinx.datetime.toJavaInstant
 import org.koin.androidx.compose.getViewModel
 import kmp.android.trip.ui.home.HomeViewModel.ViewState as State
 
@@ -75,9 +73,16 @@ private fun HomeScreen(trip: Trip) {
             fontWeight = FontWeight.Bold
         )
 
-        LazyColumn {
+        var lastPlaceId = ""
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             items(trip.itinerary) { place ->
+                if(lastPlaceId.isNotEmpty()){
+                    Text(text = "${trip.distances[lastPlaceId to place.id]?.duration?.div(60)} minutes walking")
+                }
                 PlaceCard(place = place)
+                lastPlaceId = place.id
             }
         }
     }

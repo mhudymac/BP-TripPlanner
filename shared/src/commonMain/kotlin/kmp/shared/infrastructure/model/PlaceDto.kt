@@ -9,7 +9,7 @@ internal data class PhotoResponse(
 
 @Serializable
 internal data class TextSearchResponse(
-    val places: Array<PlaceDto>?
+    val places: List<PlaceDto>?
 )
 @Serializable
 internal data class PlaceDto(
@@ -18,7 +18,7 @@ internal data class PlaceDto(
     val formattedAddress: String,
     val location: LatLng,
     val googleMapsUri: String,
-    val photos: Array<Photo>? = null
+    val photos: List<Photo>? = null
 ) {
     @Serializable
     data class LocalizedText(

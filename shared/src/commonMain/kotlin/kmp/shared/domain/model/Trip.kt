@@ -1,8 +1,7 @@
 package kmp.shared.domain.model
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
+
 data class Trip(
     val id: Long,
     val name: String,
@@ -10,5 +9,11 @@ data class Trip(
     val itinerary: List<Place>,
     val order: List<String>,
     val completed: Boolean = false,
-)
+    val distances: Map<Pair<String, String>, Distance> = emptyMap(),
+){
+    data class Distance(
+        val meters: Int,
+        val duration: Int
+    )
+}
 

@@ -13,7 +13,6 @@ internal class GetAllTripsWithoutPlacesUseCaseImpl(
     private val tripRepository: TripRepository
 ) : GetAllTripsWithoutPlacesUseCase {
     override suspend fun invoke(): Flow<List<Trip>> {
-
         return tripRepository.getAllTrips()
     }
 }

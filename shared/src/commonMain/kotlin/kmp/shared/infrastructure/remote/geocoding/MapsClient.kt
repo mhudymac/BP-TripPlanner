@@ -14,7 +14,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kmp.shared.infrastructure.remote.places.globalJson
 import kmp.shared.system.Config
 
-internal object GeocodingClient {
+internal object MapsClient {
 
     fun init(config: Config, engine: HttpClientEngine, apiKey: String) = HttpClient(engine) {
         expectSuccess = true

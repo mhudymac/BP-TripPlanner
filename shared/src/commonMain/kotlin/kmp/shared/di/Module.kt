@@ -9,6 +9,8 @@ import kmp.shared.data.source.PlaceRemoteSource
 import kmp.shared.data.source.TripLocalSource
 import kmp.shared.domain.repository.PlaceRepository
 import kmp.shared.domain.repository.TripRepository
+import kmp.shared.domain.usecase.distances.GetDistancesUseCase
+import kmp.shared.domain.usecase.distances.GetDistancesUseCaseImpl
 import kmp.shared.domain.usecase.location.GetLocationFlowUseCase
 import kmp.shared.domain.usecase.location.GetLocationFlowUseCaseImpl
 import kmp.shared.domain.usecase.location.GetLocationUseCase
@@ -34,8 +36,8 @@ import kmp.shared.domain.usecase.trip.SaveTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCase
 import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCaseImpl
 import kmp.shared.infrastructure.local.createDatabase
-import kmp.shared.infrastructure.remote.geocoding.GeocodingClient
-import kmp.shared.infrastructure.remote.geocoding.GeocodingService
+import kmp.shared.infrastructure.remote.geocoding.MapsClient
+import kmp.shared.infrastructure.remote.geocoding.MapsService
 import kmp.shared.infrastructure.remote.places.PlacesClient
 import kmp.shared.infrastructure.remote.places.PlaceService
 import kmp.shared.infrastructure.source.PlaceLocalSourceImpl
@@ -68,13 +70,8 @@ private val commonModule = module {
     // General
     single { "AIzaSyCm23vlG0GFw6CE9U94peD-2HaSzkPZhGk" }
     single(named("PlacesClient")) { PlacesClient.init(get(), get(), get()) }
-    single(named("GeocodingClient")) { GeocodingClient.init(get(), get(), get()) }
+    single(named("GeocodingClient")) { MapsClient.init(get(), get(), get()) }
     single { Settings() }
-
-    // UseCases
-    factory<SearchPlacesUseCase> { SearchPlacesUseCaseImpl(get()) }
-    factory<SearchPlacesWithBiasUseCase> { SearchPlacesWithBiasUseCaseImpl(get()) }
-    factory<UpdatePhotoUrlUseCase> { UpdatePhotoUrlUseCaseImpl(get()) }
 
     // Trip UseCases
     factory<SaveTripUseCase> { SaveTripUseCaseImpl(get(),get()) }
@@ -85,9 +82,15 @@ private val commonModule = module {
     factory<RemoveTripUseCase> { RemoveTripUseCaseImpl(get()) }
 
     // Place UseCases
+    factory<SearchPlacesUseCase> { SearchPlacesUseCaseImpl(get()) }
+    factory<SearchPlacesWithBiasUseCase> { SearchPlacesWithBiasUseCaseImpl(get()) }
+    factory<UpdatePhotoUrlUseCase> { UpdatePhotoUrlUseCaseImpl(get()) }
     factory<GetLocationFlowUseCase> { GetLocationFlowUseCaseImpl(get()) }
     factory<GetLocationUseCase> { GetLocationUseCaseImpl(get()) }
     factory<GetPlaceByLocationUseCase> { GetPlaceByLocationUseCaseImpl(get()) }
+
+    // Distance UseCases
+    factory<GetDistancesUseCase> { GetDistancesUseCaseImpl(get())}
 
     // Repositories
     single<PlaceRepository> { PlaceRepositoryImpl(get(), get()) }
@@ -103,7 +106,7 @@ private val commonModule = module {
 
     // Http Services
     single { PlaceService(get(named("PlacesClient"))) }
-    single { GeocodingService(get(named("GeocodingClient"))) }
+    single { MapsService(get(named("GeocodingClient"))) }
 
     // Database
     single { createDatabase(get()) }

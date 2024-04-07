@@ -3,6 +3,7 @@ package kmp.shared.domain.repository
 import kmp.shared.domain.model.Place
 import kmp.shared.base.Result
 import kmp.shared.domain.model.Location
+import kmp.shared.domain.model.Trip
 
 
 internal interface PlaceRepository {
@@ -14,6 +15,10 @@ internal interface PlaceRepository {
 
     suspend fun getPlace(id: String): Result<Place>
 
+    suspend fun getPlaceByLocation(location: Location): Result<Place>
+
+    suspend fun getDistanceMatrix(places: List<String>): Result<List<List<Trip.Distance>>>
+
     suspend fun getPlacesById(id: String): List<Place>
 
     suspend fun deleteById(id: String)
@@ -24,5 +29,7 @@ internal interface PlaceRepository {
 
     suspend fun getPlacesByTripID(tripID: Long): List<Place>
 
-    suspend fun getPlaceByLocation(location: Location): Result<Place>
+    suspend fun saveDistance(fromPlaceId: String, toPlaceId: String, distance: Int)
+
+    suspend fun getDistance(fromPlaceId: String, toPlaceId: String): Int
 }
