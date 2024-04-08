@@ -31,7 +31,7 @@ import kmp.android.shared.core.util.get
 import kmp.android.shared.navigation.composableDestination
 import kmp.android.trip.navigation.TripGraph
 import kmp.android.trip.ui.create.PlaceCard
-import kmp.android.trip.ui.home.PlaceCardListWithDistances
+import kmp.android.trip.ui.home.PlaceCardListWithDistancesAndCurrent
 import kmp.shared.domain.model.Trip
 import org.koin.androidx.compose.getViewModel
 import kmp.android.trip.ui.detail.DetailViewModel.ViewState as State
@@ -101,7 +101,7 @@ internal fun DetailScreen(trip: Trip, padding: PaddingValues) {
     ) {
         Text(text = "${trip.date.dayOfMonth}.${trip.date.monthNumber}.${trip.date.year} ")
 
-        PlaceCardListWithDistances(trip = trip)
+        PlaceCardListWithDistancesAndCurrent(trip = trip, null, { _, _ -> 0 })
     }
 }
 

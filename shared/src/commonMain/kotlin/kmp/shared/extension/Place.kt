@@ -1,5 +1,6 @@
 package kmp.shared.extension
 
+import kmp.shared.domain.model.Location
 import kmp.shared.domain.model.Place
 import kmp.shared.infrastructure.local.PlaceEntity
 import kmp.shared.infrastructure.model.PlaceDto
@@ -9,8 +10,7 @@ internal val PlaceDto.asDomain
         name = displayName.text,
         id = id,
         formattedAddress = formattedAddress,
-        latitude = location.latitude,
-        longitude = location.longitude,
+        location = location.let { Location(it.latitude, it.longitude) },
         googleMapsUri = googleMapsUri,
         photoName = photos?.firstOrNull()?.name
     )
@@ -20,8 +20,8 @@ internal fun Place.asEntity(tripId: Long): PlaceEntity {
         name = name,
         id = id,
         formattedAddress = formattedAddress,
-        lat = latitude,
-        lng = longitude,
+        lat = location.latitude,
+        lng = location.longitude,
         googleMapsUri = googleMapsUri,
         photo = photoName,
         photoUri = photoUri,
@@ -35,8 +35,7 @@ internal val PlaceEntity.asDomain
         name = name,
         id = id,
         formattedAddress = formattedAddress,
-        latitude = lat,
-        longitude = lng,
+        location = Location(lat, lng),
         googleMapsUri = googleMapsUri,
         photoName = photo,
         photoUri = photoUri

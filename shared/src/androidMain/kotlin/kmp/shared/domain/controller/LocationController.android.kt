@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-private const val UPDATE_INTERVAL = 1000L
+private const val UPDATE_INTERVAL = 10000L
 
 
 @RequiresApi(Build.VERSION_CODES.S)

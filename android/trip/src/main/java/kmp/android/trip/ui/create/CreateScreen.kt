@@ -1,8 +1,6 @@
 package kmp.android.trip.ui.create
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,10 +19,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ElevatedCard
@@ -34,7 +32,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.SnackbarHost
@@ -63,8 +60,6 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import coil.compose.ImagePainter
 import kmp.android.home.R
 import kmp.android.shared.core.ui.util.rememberLocationPermissionRequest
 import kmp.android.shared.core.util.get
@@ -153,9 +148,7 @@ private fun CreateRoute(
                     viewModel.getLocation()
                 } else {
                     permissionHandler.requestPermission()
-                    viewModel.getLocation()
-                }
-            },
+                } },
         )
     }
 
@@ -194,13 +187,12 @@ internal fun CreateScreen(
             if(start != null) {
                 PlaceCard(start)
             } else {
-                Column {
-                    EmptyPlaceCard(onClick = { showSearchDialog = true })
-                        Button(
-                            onClick = onCurrentLocationClick
-                        ) {
-                        Text("Use Current Location")
-                    }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    EmptyPlaceCard(onClick = { showSearchDialog = true }, text = "Search", modifier = Modifier.weight(1f).padding(end = 16.dp))
+                    EmptyPlaceCard(onClick = onCurrentLocationClick, text = "Use Current Location", modifier = Modifier.weight(1f))
                 }
             }
         }
@@ -209,7 +201,7 @@ internal fun CreateScreen(
             ComponentWithLabel(label = "Itinerary") {
                 LazyColumn {
                     item {
-                        EmptyPlaceCard { showSearchDialog = true }
+                        EmptyPlaceCard( onClick = { showSearchDialog = true } )
                     }
                     items(itinerary.reversed()) { place ->
                         PlaceCard(place = place)
@@ -234,7 +226,7 @@ internal fun CreateScreen(
                         onAddPlace(selectedPlace)
                         showSearchDialog = false
                     },
-                    latLng = start?.let { Pair( it.latitude, it.longitude )}
+                    latLng = start?.let { Pair( it.location.latitude, it.location.longitude )}
                 )
             }
         }
@@ -323,8 +315,8 @@ private fun CardDialog(
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(0.75f)
-                .fillMaxHeight(0.66f),
+                .fillMaxWidth(0.80f)
+                .fillMaxHeight(0.70f),
             shape = RoundedCornerShape(16.dp),
 
             ) {
@@ -380,19 +372,26 @@ internal fun PlaceCard(
     place: Place,
     onClick: () -> Unit = {},
     trailingIcon: @Composable () -> Unit = {},
+    isActive: Boolean = false
 ) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp)
+            .height(if (!isActive) 120.dp else 200.dp)
             .padding(vertical = 8.dp),
+        colors = CardColors(
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            containerColor = if (isActive) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
+            disabledContentColor = MaterialTheme.colorScheme.onSurface,
+            disabledContainerColor = MaterialTheme.colorScheme.surface,
+        ),
         shape = MaterialTheme.shapes.large,
         onClick = onClick,
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
             AsyncImage(
                 model = place.photoUri,
@@ -431,24 +430,27 @@ internal fun PlaceCard(
 }
 
 @Composable
-internal fun EmptyPlaceCard(onClick: () -> Unit) {
+internal fun EmptyPlaceCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    text: String = "Add a place",
+) {
     ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .height(100.dp)
             .padding(vertical = 8.dp),
         onClick = onClick,
     ) {
-        Row(
+        Column(
             modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = "Add Place",
             )
-            Text(text = "Add a place")
+            Text(text = text)
         }
     }
 }
