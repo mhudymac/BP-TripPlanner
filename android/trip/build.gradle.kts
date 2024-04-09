@@ -13,5 +13,6 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.dateTime)
     implementation(libs.reorderable)
+    implementation(libs.compose.materialIconsExtended)
     ktlintRuleset(libs.ktlint.composeRules)
 }

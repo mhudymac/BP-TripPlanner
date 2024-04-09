@@ -1,5 +1,8 @@
 package kmp.android.trip.ui.create
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,17 +15,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ElevatedCard
@@ -51,6 +59,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -60,6 +69,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import kmp.android.home.R
 import kmp.android.shared.core.ui.util.rememberLocationPermissionRequest
 import kmp.android.shared.core.util.get
@@ -118,6 +129,11 @@ private fun CreateRoute(
         }
     }
 
+    LaunchedEffect(locationPermissionGranted) {
+        if (locationPermissionGranted)
+            viewModel.getLocation()
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackHost) },
         topBar = {
@@ -139,6 +155,7 @@ private fun CreateRoute(
             date = date,
             start = start,
             itinerary = itinerary,
+            loading = loading,
             padding = paddingValues,
             onNameChange = { viewModel.updateName(it) },
             onDateSelected = { viewModel.updateDate(it) },
@@ -148,7 +165,8 @@ private fun CreateRoute(
                     viewModel.getLocation()
                 } else {
                     permissionHandler.requestPermission()
-                } },
+                }
+            },
         )
     }
 
@@ -160,6 +178,7 @@ internal fun CreateScreen(
     date: LocalDate?,
     start: Place?,
     itinerary: List<Place>,
+    loading: Boolean,
     padding: PaddingValues,
     onNameChange: (String) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
@@ -183,16 +202,42 @@ internal fun CreateScreen(
 
         TripDateComponent(date = date, onShowDatePicker = { showDatePicker = true })
 
-        ComponentWithLabel(label = "Start Place") {
+        ComponentWithLabel(label = "Starting Place") {
             if(start != null) {
                 PlaceCard(start)
             } else {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    EmptyPlaceCard(onClick = { showSearchDialog = true }, text = "Search", modifier = Modifier.weight(1f).padding(end = 16.dp))
-                    EmptyPlaceCard(onClick = onCurrentLocationClick, text = "Use Current Location", modifier = Modifier.weight(1f))
+                if(loading) {
+                    EmptyPlaceCard(onClick = {}) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        EmptyPlaceCard(
+                            onClick = { showSearchDialog = true },
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 16.dp),
+                        ){
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search Place"
+                            )
+                            Text(text = "Search place")
+                        }
+                        EmptyPlaceCard(
+                            onClick = onCurrentLocationClick,
+                            modifier = Modifier.weight(1f)
+                        ){
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Current Place"
+                            )
+                            Text(text = "Use Current Location")
+                        }
+                    }
                 }
             }
         }
@@ -201,7 +246,7 @@ internal fun CreateScreen(
             ComponentWithLabel(label = "Itinerary") {
                 LazyColumn {
                     item {
-                        EmptyPlaceCard( onClick = { showSearchDialog = true } )
+                        AddPlaceCard( onClick = { showSearchDialog = true } )
                     }
                     items(itinerary.reversed()) { place ->
                         PlaceCard(place = place)
@@ -371,8 +416,10 @@ private fun SelectDate(
 internal fun PlaceCard(
     place: Place,
     onClick: () -> Unit = {},
+    onCameraClick: () -> Unit = {},
     trailingIcon: @Composable () -> Unit = {},
-    isActive: Boolean = false
+    isActive: Boolean = false,
+    images: List<Uri> = emptyList()
 ) {
     ElevatedCard(
         modifier = Modifier
@@ -380,52 +427,98 @@ internal fun PlaceCard(
             .height(if (!isActive) 120.dp else 200.dp)
             .padding(vertical = 8.dp),
         colors = CardColors(
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            containerColor = if (isActive) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
+            contentColor = if (isActive) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSurface,
+            containerColor = if (isActive) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.surface,
             disabledContentColor = MaterialTheme.colorScheme.onSurface,
             disabledContainerColor = MaterialTheme.colorScheme.surface,
         ),
         shape = MaterialTheme.shapes.large,
         onClick = onClick,
     ) {
-        Row(
+        Column(
             modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.Top
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            AsyncImage(
-                model = place.photoUri,
-                contentDescription = "Place Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(112.dp)
-                    .padding(8.dp)
-                    .clip(MaterialTheme.shapes.large),
-                placeholder = painterResource(id = R.drawable.placeholder_view_vector),
-                error = painterResource(id = R.drawable.placeholder_view_vector),
-
-                )
-
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start,
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = place.name,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Text(
-                    text = place.formattedAddress,
-                    style = MaterialTheme.typography.bodySmall
-                )
+                AsyncImage(
+                    model = place.photoUri,
+                    contentDescription = "Place Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(112.dp)
+                        .padding(8.dp)
+                        .clip(MaterialTheme.shapes.large),
+                    placeholder = painterResource(id = R.drawable.placeholder_view_vector),
+                    error = painterResource(id = R.drawable.placeholder_view_vector),
+
+                    )
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.Start,
+                ) {
+                    Text(
+                        text = place.name,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        text = place.formattedAddress,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+                trailingIcon()
             }
 
-            trailingIcon()
-
+            if(isActive) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    IconButton(onClick = onCameraClick) {
+                        Icon(
+                            imageVector = Icons.Default.CameraAlt,
+                            contentDescription = "Take Picture"
+                        )
+                    }
+                    LazyRow {
+                        items(images) { imageUri ->
+                            AsyncImage(
+                                model = imageUri,
+                                contentDescription = "Place Image",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .padding(8.dp)
+                                    .clip(MaterialTheme.shapes.extraSmall),
+                            )
+                        }
+                    }
+                }
+            }
         }
+    }
+}
+
+
+@Composable
+internal fun AddPlaceCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    EmptyPlaceCard(onClick = onClick, modifier = modifier) {
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = "Add Place"
+        )
+        Text(text = "Add place")
     }
 }
 
@@ -433,7 +526,7 @@ internal fun PlaceCard(
 internal fun EmptyPlaceCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    text: String = "Add a place",
+    content: @Composable () -> Unit,
 ) {
     ElevatedCard(
         modifier = modifier
@@ -446,11 +539,7 @@ internal fun EmptyPlaceCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add Place",
-            )
-            Text(text = text)
+            content()
         }
     }
 }

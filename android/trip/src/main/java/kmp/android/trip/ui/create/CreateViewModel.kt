@@ -26,6 +26,8 @@ class CreateViewModel(
     fun addPlace(place: Place) {
         if( lastState().start == null ) update { copy(start = place) }
         else update { copy(itinerary = itinerary + place) }
+
+        Log.d("CreateViewModel", "addPlace: ${lastState().itinerary}")
     }
 
     fun updateName(name: String) {
@@ -38,6 +40,7 @@ class CreateViewModel(
 
     fun getLocation() {
         launch {
+            loading = true
             when(val location = getLocationUseCase()){
                 is Result.Success -> {
                     when(val place = getPlaceByLocationUseCase(location.data)){
@@ -47,11 +50,13 @@ class CreateViewModel(
                 }
                 is Result.Error -> update { copy(error = Pair("Error getting location", Random.nextInt())) }
             }
+            loading = false
         }
     }
 
     fun saveTrip() {
         launch {
+            loading = true
             if( lastState().name.isEmpty() )
                 update { copy(error = Pair("Name is required", Random.nextInt())) }
             else if( lastState().date == null )
@@ -74,6 +79,7 @@ class CreateViewModel(
                 saveTripUseCase(trip)
                 update{ copy(saveSuccess = true) }
             }
+            loading = false
         }
     }
 

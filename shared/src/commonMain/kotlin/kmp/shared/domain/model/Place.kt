@@ -7,5 +7,5 @@ data class Place (
     val location: Location,
     val googleMapsUri: String,
     val photoName: String?,
-    val photoUri: String? = null
+    val photoUri: String? = null,
 )

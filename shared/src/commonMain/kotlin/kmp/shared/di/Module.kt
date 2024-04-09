@@ -4,9 +4,12 @@ import com.russhwolf.settings.Settings
 import kmp.Database
 import kmp.shared.data.repository.PlaceRepositoryImpl
 import kmp.shared.data.repository.TripRepositoryImpl
+import kmp.shared.data.repository.PhotoRepositoryImpl
+import kmp.shared.data.source.PhotoLocalSource
 import kmp.shared.data.source.PlaceLocalSource
 import kmp.shared.data.source.PlaceRemoteSource
 import kmp.shared.data.source.TripLocalSource
+import kmp.shared.domain.repository.PhotoRepository
 import kmp.shared.domain.repository.PlaceRepository
 import kmp.shared.domain.repository.TripRepository
 import kmp.shared.domain.usecase.distances.GetDistancesUseCase
@@ -15,6 +18,10 @@ import kmp.shared.domain.usecase.location.GetLocationFlowUseCase
 import kmp.shared.domain.usecase.location.GetLocationFlowUseCaseImpl
 import kmp.shared.domain.usecase.location.GetLocationUseCase
 import kmp.shared.domain.usecase.location.GetLocationUseCaseImpl
+import kmp.shared.domain.usecase.photos.GetPhotosByPlaceUseCase
+import kmp.shared.domain.usecase.photos.GetPhotosByPlaceUseCaseImpl
+import kmp.shared.domain.usecase.photos.SavePhotoUseCase
+import kmp.shared.domain.usecase.photos.SavePhotoUseCaseImpl
 import kmp.shared.domain.usecase.place.GetPlaceByLocationUseCase
 import kmp.shared.domain.usecase.place.GetPlaceByLocationUseCaseImpl
 import kmp.shared.domain.usecase.place.SearchPlacesUseCase
@@ -40,6 +47,7 @@ import kmp.shared.infrastructure.remote.geocoding.MapsClient
 import kmp.shared.infrastructure.remote.geocoding.MapsService
 import kmp.shared.infrastructure.remote.places.PlacesClient
 import kmp.shared.infrastructure.remote.places.PlaceService
+import kmp.shared.infrastructure.source.PhotoLocalSourceImpl
 import kmp.shared.infrastructure.source.PlaceLocalSourceImpl
 import kmp.shared.infrastructure.source.PlaceRemoteSourceImpl
 import kmp.shared.infrastructure.source.TripLocalSourceImpl
@@ -92,14 +100,20 @@ private val commonModule = module {
     // Distance UseCases
     factory<GetDistancesUseCase> { GetDistancesUseCaseImpl(get())}
 
+    // Photo UseCases
+    factory<SavePhotoUseCase> { SavePhotoUseCaseImpl(get()) }
+    factory<GetPhotosByPlaceUseCase> { GetPhotosByPlaceUseCaseImpl(get()) }
+
     // Repositories
     single<PlaceRepository> { PlaceRepositoryImpl(get(), get()) }
     single<TripRepository> { TripRepositoryImpl(get()) }
+    single<PhotoRepository> { PhotoRepositoryImpl(get()) }
 
     // Sources
     single<PlaceRemoteSource> { PlaceRemoteSourceImpl(get(), get()) }
     single<PlaceLocalSource> { PlaceLocalSourceImpl(get()) }
     single<TripLocalSource> { TripLocalSourceImpl(get()) }
+    single<PhotoLocalSource> { PhotoLocalSourceImpl(get()) }
 
     // DAOs
 
@@ -112,6 +126,8 @@ private val commonModule = module {
     single { createDatabase(get()) }
     single { get<Database>().tripQueries }
     single { get<Database>().placeQueries }
+    single { get<Database>().photosQueries }
+
 
 
 }

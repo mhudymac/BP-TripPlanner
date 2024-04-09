@@ -19,9 +19,8 @@ internal class SaveTripUseCaseImpl internal constructor(
 
         if(params.second){
             when (val tripWithDistances = getDistancesUseCase(params.first)) {
-                is Result.Error -> { Log.d("SaveTripUseCaseImpl", "Can'tsaveeee" + tripWithDistances.error.message); return Result.Error(tripWithDistances.error) }
+                is Result.Error -> return Result.Error(tripWithDistances.error)
                 is Result.Success -> {
-
                     tripRepository.insertOrReplace( listOf(tripWithDistances.data) )
 
                     placeRepository.insertOrReplace(params.first.itinerary, tripId = tripWithDistances.data.id)

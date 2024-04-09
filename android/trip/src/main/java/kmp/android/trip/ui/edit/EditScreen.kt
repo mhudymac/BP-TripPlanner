@@ -128,6 +128,7 @@ internal fun DetailEditRoute (
                         date = date,
                         start = start,
                         itinerary = itinerary,
+                        loading = false,
                         padding = it,
                         onNameChange = viewModel::onNameChange,
                         onDateSelected = viewModel::onDateSelected,

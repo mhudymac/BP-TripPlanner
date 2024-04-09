@@ -22,10 +22,9 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-private const val UPDATE_INTERVAL = 10000L
+private const val UPDATE_INTERVAL = 15000L
 
 
-@RequiresApi(Build.VERSION_CODES.S)
 internal actual class LocationController(
     private val context: Context,
     private val locationProvider: FusedLocationProviderClient,
@@ -57,7 +56,6 @@ internal actual class LocationController(
         }
     }.filterNotNull()
 
-    @RequiresApi(Build.VERSION_CODES.S)
     @SuppressLint("MissingPermission")
     private fun startListening() {
         if (permissionGranted) {

@@ -1,5 +1,7 @@
 package kmp.android.trip.ui.detail
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -32,6 +35,8 @@ import kmp.android.shared.navigation.composableDestination
 import kmp.android.trip.navigation.TripGraph
 import kmp.android.trip.ui.create.PlaceCard
 import kmp.android.trip.ui.home.PlaceCardListWithDistancesAndCurrent
+import kmp.shared.domain.model.Location
+import kmp.shared.domain.model.Place
 import kmp.shared.domain.model.Trip
 import org.koin.androidx.compose.getViewModel
 import kmp.android.trip.ui.detail.DetailViewModel.ViewState as State
@@ -64,6 +69,8 @@ internal fun DetailRoute(
     val trip by viewModel[State::trip].collectAsState(null)
     val loading by viewModel[State::loading].collectAsState(false)
 
+    val context = LocalContext.current
+
     LaunchedEffect(tripId) {
         viewModel.getTrip(tripId)
     }
@@ -86,13 +93,24 @@ internal fun DetailRoute(
         },
     ) {
         trip?.let { trip ->
-            DetailScreen(trip, it)
+            DetailScreen(
+                trip = trip,
+                onPlaceClick = { place ->
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(place.googleMapsUri))
+                    context.startActivity(intent)
+                },
+                padding = it
+            )
         }
     }
 }
 
 @Composable
-internal fun DetailScreen(trip: Trip, padding: PaddingValues) {
+internal fun DetailScreen(
+    trip: Trip,
+    onPlaceClick: (Place) -> Unit,
+    padding: PaddingValues
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -101,7 +119,7 @@ internal fun DetailScreen(trip: Trip, padding: PaddingValues) {
     ) {
         Text(text = "${trip.date.dayOfMonth}.${trip.date.monthNumber}.${trip.date.year} ")
 
-        PlaceCardListWithDistancesAndCurrent(trip = trip, null, { _, _ -> 0 })
+        PlaceCardListWithDistancesAndCurrent(trip = trip, null, { _, _ -> 0 }, onPlaceClick = onPlaceClick)
     }
 }
 

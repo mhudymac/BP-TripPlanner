@@ -1,0 +1,22 @@
+CREATE TABLE PhotoEntity (
+    placeId TEXT NOT NULL,
+    tripID INTEGER NOT NULL,
+    photoUri TEXT NOT NULL,
+    FOREIGN KEY (placeId) REFERENCES PlaceEntity(id),
+    FOREIGN KEY (tripID) REFERENCES TripEntity(id)
+);
+
+getPhotosByPlace:
+SELECT * FROM PhotoEntity WHERE placeId = :placeId;
+
+insertPhoto:
+INSERT INTO PhotoEntity (placeId, tripID, photoUri) VALUES (:placeId, :tripID, :photoUri);
+
+getPhotosByTrip:
+SELECT * FROM PhotoEntity WHERE tripID = :tripID;
+
+deletePhotoByUri:
+DELETE FROM PhotoEntity WHERE photoUri = :photoUri;
+
+deletePhotosByPlace:
+DELETE FROM PhotoEntity WHERE placeId = :placeId;

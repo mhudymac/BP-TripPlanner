@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 internal actual class LocationController {
     actual val locationFlow: Flow<Location>
         get() = TODO("Not yet implemented")
-    actual val lastLocation: Location?
+    actual var lastLocation: Location?
         get() = TODO("Not yet implemented")
+        set(value) {}
+
 }

@@ -20,17 +20,19 @@ internal class GetNearestTripUseCaseImpl(
         return tripRepository.getNearestTrip().map { trip ->
             if (trip != null) {
                 val places = placeRepository.getPlacesByTripID(trip.id)
-                val itinerary: List<Place> = trip.order.mapNotNull {
-                        order -> places.firstOrNull { it.id == order } ?: return@map Result.Error(ErrorResult("Place not found"))
+
+                val itinerary: List<Place> = trip.order.mapNotNull { order ->
+                    places.firstOrNull { it.id == order } ?: return@map Result.Error(ErrorResult("Place not found"))
                 }
-                val distances = trip.order.indices.map { originIndex ->
-                    trip.order.indices.map { destinationIndex ->
-                        Pair(trip.order[originIndex], trip.order[destinationIndex]) to placeRepository.getDistance(trip.order[originIndex], trip.order[destinationIndex])
+
+                val distances = trip.order.indices.mapNotNull { originIndex ->
+                    trip.order.indices.mapNotNull { destinationIndex ->
+                        val pair = Pair(trip.order[originIndex], trip.order[destinationIndex])
+                        placeRepository.getDistance(pair.first, pair.second)?.let { distance ->
+                            pair to distance
+                        }?: return@map Result.Error(ErrorResult("Place not found"))
                     }
-                }.flatten().mapNotNull { (pair, distance) ->
-                    if(distance == null) return@map Result.Error(ErrorResult("Place not found"))
-                    distance.let { pair to it }
-                }.toMap()
+                }.flatten().toMap()
 
                 Result.Success(
                     trip.copy(
@@ -42,5 +44,4 @@ internal class GetNearestTripUseCaseImpl(
                 Result.Error(error = ErrorResult("Trip not found"))
         }
     }
-
 }
