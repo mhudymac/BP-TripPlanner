@@ -30,7 +30,7 @@ internal class GetNearestTripUseCaseImpl(
                         val pair = Pair(trip.order[originIndex], trip.order[destinationIndex])
                         placeRepository.getDistance(pair.first, pair.second)?.let { distance ->
                             pair to distance
-                        }?: return@map Result.Error(ErrorResult("Place not found"))
+                        }?: return@map Result.Error(ErrorResult("Distance not found"))
                     }
                 }.flatten().toMap()
 

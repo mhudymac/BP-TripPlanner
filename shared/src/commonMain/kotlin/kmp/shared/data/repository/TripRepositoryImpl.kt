@@ -6,17 +6,19 @@ import kmp.shared.domain.repository.TripRepository
 import kmp.shared.extension.asDomain
 import kmp.shared.extension.asEntity
 import kmp.shared.infrastructure.local.TripEntity
-import kmp.shared.system.Log
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 internal class TripRepositoryImpl(
     private val source: TripLocalSource
 ) : TripRepository {
 
-    override suspend fun getAllTrips(): Flow<List<Trip>> {
-        return source.getAllTrips().map { it.map(TripEntity::asDomain) }
+    override suspend fun getUncompletedTrips(): Flow<List<Trip>> {
+        return source.getUncompletedTrips().map { it.map(TripEntity::asDomain) }
+    }
+
+    override suspend fun getCompletedTrips(): Flow<List<Trip>> {
+        return source.getCompletedTrips().map { it.map(TripEntity::asDomain) }
     }
 
     override suspend fun getTripByName(name: String): Flow<Trip?> {

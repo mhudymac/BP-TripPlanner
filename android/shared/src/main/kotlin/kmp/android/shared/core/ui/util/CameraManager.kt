@@ -24,7 +24,8 @@ fun rememberCameraManager(onResult: (Uri?) -> Unit): CameraManager {
         contract = ActivityResultContracts.TakePicture(),
         onResult = { success ->
             if (success) {
-                onResult.invoke(tempPhotoUri)
+                val savedUri = saveImageToInternalStorage(context, tempPhotoUri, "picture_${System.currentTimeMillis()}.png")
+                onResult.invoke(savedUri)
             }
         }
     )
@@ -52,8 +53,7 @@ class ComposeFileProvider : FileProvider(
     companion object {
         fun getImageUri(context: Context): Uri {
             val tempFile = File.createTempFile(
-                "picture_${System.currentTimeMillis()}", ".png", context.getExternalFilesDir(
-                    Environment.DIRECTORY_PICTURES)
+                "picture_${System.currentTimeMillis()}", ".png", context.cacheDir
             ).apply {
                 createNewFile()
             }

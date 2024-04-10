@@ -9,12 +9,19 @@ import kmp.shared.infrastructure.local.TripQueries
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 
 class TripLocalSourceImpl(
     private val tripQueries: TripQueries
 ) : TripLocalSource {
-    override fun getAllTrips(): Flow<List<TripEntity>> {
-        return tripQueries.getAllTrips().asFlow().mapToList(Dispatchers.IO)
+    override fun getUncompletedTrips(): Flow<List<TripEntity>> {
+        return tripQueries.getUncompletedTrips().asFlow().mapToList(Dispatchers.IO)
+    }
+
+    override fun getCompletedTrips(): Flow<List<TripEntity>> {
+        return tripQueries.getCompletedTrips().asFlow().mapToList(Dispatchers.IO)
     }
 
     override fun updateOrInsert(items: List<TripEntity>) {
@@ -34,7 +41,8 @@ class TripLocalSourceImpl(
     }
 
     override fun getNearestTrip(): Flow<TripEntity?> {
-        return tripQueries.getNearestTrip().asFlow().mapToOneOrNull(Dispatchers.IO)
+        val date = Clock.System.todayIn(TimeZone.currentSystemDefault()).toString()
+        return tripQueries.getNearestTrip(date).asFlow().mapToOneOrNull(Dispatchers.IO)
     }
 
     override fun insertWithoutId(item: TripEntity): Long {

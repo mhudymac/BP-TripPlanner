@@ -12,12 +12,16 @@ import kotlinx.coroutines.flow.Flow
 class PhotoLocalSourceImpl(
     private val queries: PhotosQueries
 ): PhotoLocalSource {
-    override suspend fun getPhotosByPlaceID(placeId: String): Flow<List<PhotoEntity>> {
-        return queries.getPhotosByPlace(placeId).asFlow().mapToList(Dispatchers.IO)
+    override suspend fun getPhotos(placeId: String, tripId: Long): Flow<List<PhotoEntity>> {
+        return queries.getPhotos(placeId, tripId).asFlow().mapToList(Dispatchers.IO)
     }
 
-    override suspend fun insertOrReplacePhotos(placeId: String, tripId: Long, photos: List<String>) {
-        photos.forEach { queries.insertPhoto(placeId, tripId, it) }
+    override suspend fun getPhotosByTrip(tripId: Long): Flow<List<PhotoEntity>> {
+        return queries.getPhotosByTrip(tripId).asFlow().mapToList(Dispatchers.IO)
+    }
+
+    override suspend fun insertOrReplacePhotos(photo: PhotoEntity) {
+        queries.insertPhotoAsEntity(photo)
     }
 
     override suspend fun deletePhotosByPlaceID(placeId: String) {

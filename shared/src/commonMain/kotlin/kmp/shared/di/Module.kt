@@ -18,8 +18,10 @@ import kmp.shared.domain.usecase.location.GetLocationFlowUseCase
 import kmp.shared.domain.usecase.location.GetLocationFlowUseCaseImpl
 import kmp.shared.domain.usecase.location.GetLocationUseCase
 import kmp.shared.domain.usecase.location.GetLocationUseCaseImpl
-import kmp.shared.domain.usecase.photos.GetPhotosByPlaceUseCase
-import kmp.shared.domain.usecase.photos.GetPhotosByPlaceUseCaseImpl
+import kmp.shared.domain.usecase.photos.GetPhotosByTripUseCase
+import kmp.shared.domain.usecase.photos.GetPhotosByTripUseCaseImpl
+import kmp.shared.domain.usecase.photos.GetPhotosUseCase
+import kmp.shared.domain.usecase.photos.GetPhotosUseCaseImpl
 import kmp.shared.domain.usecase.photos.SavePhotoUseCase
 import kmp.shared.domain.usecase.photos.SavePhotoUseCaseImpl
 import kmp.shared.domain.usecase.place.GetPlaceByLocationUseCase
@@ -30,8 +32,10 @@ import kmp.shared.domain.usecase.place.SearchPlacesWithBiasUseCase
 import kmp.shared.domain.usecase.place.SearchPlacesWithBiasUseCaseImpl
 import kmp.shared.domain.usecase.place.UpdatePhotoUrlUseCase
 import kmp.shared.domain.usecase.place.UpdatePhotoUrlUseCaseImpl
-import kmp.shared.domain.usecase.trip.GetAllTripsWithoutPlacesUseCase
-import kmp.shared.domain.usecase.trip.GetAllTripsWithoutPlacesUseCaseImpl
+import kmp.shared.domain.usecase.trip.GetCompletedTripsWithoutPlacesUseCase
+import kmp.shared.domain.usecase.trip.GetCompletedTripsWithoutPlacesUseCaseImpl
+import kmp.shared.domain.usecase.trip.GetUncompletedTripsWithoutPlacesUseCase
+import kmp.shared.domain.usecase.trip.GetUncompletedTripsWithoutPlacesUseCaseImpl
 import kmp.shared.domain.usecase.trip.GetNearestTripUseCase
 import kmp.shared.domain.usecase.trip.GetNearestTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.GetTripUseCase
@@ -42,6 +46,8 @@ import kmp.shared.domain.usecase.trip.SaveTripUseCase
 import kmp.shared.domain.usecase.trip.SaveTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCase
 import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCaseImpl
+import kmp.shared.domain.usecase.trip.UpdateTripDateUseCase
+import kmp.shared.domain.usecase.trip.UpdateOnlyTripDetailsUseCaseImpl
 import kmp.shared.infrastructure.local.createDatabase
 import kmp.shared.infrastructure.remote.geocoding.MapsClient
 import kmp.shared.infrastructure.remote.geocoding.MapsService
@@ -84,10 +90,12 @@ private val commonModule = module {
     // Trip UseCases
     factory<SaveTripUseCase> { SaveTripUseCaseImpl(get(),get(), get()) }
     factory<SaveTripWithoutIdUseCase> { SaveTripWithoutIdUseCaseImpl(get(),get(),get()) }
-    factory<GetAllTripsWithoutPlacesUseCase> { GetAllTripsWithoutPlacesUseCaseImpl(get()) }
+    factory<GetUncompletedTripsWithoutPlacesUseCase> { GetUncompletedTripsWithoutPlacesUseCaseImpl(get()) }
+    factory<GetCompletedTripsWithoutPlacesUseCase> { GetCompletedTripsWithoutPlacesUseCaseImpl(get()) }
     factory<GetTripUseCase> { GetTripUseCaseImpl(get(), get()) }
     factory<GetNearestTripUseCase> { GetNearestTripUseCaseImpl(get(), get()) }
     factory<RemoveTripUseCase> { RemoveTripUseCaseImpl(get()) }
+    factory<UpdateTripDateUseCase> { UpdateOnlyTripDetailsUseCaseImpl(get()) }
 
     // Place UseCases
     factory<SearchPlacesUseCase> { SearchPlacesUseCaseImpl(get()) }
@@ -102,7 +110,8 @@ private val commonModule = module {
 
     // Photo UseCases
     factory<SavePhotoUseCase> { SavePhotoUseCaseImpl(get()) }
-    factory<GetPhotosByPlaceUseCase> { GetPhotosByPlaceUseCaseImpl(get()) }
+    factory<GetPhotosUseCase> { GetPhotosUseCaseImpl(get()) }
+    factory<GetPhotosByTripUseCase> { GetPhotosByTripUseCaseImpl(get()) }
 
     // Repositories
     single<PlaceRepository> { PlaceRepositoryImpl(get(), get()) }

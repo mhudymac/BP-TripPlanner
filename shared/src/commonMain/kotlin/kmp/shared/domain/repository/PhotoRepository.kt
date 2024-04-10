@@ -1,12 +1,15 @@
 package kmp.shared.domain.repository
 
+import kmp.shared.domain.model.Photo
 import kotlinx.coroutines.flow.Flow
 
 internal interface PhotoRepository {
 
-    suspend fun getPhotosByPlace(placeId: String): Flow<List<String>>
+    suspend fun getPhotos(placeId: String, tripId: Long): Flow<List<Photo>>
 
-    suspend fun insertPhoto(placeId: String, tripId: Long, photo: String)
+    suspend fun getPhotosByTrip(tripId: Long): Flow<List<Photo>>
+
+    suspend fun insertPhoto(photo: Photo)
 
     suspend fun deletePhotoByPlace(placeId: String)
 }

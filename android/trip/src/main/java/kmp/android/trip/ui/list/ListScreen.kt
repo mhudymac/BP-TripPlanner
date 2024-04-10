@@ -43,14 +43,16 @@ import kmp.android.trip.ui.list.ListViewModel.ViewState as State
 
 internal fun NavGraphBuilder.tripListRoute(
     navigateToCreateScreen: () -> Unit,
-    navigateToDetailScreen: (Long) -> Unit
+    navigateToDetailScreen: (Long) -> Unit,
+    navigateToGalleryScreen: (Long) -> Unit
 ) {
     composableDestination(
         destination = TripGraph.List
     ) {
         TripListScreenRoute(
             navigateToCreateScreen,
-            navigateToDetailScreen
+            navigateToDetailScreen,
+            navigateToGalleryScreen
         )
     }
 }
@@ -58,24 +60,14 @@ internal fun NavGraphBuilder.tripListRoute(
 @Composable
 internal fun TripListScreenRoute(
     navigateToCreateScreen: () -> Unit,
-    navigateToDetailScreen: (Long) -> Unit
-) {
-    TripListScreen(
-        navigateToCreateScreen,
-        navigateToDetailScreen
-    )
-}
-
-@Composable
-private fun TripListScreen(
-    navigateToCreateScreen: () -> Unit,
     navigateToDetailScreen: (Long) -> Unit,
+    navigateToGalleryScreen: (Long) -> Unit,
     viewModel: ListViewModel = getViewModel()
 ) {
     val loading by viewModel[State::isLoading].collectAsState(false)
-    val trips by viewModel[State::trips].collectAsState(emptyList())
-
-    var selectedTab by remember { mutableIntStateOf(0) }
+    val unCompletedTrips by viewModel[State::uncompletedTrips].collectAsState(emptyList())
+    val completedTrips by viewModel[State::completedTrips].collectAsState(emptyList())
+    val selectedTab by viewModel[State::selectedTab].collectAsState(0)
 
     Scaffold(
         floatingActionButton = {
@@ -97,7 +89,7 @@ private fun TripListScreen(
             ) {
                 Tab(
                     selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 },
+                    onClick = { viewModel.selectedTab = 0 },
                     text = { Text(
                         "New Trips",
                         style = if (selectedTab == 0) MaterialTheme.typography.titleLarge else MaterialTheme.typography.bodyMedium,
@@ -106,7 +98,7 @@ private fun TripListScreen(
                 )
                 Tab(
                     selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
+                    onClick = { viewModel.selectedTab = 1 },
                     text = { Text(
                         "Completed Trips",
                         style = if (selectedTab == 1) MaterialTheme.typography.titleLarge else MaterialTheme.typography.bodyMedium,
@@ -116,20 +108,20 @@ private fun TripListScreen(
             }
 
             when (selectedTab) {
-                0 -> NewTripsScreen( trips, navigateToDetailScreen )
-                1 -> FullScreenText("Completed Trips")
+                0 -> TripList( unCompletedTrips, navigateToDetailScreen )
+                1 -> TripList( completedTrips, navigateToGalleryScreen )
             }
         }
     }
 }
 
 @Composable
-private fun NewTripsScreen(trips: List<Trip>, navigateToDetailScreen: (Long) -> Unit) {
+private fun TripList(trips: List<Trip>, onTripClick: (Long) -> Unit) {
     LazyColumn(
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
         items(trips) { trip ->
-            TripCard(trip = trip, onClick = { navigateToDetailScreen(trip.id) })
+            TripCard(trip = trip, onClick = { onTripClick(trip.id) })
         }
     }
 }
@@ -169,19 +161,5 @@ internal fun TripCard(
                 )
             }
         }
-    }
-}
-
-
-@Composable
-internal fun FullScreenText( text: String ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text)
     }
 }

@@ -41,7 +41,7 @@ fun Root(modifier: Modifier = Modifier) {
         ) {
                 NavHost(
                     navController,
-                    startDestination = TripGraph.rootPath // if (showLogin) LoginDestination.route else UsersGraph.rootPath
+                    startDestination = TripGraph.rootPath
                 ) {
                     tripNavGraph(navController)
                 }
@@ -62,8 +62,8 @@ private fun BottomBar(navController: NavHostController) {
                 NavigationBarItem(
                     icon = {
                         when (screen) {
-                            NavBarFeature.Home -> Icon(Icons.Filled.Home, "")
-                            NavBarFeature.TripsList -> Icon(Icons.AutoMirrored.Filled.List, "")
+                            NavBarFeature.Home -> Icon(Icons.Filled.Home, "Home icon")
+                            NavBarFeature.TripsList -> Icon(Icons.AutoMirrored.Filled.List, "Trip list icon")
                         }
                     },
                     label = { Text(stringResource(screen.titleRes)) },

@@ -4,7 +4,9 @@ import kmp.shared.domain.model.Trip
 import kotlinx.coroutines.flow.Flow
 
 interface TripRepository {
-    suspend fun getAllTrips(): Flow<List<Trip>>
+    suspend fun getUncompletedTrips(): Flow<List<Trip>>
+
+    suspend fun getCompletedTrips(): Flow<List<Trip>>
 
     suspend fun getTripByName(name: String): Flow<Trip?>
 

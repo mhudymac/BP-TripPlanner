@@ -50,4 +50,21 @@ object TripGraph : FeatureGraph(parent = null) {
             )
         }
     }
+
+    object Gallery : Destination(parent = this) {
+        override val routeDefinition: String = "gallery"
+        internal const val tripIdArg = "tripId"
+
+        override val arguments = listOf(
+            navArgument(tripIdArg) { type = NavType.LongType }
+        )
+
+        internal class Args(
+            val tripId: Long
+        ) {
+            constructor(arguments: android.os.Bundle?) : this(
+                requireNotNull(arguments?.getLong(tripIdArg))
+            )
+        }
+    }
 }

@@ -2,6 +2,7 @@ package kmp.android.trip.ui.search
 
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import coil.compose.AsyncImage
@@ -28,18 +30,6 @@ import kmp.android.trip.ui.create.PlaceCard
 import kmp.shared.domain.model.Place
 import org.koin.androidx.compose.getViewModel
 import kmp.android.trip.ui.search.SearchViewModel.ViewState as State
-
-//fun NavController.navigateToSearchScreen() {
-//    navigate(TripGraph.Search())
-//}
-//
-//internal fun NavGraphBuilder.searchScreenRoute() {
-//    dialogDestination(
-//        destination = TripGraph.Search
-//    ) {
-//        SearchScreen(withBias = start != null)
-//    }
-//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,7 +66,8 @@ internal fun SearchScreen(
         placeholder = { Text("Search") },
     ) {
         LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(horizontal = 8.dp),
         ) {
             items(places) { place ->
                 PlaceCard(place = place, onClick = { onPlaceSelected(place); viewModel.clear() })

@@ -2,13 +2,11 @@ package kmp.android.trip.ui.detail
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
@@ -33,9 +31,8 @@ import androidx.navigation.NavGraphBuilder
 import kmp.android.shared.core.util.get
 import kmp.android.shared.navigation.composableDestination
 import kmp.android.trip.navigation.TripGraph
-import kmp.android.trip.ui.create.PlaceCard
-import kmp.android.trip.ui.home.PlaceCardListWithDistancesAndCurrent
-import kmp.shared.domain.model.Location
+import kmp.android.trip.ui.home.ActivePlaceTripList
+import kmp.android.trip.ui.home.InactiveTripPlaceList
 import kmp.shared.domain.model.Place
 import kmp.shared.domain.model.Trip
 import org.koin.androidx.compose.getViewModel
@@ -119,7 +116,7 @@ internal fun DetailScreen(
     ) {
         Text(text = "${trip.date.dayOfMonth}.${trip.date.monthNumber}.${trip.date.year} ")
 
-        PlaceCardListWithDistancesAndCurrent(trip = trip, null, { _, _ -> 0 }, onPlaceClick = onPlaceClick)
+        InactiveTripPlaceList(trip = trip, onPlaceClick = onPlaceClick, scrollState = rememberLazyListState())
     }
 }
 

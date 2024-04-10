@@ -15,8 +15,11 @@ SELECT * FROM TripEntity WHERE id = ?;
 deleteById:
 DELETE FROM TripEntity WHERE id = ?;
 
-getAllTrips:
-SELECT * FROM TripEntity;
+getUncompletedTrips:
+SELECT * FROM TripEntity WHERE completed = 0 ORDER BY date ASC;
+
+getCompletedTrips:
+SELECT * FROM TripEntity WHERE completed = 1 ORDER BY date;
 
 insertOrReplace:
 INSERT OR REPLACE INTO TripEntity VALUES ?;
@@ -34,4 +37,4 @@ deleteAll:
 DELETE FROM TripEntity;
 
 getNearestTrip:
-SELECT * FROM TripEntity ORDER BY date ASC LIMIT 1;
+SELECT * FROM TripEntity WHERE (date >= ? AND completed = 0)  ORDER BY date ASC LIMIT 1;

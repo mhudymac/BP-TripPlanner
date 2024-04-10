@@ -3,7 +3,6 @@ package kmp.android.trip.ui.edit
 import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +14,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -29,7 +27,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -41,7 +38,6 @@ import kmp.android.trip.ui.create.CreateScreen
 import kmp.android.trip.ui.create.PlaceCard
 import kmp.android.trip.ui.detail.TopBar
 import kmp.shared.domain.model.Place
-import kotlinx.datetime.toJavaLocalDate
 import org.koin.androidx.compose.getViewModel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyColumnState
@@ -55,8 +51,8 @@ internal fun NavGraphBuilder.editScreenRoute(navigateUp: () -> Unit) {
     composableDestination(
         destination = TripGraph.Edit
     ) { navBackStackEntry ->
-        val args = TripGraph.Detail.Args(navBackStackEntry.arguments)
-        DetailEditRoute(
+        val args = TripGraph.Edit.Args(navBackStackEntry.arguments)
+        EditRoute(
             tripId = args.tripId,
             navigateUp = navigateUp
         )
@@ -64,7 +60,7 @@ internal fun NavGraphBuilder.editScreenRoute(navigateUp: () -> Unit) {
 }
 
 @Composable
-internal fun DetailEditRoute (
+internal fun EditRoute (
     tripId: Long,
     navigateUp: () -> Unit,
     viewModel: EditViewModel = getViewModel()
@@ -191,7 +187,7 @@ fun ReorderingScreen(
                                             )
                                         }
                                     )
-                                    .size(34.dp)
+                                    .size(32.dp)
                                     .padding(end = 8.dp),
                                 imageVector = Icons.Rounded.Menu,
                                 contentDescription = "Reorder"

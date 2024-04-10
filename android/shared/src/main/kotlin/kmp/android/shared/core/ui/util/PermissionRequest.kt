@@ -1,10 +1,6 @@
 package kmp.android.shared.core.ui.util
 
 import android.Manifest
-import android.Manifest.permission.READ_EXTERNAL_STORAGE
-import android.Manifest.permission.READ_MEDIA_IMAGES
-import android.Manifest.permission.READ_MEDIA_VIDEO
-import android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -39,12 +35,12 @@ private fun <T : PermissionRequest> rememberPermissionRequest(
 
 // === Specific permissions ===
 
-class LocationPermissionRequest(
+class PreciseLocationPermissionRequest(
     launcher: ActivityResultLauncher<String>,
     granted: State<Boolean>,
 ) : PermissionRequest(launcher, granted) {
     override fun requestPermission(): Unit =
-        launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION )
 }
 
 class CameraPermissionRequest(
@@ -60,21 +56,25 @@ class GalleryPermissionRequest(
     granted: State<Boolean>,
 ) : PermissionRequest(launcher, granted) {
     override fun requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            launcher.launch(arrayOf(READ_MEDIA_IMAGES, READ_MEDIA_VISUAL_USER_SELECTED).toString())
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            launcher.launch(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            launcher.launch(arrayOf(READ_MEDIA_IMAGES, READ_MEDIA_VIDEO).toString())
+            launcher.launch(Manifest.permission.READ_MEDIA_IMAGES)
         } else {
-            launcher.launch(arrayOf(READ_EXTERNAL_STORAGE).toString())
+            launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
 
     }
 }
 
 @Composable
-fun rememberLocationPermissionRequest(): LocationPermissionRequest =
-    rememberPermissionRequest(::LocationPermissionRequest)
+fun rememberPreciseLocationPermissionRequest(): PreciseLocationPermissionRequest =
+    rememberPermissionRequest(::PreciseLocationPermissionRequest)
 
 @Composable
 fun rememberCameraPermissionRequest(): CameraPermissionRequest =
     rememberPermissionRequest(::CameraPermissionRequest)
+
+@Composable
+fun rememberGalleryPermissionRequest(): GalleryPermissionRequest =
+    rememberPermissionRequest(::GalleryPermissionRequest)

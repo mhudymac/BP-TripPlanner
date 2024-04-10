@@ -4,7 +4,9 @@ import kmp.shared.infrastructure.local.TripEntity
 import kotlinx.coroutines.flow.Flow
 
 internal interface TripLocalSource {
-    fun getAllTrips(): Flow<List<TripEntity>>
+    fun getUncompletedTrips(): Flow<List<TripEntity>>
+
+    fun getCompletedTrips(): Flow<List<TripEntity>>
 
     fun updateOrInsert(items: List<TripEntity>)
 

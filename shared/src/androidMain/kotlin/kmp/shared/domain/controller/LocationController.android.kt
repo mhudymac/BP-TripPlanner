@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-private const val UPDATE_INTERVAL = 15000L
+private const val UPDATE_INTERVAL = 1000L
 
 
 internal actual class LocationController(
@@ -40,7 +40,6 @@ internal actual class LocationController(
     actual var lastLocation: Location? = null
         private set
 
-    @RequiresApi(Build.VERSION_CODES.S)
     actual val locationFlow = callbackFlow {
         if (locationListeners.isEmpty() ||  !listening) {
             startListening()
@@ -94,11 +93,7 @@ internal actual class LocationController(
     }
 
     private val permissionGranted
-        get() = ActivityCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-        ) == PackageManager.PERMISSION_GRANTED
-
+        get() = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION,) == PackageManager.PERMISSION_GRANTED
     /**
      * Helper function to prevent ConcurrentModification by synchronizing access to listeners
      */

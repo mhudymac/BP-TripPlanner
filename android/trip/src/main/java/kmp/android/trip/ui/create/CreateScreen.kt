@@ -1,6 +1,5 @@
 package kmp.android.trip.ui.create
 
-import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -59,7 +57,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -68,11 +65,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
+import coil.compose.SubcomposeAsyncImage
 import kmp.android.home.R
-import kmp.android.shared.core.ui.util.rememberLocationPermissionRequest
+import kmp.android.shared.core.ui.util.rememberPreciseLocationPermissionRequest
 import kmp.android.shared.core.util.get
 import kmp.android.shared.navigation.composableDestination
 import kmp.android.trip.navigation.TripGraph
@@ -80,6 +75,7 @@ import kmp.android.trip.ui.detail.TopBar
 import kmp.android.trip.ui.search.SearchScreen
 import kmp.shared.domain.model.Place
 import org.koin.androidx.compose.getViewModel
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -113,7 +109,7 @@ private fun CreateRoute(
 
     val snackHost = remember { SnackbarHostState() }
 
-    val permissionHandler = rememberLocationPermissionRequest()
+    val permissionHandler = rememberPreciseLocationPermissionRequest()
     val locationPermissionGranted by permissionHandler.granted
 
     if(error.first.isNotEmpty()){
@@ -213,13 +209,13 @@ internal fun CreateScreen(
                 } else {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         EmptyPlaceCard(
                             onClick = { showSearchDialog = true },
                             modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 16.dp),
+                                .weight(0.5f)
                         ){
                             Icon(
                                 imageVector = Icons.Default.Search,
@@ -227,9 +223,10 @@ internal fun CreateScreen(
                             )
                             Text(text = "Search place")
                         }
+
                         EmptyPlaceCard(
                             onClick = onCurrentLocationClick,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(0.5f)
                         ){
                             Icon(
                                 imageVector = Icons.Default.LocationOn,
@@ -360,9 +357,9 @@ private fun CardDialog(
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(0.80f)
-                .fillMaxHeight(0.70f),
-            shape = RoundedCornerShape(16.dp),
+                .fillMaxWidth(0.90f)
+                .fillMaxHeight(0.75f),
+            shape = MaterialTheme.shapes.large,
 
             ) {
             content()
@@ -378,7 +375,9 @@ private fun SelectDate(
 ) {
     val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
         override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-            return utcTimeMillis >= System.currentTimeMillis()
+            val selectedDate = Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneId.systemDefault()).toLocalDate()
+            val currentDate = Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault()).toLocalDate()
+            return !selectedDate.isBefore(currentDate)
         }
     })
 
@@ -412,26 +411,71 @@ private fun SelectDate(
     }
 }
 
+
+@Composable
+internal fun ActivePlaceCard(
+    place: Place,
+    onClick: () -> Unit = {},
+    onCameraClick: () -> Unit = {},
+    images: List<Uri> = emptyList()
+){
+    PlaceCard(
+        place = place,
+        onClick = onClick,
+        height = 200,
+        colors = CardColors(
+            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            disabledContentColor = MaterialTheme.colorScheme.onSurface,
+            disabledContainerColor = MaterialTheme.colorScheme.surface,
+        ),
+    ){
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(onClick = onCameraClick) {
+                Icon(
+                    imageVector = Icons.Default.CameraAlt,
+                    contentDescription = "Take Picture"
+                )
+            }
+            LazyRow {
+                items(images) { imageUri ->
+                    SubcomposeAsyncImage(
+                        model = imageUri,
+                        contentDescription = "Place Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .padding(8.dp)
+                            .clip(MaterialTheme.shapes.extraSmall),
+                        loading = {
+                            CircularProgressIndicator()
+                        },
+                    )
+                }
+            }
+        }
+    }
+
+}
 @Composable
 internal fun PlaceCard(
     place: Place,
     onClick: () -> Unit = {},
-    onCameraClick: () -> Unit = {},
+    colors: CardColors = CardDefaults.elevatedCardColors(),
+    height: Int = 120,
     trailingIcon: @Composable () -> Unit = {},
-    isActive: Boolean = false,
-    images: List<Uri> = emptyList()
+    expandedContent: @Composable () -> Unit = {},
 ) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .height(if (!isActive) 120.dp else 200.dp)
+            .height(height.dp)
             .padding(vertical = 8.dp),
-        colors = CardColors(
-            contentColor = if (isActive) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSurface,
-            containerColor = if (isActive) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.surface,
-            disabledContentColor = MaterialTheme.colorScheme.onSurface,
-            disabledContainerColor = MaterialTheme.colorScheme.surface,
-        ),
+        colors = colors,
         shape = MaterialTheme.shapes.large,
         onClick = onClick,
     ) {
@@ -444,7 +488,7 @@ internal fun PlaceCard(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                AsyncImage(
+                SubcomposeAsyncImage(
                     model = place.photoUri,
                     contentDescription = "Place Image",
                     contentScale = ContentScale.Crop,
@@ -452,10 +496,15 @@ internal fun PlaceCard(
                         .size(112.dp)
                         .padding(8.dp)
                         .clip(MaterialTheme.shapes.large),
-                    placeholder = painterResource(id = R.drawable.placeholder_view_vector),
-                    error = painterResource(id = R.drawable.placeholder_view_vector),
-
-                    )
+                    loading = { CircularProgressIndicator() },
+                    error = {
+                        Image(
+                            painterResource(id = R.drawable.placeholder_view_vector),
+                            contentDescription,
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
+                )
 
                 Column(
                     modifier = Modifier
@@ -476,33 +525,7 @@ internal fun PlaceCard(
                 trailingIcon()
             }
 
-            if(isActive) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    IconButton(onClick = onCameraClick) {
-                        Icon(
-                            imageVector = Icons.Default.CameraAlt,
-                            contentDescription = "Take Picture"
-                        )
-                    }
-                    LazyRow {
-                        items(images) { imageUri ->
-                            AsyncImage(
-                                model = imageUri,
-                                contentDescription = "Place Image",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .padding(8.dp)
-                                    .clip(MaterialTheme.shapes.extraSmall),
-                            )
-                        }
-                    }
-                }
-            }
+            expandedContent()
         }
     }
 }
