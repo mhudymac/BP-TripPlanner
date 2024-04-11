@@ -93,7 +93,8 @@ internal actual class LocationController(
     }
 
     private val permissionGranted
-        get() = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION,) == PackageManager.PERMISSION_GRANTED
+        get() = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION,) == PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION,) == PackageManager.PERMISSION_GRANTED
     /**
      * Helper function to prevent ConcurrentModification by synchronizing access to listeners
      */

@@ -7,6 +7,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import kmp.shared.base.Result
 import kmp.shared.base.error.util.runCatchingCommonNetworkExceptions
+import kmp.shared.domain.model.Location
 import kmp.shared.infrastructure.model.PhotoResponse
 import kmp.shared.infrastructure.model.TextSearchResponse
 import kmp.shared.infrastructure.model.PlaceDto
@@ -23,12 +24,12 @@ internal object PlacePaths {
 
 internal class PlaceService(private val client: HttpClient) {
 
-    suspend fun searchPlaces( query: String, maxResultCount: Int = 16, lat: Double? = null, lng: Double? = null, radius: Int = 50 ): Result<TextSearchResponse> {
+    suspend fun searchPlaces( query: String, maxResultCount: Int = 16, location: Location? = null, radius: Int = 50 ): Result<TextSearchResponse> {
         return runCatchingCommonNetworkExceptions {
             client.post(PlacePaths.textSearch) {
                 headers.append("X-Goog-FieldMask", searchFieldMask())
-                if(lat != null && lng != null)
-                    setBody(TextSearchRequestBody( query, maxResultCount, lat, lng, radius))
+                if(location != null)
+                    setBody(TextSearchRequestBody( query, maxResultCount, location.latitude, location.longitude, radius))
                 else
                     setBody(TextSearchRequestBody( query, maxResultCount))
             }.body()

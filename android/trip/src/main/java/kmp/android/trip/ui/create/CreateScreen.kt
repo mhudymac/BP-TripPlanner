@@ -3,6 +3,7 @@ package kmp.android.trip.ui.create
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,8 +23,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -55,6 +61,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
@@ -67,7 +74,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import coil.compose.SubcomposeAsyncImage
 import kmp.android.home.R
-import kmp.android.shared.core.ui.util.rememberPreciseLocationPermissionRequest
+import kmp.android.shared.core.ui.util.rememberLocationPermissionRequest
 import kmp.android.shared.core.util.get
 import kmp.android.shared.navigation.composableDestination
 import kmp.android.trip.navigation.TripGraph
@@ -101,15 +108,14 @@ private fun CreateRoute(
 ) {
     val name by viewModel[State::name].collectAsState("")
     val date by viewModel[State::date].collectAsState(null)
-    val start by viewModel[State::start].collectAsState(null)
     val itinerary by viewModel[State::itinerary].collectAsState(emptyList())
-    val loading by viewModel[State::isLoading].collectAsState(false)
+    val loading by viewModel[State::loading].collectAsState(false)
     val error by viewModel[State::error].collectAsState(Pair("",0))
     val saveSuccess by viewModel[State::saveSuccess].collectAsState(initial = false)
 
     val snackHost = remember { SnackbarHostState() }
 
-    val permissionHandler = rememberPreciseLocationPermissionRequest()
+    val permissionHandler = rememberLocationPermissionRequest()
     val locationPermissionGranted by permissionHandler.granted
 
     if(error.first.isNotEmpty()){
@@ -149,13 +155,13 @@ private fun CreateRoute(
         CreateScreen(
             name = name,
             date = date,
-            start = start,
             itinerary = itinerary,
             loading = loading,
             padding = paddingValues,
             onNameChange = { viewModel.updateName(it) },
             onDateSelected = { viewModel.updateDate(it) },
             onAddPlace = { viewModel.addPlace(it) },
+            onRemovePlace = { viewModel.removePlace(it) },
             onCurrentLocationClick = {
                 if (locationPermissionGranted) {
                     viewModel.getLocation()
@@ -172,13 +178,13 @@ private fun CreateRoute(
 internal fun CreateScreen(
     name: String,
     date: LocalDate?,
-    start: Place?,
     itinerary: List<Place>,
     loading: Boolean,
     padding: PaddingValues,
     onNameChange: (String) -> Unit,
     onDateSelected: (LocalDate) -> Unit,
     onAddPlace: (Place) -> Unit,
+    onRemovePlace: (Place) -> Unit,
     onCurrentLocationClick: () -> Unit = {},
 ) {
     Column(
@@ -198,10 +204,8 @@ internal fun CreateScreen(
 
         TripDateComponent(date = date, onShowDatePicker = { showDatePicker = true })
 
-        ComponentWithLabel(label = "Starting Place") {
-            if(start != null) {
-                PlaceCard(start)
-            } else {
+        ComponentWithLabel(label = "Itinerary") {
+            if(itinerary.isEmpty()){
                 if(loading) {
                     EmptyPlaceCard(onClick = {}) {
                         CircularProgressIndicator()
@@ -236,17 +240,18 @@ internal fun CreateScreen(
                         }
                     }
                 }
-            }
-        }
-
-        start?.let {
-            ComponentWithLabel(label = "Itinerary") {
-                LazyColumn {
+            } else {
+                LazyColumn(
+                    reverseLayout = true,
+                ) {
                     item {
-                        AddPlaceCard( onClick = { showSearchDialog = true } )
+                        AddPlaceCard(onClick = { showSearchDialog = true })
                     }
                     items(itinerary.reversed()) { place ->
-                        PlaceCard(place = place)
+                        PlaceCard(
+                            place = place,
+                            onDeleteClick = { onRemovePlace(place) }
+                        )
                     }
                 }
             }
@@ -268,7 +273,7 @@ internal fun CreateScreen(
                         onAddPlace(selectedPlace)
                         showSearchDialog = false
                     },
-                    latLng = start?.let { Pair( it.location.latitude, it.location.longitude )}
+                    location = itinerary.firstOrNull()?.location,
                 )
             }
         }
@@ -357,7 +362,7 @@ private fun CardDialog(
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(0.90f)
+                .fillMaxWidth(0.80f)
                 .fillMaxHeight(0.75f),
             shape = MaterialTheme.shapes.large,
 
@@ -452,7 +457,12 @@ internal fun ActivePlaceCard(
                             .padding(8.dp)
                             .clip(MaterialTheme.shapes.extraSmall),
                         loading = {
-                            CircularProgressIndicator()
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         },
                     )
                 }
@@ -465,67 +475,94 @@ internal fun ActivePlaceCard(
 internal fun PlaceCard(
     place: Place,
     onClick: () -> Unit = {},
+    onDeleteClick: (() -> Unit)? = null,
     colors: CardColors = CardDefaults.elevatedCardColors(),
     height: Int = 120,
     trailingIcon: @Composable () -> Unit = {},
     expandedContent: @Composable () -> Unit = {},
 ) {
-    ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(height.dp)
-            .padding(vertical = 8.dp),
-        colors = colors,
-        shape = MaterialTheme.shapes.large,
-        onClick = onClick,
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceEvenly
+    Box {
+        ElevatedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(height.dp)
+                .padding(vertical = 8.dp),
+            colors = colors,
+            shape = MaterialTheme.shapes.large,
+            onClick = onClick,
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically,
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                SubcomposeAsyncImage(
-                    model = place.photoUri,
-                    contentDescription = "Place Image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(112.dp)
-                        .padding(8.dp)
-                        .clip(MaterialTheme.shapes.large),
-                    loading = { CircularProgressIndicator() },
-                    error = {
-                        Image(
-                            painterResource(id = R.drawable.placeholder_view_vector),
-                            contentDescription,
-                            contentScale = ContentScale.Crop,
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    SubcomposeAsyncImage(
+                        model = place.photoUri,
+                        contentDescription = "Place Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(112.dp)
+                            .padding(8.dp)
+                            .clip(MaterialTheme.shapes.large),
+                        loading = {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(50.dp)
+                                )
+                            }
+                        },
+                        error = {
+                            Image(
+                                painterResource(id = R.drawable.placeholder_view_vector),
+                                contentDescription,
+                                contentScale = ContentScale.Crop,
+                            )
+                        }
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.Start,
+                    ) {
+                        Text(
+                            text = place.name,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = place.formattedAddress,
+                            style = MaterialTheme.typography.bodySmall
                         )
                     }
-                )
-
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.Start,
-                ) {
-                    Text(
-                        text = place.name,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Text(
-                        text = place.formattedAddress,
-                        style = MaterialTheme.typography.bodySmall
-                    )
+                    trailingIcon()
                 }
-                trailingIcon()
+                expandedContent()
             }
+        }
 
-            expandedContent()
+        if(onDeleteClick != null) {
+            IconButton(
+                onClick = onDeleteClick,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Delete",
+                    modifier = Modifier.size(26.dp),
+                    tint = Color.Red
+                )
+            }
         }
     }
 }

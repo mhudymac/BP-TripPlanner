@@ -35,7 +35,7 @@ private fun <T : PermissionRequest> rememberPermissionRequest(
 
 // === Specific permissions ===
 
-class PreciseLocationPermissionRequest(
+class LocationPermissionRequest(
     launcher: ActivityResultLauncher<String>,
     granted: State<Boolean>,
 ) : PermissionRequest(launcher, granted) {
@@ -68,8 +68,8 @@ class GalleryPermissionRequest(
 }
 
 @Composable
-fun rememberPreciseLocationPermissionRequest(): PreciseLocationPermissionRequest =
-    rememberPermissionRequest(::PreciseLocationPermissionRequest)
+fun rememberLocationPermissionRequest(): LocationPermissionRequest =
+    rememberPermissionRequest(::LocationPermissionRequest)
 
 @Composable
 fun rememberCameraPermissionRequest(): CameraPermissionRequest =

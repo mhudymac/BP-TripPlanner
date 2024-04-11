@@ -2,18 +2,21 @@ package kmp.shared.di
 
 import com.russhwolf.settings.Settings
 import kmp.Database
+import kmp.shared.data.repository.DistanceRepositoryImpl
 import kmp.shared.data.repository.PlaceRepositoryImpl
 import kmp.shared.data.repository.TripRepositoryImpl
 import kmp.shared.data.repository.PhotoRepositoryImpl
+import kmp.shared.data.source.DistanceLocalSource
 import kmp.shared.data.source.PhotoLocalSource
 import kmp.shared.data.source.PlaceLocalSource
 import kmp.shared.data.source.PlaceRemoteSource
 import kmp.shared.data.source.TripLocalSource
+import kmp.shared.domain.repository.DistanceRepository
 import kmp.shared.domain.repository.PhotoRepository
 import kmp.shared.domain.repository.PlaceRepository
 import kmp.shared.domain.repository.TripRepository
-import kmp.shared.domain.usecase.distances.GetDistancesUseCase
-import kmp.shared.domain.usecase.distances.GetDistancesUseCaseImpl
+import kmp.shared.domain.usecase.place.GetDistancesUseCase
+import kmp.shared.domain.usecase.place.GetDistancesUseCaseImpl
 import kmp.shared.domain.usecase.location.GetLocationFlowUseCase
 import kmp.shared.domain.usecase.location.GetLocationFlowUseCaseImpl
 import kmp.shared.domain.usecase.location.GetLocationUseCase
@@ -24,6 +27,8 @@ import kmp.shared.domain.usecase.photos.GetPhotosUseCase
 import kmp.shared.domain.usecase.photos.GetPhotosUseCaseImpl
 import kmp.shared.domain.usecase.photos.SavePhotoUseCase
 import kmp.shared.domain.usecase.photos.SavePhotoUseCaseImpl
+import kmp.shared.domain.usecase.place.DeletePlaceByIdUseCase
+import kmp.shared.domain.usecase.place.DeletePlaceByIdUseCaseImpl
 import kmp.shared.domain.usecase.place.GetPlaceByLocationUseCase
 import kmp.shared.domain.usecase.place.GetPlaceByLocationUseCaseImpl
 import kmp.shared.domain.usecase.place.SearchPlacesUseCase
@@ -32,6 +37,8 @@ import kmp.shared.domain.usecase.place.SearchPlacesWithBiasUseCase
 import kmp.shared.domain.usecase.place.SearchPlacesWithBiasUseCaseImpl
 import kmp.shared.domain.usecase.place.UpdatePhotoUrlUseCase
 import kmp.shared.domain.usecase.place.UpdatePhotoUrlUseCaseImpl
+import kmp.shared.domain.usecase.trip.DeleteTripUseCase
+import kmp.shared.domain.usecase.trip.DeleteTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.GetCompletedTripsWithoutPlacesUseCase
 import kmp.shared.domain.usecase.trip.GetCompletedTripsWithoutPlacesUseCaseImpl
 import kmp.shared.domain.usecase.trip.GetUncompletedTripsWithoutPlacesUseCase
@@ -42,6 +49,8 @@ import kmp.shared.domain.usecase.trip.GetTripUseCase
 import kmp.shared.domain.usecase.trip.GetTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.RemoveTripUseCase
 import kmp.shared.domain.usecase.trip.RemoveTripUseCaseImpl
+import kmp.shared.domain.usecase.trip.RepeatTripUseCase
+import kmp.shared.domain.usecase.trip.RepeatTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.SaveTripUseCase
 import kmp.shared.domain.usecase.trip.SaveTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCase
@@ -53,6 +62,7 @@ import kmp.shared.infrastructure.remote.geocoding.MapsClient
 import kmp.shared.infrastructure.remote.geocoding.MapsService
 import kmp.shared.infrastructure.remote.places.PlacesClient
 import kmp.shared.infrastructure.remote.places.PlaceService
+import kmp.shared.infrastructure.source.DistanceLocalSourceImpl
 import kmp.shared.infrastructure.source.PhotoLocalSourceImpl
 import kmp.shared.infrastructure.source.PlaceLocalSourceImpl
 import kmp.shared.infrastructure.source.PlaceRemoteSourceImpl
@@ -88,14 +98,16 @@ private val commonModule = module {
     single { Settings() }
 
     // Trip UseCases
-    factory<SaveTripUseCase> { SaveTripUseCaseImpl(get(),get(), get()) }
-    factory<SaveTripWithoutIdUseCase> { SaveTripWithoutIdUseCaseImpl(get(),get(),get()) }
+    factory<SaveTripUseCase> { SaveTripUseCaseImpl(get(),get(), get(), get()) }
+    factory<SaveTripWithoutIdUseCase> { SaveTripWithoutIdUseCaseImpl(get(),get(),get(), get()) }
     factory<GetUncompletedTripsWithoutPlacesUseCase> { GetUncompletedTripsWithoutPlacesUseCaseImpl(get()) }
     factory<GetCompletedTripsWithoutPlacesUseCase> { GetCompletedTripsWithoutPlacesUseCaseImpl(get()) }
     factory<GetTripUseCase> { GetTripUseCaseImpl(get(), get()) }
     factory<GetNearestTripUseCase> { GetNearestTripUseCaseImpl(get(), get()) }
     factory<RemoveTripUseCase> { RemoveTripUseCaseImpl(get()) }
     factory<UpdateTripDateUseCase> { UpdateOnlyTripDetailsUseCaseImpl(get()) }
+    factory<DeleteTripUseCase> { DeleteTripUseCaseImpl(get(), get(), get(), get()) }
+    factory<RepeatTripUseCase> { RepeatTripUseCaseImpl(get(), get(), get(), get()) }
 
     // Place UseCases
     factory<SearchPlacesUseCase> { SearchPlacesUseCaseImpl(get()) }
@@ -104,9 +116,10 @@ private val commonModule = module {
     factory<GetLocationFlowUseCase> { GetLocationFlowUseCaseImpl(get()) }
     factory<GetLocationUseCase> { GetLocationUseCaseImpl(get()) }
     factory<GetPlaceByLocationUseCase> { GetPlaceByLocationUseCaseImpl(get()) }
+    factory<DeletePlaceByIdUseCase> { DeletePlaceByIdUseCaseImpl(get()) }
 
     // Distance UseCases
-    factory<GetDistancesUseCase> { GetDistancesUseCaseImpl(get())}
+    factory<GetDistancesUseCase> { GetDistancesUseCaseImpl(get()) }
 
     // Photo UseCases
     factory<SavePhotoUseCase> { SavePhotoUseCaseImpl(get()) }
@@ -117,12 +130,14 @@ private val commonModule = module {
     single<PlaceRepository> { PlaceRepositoryImpl(get(), get()) }
     single<TripRepository> { TripRepositoryImpl(get()) }
     single<PhotoRepository> { PhotoRepositoryImpl(get()) }
+    single<DistanceRepository> { DistanceRepositoryImpl(get()) }
 
     // Sources
     single<PlaceRemoteSource> { PlaceRemoteSourceImpl(get(), get()) }
     single<PlaceLocalSource> { PlaceLocalSourceImpl(get()) }
     single<TripLocalSource> { TripLocalSourceImpl(get()) }
     single<PhotoLocalSource> { PhotoLocalSourceImpl(get()) }
+    single<DistanceLocalSource> { DistanceLocalSourceImpl(get()) }
 
     // DAOs
 
@@ -136,6 +151,7 @@ private val commonModule = module {
     single { get<Database>().tripQueries }
     single { get<Database>().placeQueries }
     single { get<Database>().photosQueries }
+    single { get<Database>().distanceQueries }
 
 
 

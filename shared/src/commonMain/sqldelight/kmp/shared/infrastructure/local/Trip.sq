@@ -6,11 +6,11 @@ CREATE TABLE TripEntity (
     completed INTEGER NOT NULL
 );
 
-getTripByName:
-SELECT * FROM TripEntity WHERE name = ?;
-
-getTripById:
-SELECT * FROM TripEntity WHERE id = ?;
+tripWithPlaces:
+SELECT TripEntity.*, PlaceEntity.*
+FROM TripEntity
+LEFT JOIN PlaceEntity ON TripEntity.id = PlaceEntity.trip_id
+WHERE TripEntity.id = ?;
 
 deleteById:
 DELETE FROM TripEntity WHERE id = ?;
@@ -30,11 +30,10 @@ INSERT INTO TripEntity (name, date, place_order, completed) VALUES (?, ?, ?, ?);
 lastInsertedId:
 SELECT last_insert_rowid();
 
-delete:
-DELETE FROM TripEntity WHERE name = ?;
-
 deleteAll:
 DELETE FROM TripEntity;
 
 getNearestTrip:
-SELECT * FROM TripEntity WHERE (date >= ? AND completed = 0)  ORDER BY date ASC LIMIT 1;
+SELECT * FROM TripEntity
+WHERE date = (SELECT MIN(date) FROM TripEntity WHERE date >= ? AND completed = 0)
+AND completed = 0;

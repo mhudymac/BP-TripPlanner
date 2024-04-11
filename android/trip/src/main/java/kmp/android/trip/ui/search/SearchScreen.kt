@@ -2,13 +2,18 @@ package kmp.android.trip.ui.search
 
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SearchBar
@@ -27,6 +32,7 @@ import kmp.android.shared.core.util.get
 import kmp.android.shared.navigation.dialogDestination
 import kmp.android.trip.navigation.TripGraph
 import kmp.android.trip.ui.create.PlaceCard
+import kmp.shared.domain.model.Location
 import kmp.shared.domain.model.Place
 import org.koin.androidx.compose.getViewModel
 import kmp.android.trip.ui.search.SearchViewModel.ViewState as State
@@ -36,14 +42,14 @@ import kmp.android.trip.ui.search.SearchViewModel.ViewState as State
 internal fun SearchScreen(
     viewModel: SearchViewModel = getViewModel(),
     onPlaceSelected: (Place) -> Unit = {},
-    latLng: Pair<Double, Double>? = null
+    location: Location? = null
 ) {
     val places by viewModel[State::places].collectAsState(emptyList())
     val loading by viewModel[State::isLoading].collectAsState(false)
     val searchedQuery by viewModel[State::searchedQuery].collectAsState("")
 
     LaunchedEffect(Unit){
-        latLng?.let { viewModel.latLng = it}
+        location?.let { viewModel.location = it}
     }
 
     SearchBar(
@@ -65,12 +71,23 @@ internal fun SearchScreen(
         },
         placeholder = { Text("Search") },
     ) {
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(horizontal = 8.dp),
-        ) {
-            items(places) { place ->
-                PlaceCard(place = place, onClick = { onPlaceSelected(place); viewModel.clear() })
+        if(loading){
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(horizontal = 8.dp),
+            ) {
+                items(places) { place ->
+                    PlaceCard(
+                        place = place,
+                        onClick = { viewModel.clear(); onPlaceSelected(place) })
+                }
             }
         }
     }

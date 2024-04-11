@@ -3,6 +3,7 @@ package kmp.shared.extension
 import kmp.shared.domain.model.Location
 import kmp.shared.domain.model.Place
 import kmp.shared.infrastructure.local.PlaceEntity
+import kmp.shared.infrastructure.local.TripWithPlaces
 import kmp.shared.infrastructure.model.PlaceDto
 
 internal val PlaceDto.asDomain
@@ -40,3 +41,20 @@ internal val PlaceEntity.asDomain
         photoName = photo,
         photoUri = photoUri
     )
+
+internal val TripWithPlaces.asPlace
+    get(): Place? {
+        return if(name_ == null || id_ == null || formattedAddress == null || lat == null || lng == null || googleMapsUri == null) {
+            null
+        } else {
+            Place(
+                name = name_,
+                id = id_,
+                formattedAddress = formattedAddress,
+                location = Location(lat, lng),
+                googleMapsUri = googleMapsUri,
+                photoName = photo,
+                photoUri = photoUri
+            )
+        }
+    }

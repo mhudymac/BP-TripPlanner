@@ -24,8 +24,7 @@ class PhotoLocalSourceImpl(
         queries.insertPhotoAsEntity(photo)
     }
 
-    override suspend fun deletePhotosByPlaceID(placeId: String) {
-        queries.deletePhotosByPlace(placeId)
+    override suspend fun deletePhotosByTripId(tripId: Long) {
+        queries.deletePhotosByTrip(tripId)
     }
-
 }

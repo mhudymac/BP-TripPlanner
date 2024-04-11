@@ -44,7 +44,12 @@ class HomeViewModel(
             getNearestTripUseCase().collect { result ->
                 when (result) {
                     is Result.Success -> {
-                        update { copy(trip = result.data, isActive = result.data.date == LocalDate.now().toKotlinLocalDate(), loading = false) }
+                        update { copy(trips = result.data) }
+                        if(result.data.isNotEmpty()) {
+                            update { copy(trip = result.data.first(), isActive = result.data.first().date == LocalDate.now().toKotlinLocalDate(), loading = false) }
+                        } else {
+                            update { copy(loading = false) }
+                        }
                     }
                     is Result.Error -> {
                         update { copy(trip = null, error = result.error.message ?: "No saved trip", loading = false) }
@@ -84,15 +89,21 @@ class HomeViewModel(
         update { copy(images = images + Uri.parse(photoUri)) }
     }
 
+    fun setActiveTrip(trip: Trip) {
+        update { copy(trip = trip) }
+    }
+
     var loading
         get() = lastState().loading
         set(value) { update { copy(loading = value) } }
 
      data class ViewState(
+         val trips: List<Trip> = emptyList(),
          val trip: Trip? = null,
          val loading: Boolean = true,
          val error: String = "",
          val images: List<Uri> = emptyList(),
-         val isActive: Boolean = false
+         val isActive: Boolean = false,
+         val selectedTab: Int = 0
      ) : State
 }

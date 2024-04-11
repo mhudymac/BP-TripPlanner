@@ -2,10 +2,10 @@ package kmp.shared.infrastructure.source
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOneOrNull
 import kmp.shared.data.source.TripLocalSource
 import kmp.shared.infrastructure.local.TripEntity
 import kmp.shared.infrastructure.local.TripQueries
+import kmp.shared.infrastructure.local.TripWithPlaces
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
@@ -32,17 +32,9 @@ class TripLocalSourceImpl(
         tripQueries.deleteAll()
     }
 
-    override fun getTripByName(name: String): Flow<TripEntity?> {
-        return tripQueries.getTripByName(name).asFlow().mapToOneOrNull(Dispatchers.IO)
-    }
-
-    override fun deleteTripByName(name: String) {
-        tripQueries.delete(name)
-    }
-
-    override fun getNearestTrip(): Flow<TripEntity?> {
+    override fun getNearestTrip(): Flow<List<TripEntity>> {
         val date = Clock.System.todayIn(TimeZone.currentSystemDefault()).toString()
-        return tripQueries.getNearestTrip(date).asFlow().mapToOneOrNull(Dispatchers.IO)
+        return tripQueries.getNearestTrip(date).asFlow().mapToList(Dispatchers.IO)
     }
 
     override fun insertWithoutId(item: TripEntity): Long {
@@ -50,8 +42,8 @@ class TripLocalSourceImpl(
         return tripQueries.lastInsertedId().executeAsOne()
     }
 
-    override fun getTripById(id: Long): Flow<TripEntity?> {
-        return tripQueries.getTripById(id).asFlow().mapToOneOrNull(Dispatchers.IO)
+    override fun getTripById(id: Long): Flow<List<TripWithPlaces>> {
+        return tripQueries.tripWithPlaces(id).asFlow().mapToList(Dispatchers.IO)
     }
 
     override fun deleteTripById(id: Long) {

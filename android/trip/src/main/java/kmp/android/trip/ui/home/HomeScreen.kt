@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -25,11 +28,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,6 +44,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,7 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import kmp.android.shared.core.ui.util.rememberCameraManager
 import kmp.android.shared.core.ui.util.rememberCameraPermissionRequest
-import kmp.android.shared.core.ui.util.rememberPreciseLocationPermissionRequest
+import kmp.android.shared.core.ui.util.rememberLocationPermissionRequest
 import kmp.android.shared.core.util.get
 import kmp.android.shared.extension.distanceTo
 import kmp.android.shared.navigation.composableDestination
@@ -62,6 +71,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.daysUntil
 import org.koin.androidx.compose.getViewModel
+import kotlin.reflect.KFunction1
 import kmp.android.trip.ui.home.HomeViewModel.ViewState as State
 
 
@@ -80,16 +90,16 @@ internal fun HomeScreenRoute(
     viewModel: HomeViewModel = getViewModel(),
     navigateToCreateScreen: () -> Unit,
 ){
-
     val loading by viewModel[State::loading].collectAsState(initial = true)
     val trip by viewModel[State::trip].collectAsState(initial = null)
+    val trips by viewModel[State::trips].collectAsState(initial = emptyList())
     val error by viewModel[State::error].collectAsState(initial = "")
     val images by viewModel[State::images].collectAsState(initial = emptyList())
     val isTripActive by viewModel[State::isActive].collectAsState(initial = false)
 
     var location by remember { mutableStateOf<Location?>(null) }
 
-    val locationPermissionHandler = rememberPreciseLocationPermissionRequest()
+    val locationPermissionHandler = rememberLocationPermissionRequest()
     val locationPermissionGranted by locationPermissionHandler.granted
 
     val cameraPermissionHandler = rememberCameraPermissionRequest()
@@ -99,6 +109,7 @@ internal fun HomeScreenRoute(
         viewModel.addUserPhoto(it.toString())
     }
 
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scrollState = rememberLazyListState()
     val isFloatingButtonExpanded = remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset <= 0 } }
 
@@ -136,47 +147,82 @@ internal fun HomeScreenRoute(
             CircularProgressIndicator()
         }
     } else {
-        if(trip != null){
-            Scaffold(
-                floatingActionButton = {
-                    ExtendedFloatingActionButton(
-                        text = { if(isTripActive) Text("Finish Trip") else Text("Start Trip") },
-                        icon = { if(isTripActive) Icon(Icons.Default.Done, contentDescription = "Finish Trip") else Icon(Icons.Default.PlayArrow, contentDescription = "Start trip") },
-                        onClick = { if(isTripActive) showDialog = true else viewModel.startTrip() },
-                        expanded = isFloatingButtonExpanded.value,
-                    )
-                },
-            ) {
-                HomeScreen(
-                    trip = trip!!,
-                    location = location,
-                    changeActivePlace = viewModel::activePlaceId::set,
-                    onPlaceClick = { place ->
-                        val intent = Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(
-                                if(isTripActive)
-                                    "google.navigation:q=${place.location.latitude},${place.location.longitude}&mode=w"
-                                else
-                                    place.googleMapsUri
-                            )
-                        )
-                        context.startActivity(intent)
-                    },
-                    onPlaceCameraClick = {
-                        if(isTripActive) {
-                            if (cameraPermissionGranted) {
-                                cameraManager.launch()
-                            } else {
-                                cameraPermissionHandler.requestPermission()
+        if(trip != null) {
+
+            ModalNavigationDrawer(
+                drawerState = drawerState,
+                drawerContent = {
+                    ModalDrawerSheet(
+                        modifier = Modifier.width(150.dp),
+                    ) {
+                        LazyColumn{
+                            items(trips){
+                                Card(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    onClick = { viewModel.setActiveTrip(it) }
+                                ) {
+                                    Text(
+                                        text = it.name,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        modifier = Modifier.padding(8.dp)
+                                    )
+                                }
                             }
                         }
+                    }
+                },
+            ) {
+                Scaffold(
+                    floatingActionButton = {
+                        ExtendedFloatingActionButton(
+                            text = { if (isTripActive) Text("Finish Trip") else Text("Start Trip") },
+                            icon = {
+                                if (isTripActive) Icon(
+                                    Icons.Default.Done,
+                                    contentDescription = "Finish Trip"
+                                ) else Icon(
+                                    Icons.Default.PlayArrow,
+                                    contentDescription = "Start trip"
+                                )
+                            },
+                            onClick = {
+                                if (isTripActive) showDialog = true else viewModel.startTrip()
+                            },
+                            expanded = isFloatingButtonExpanded.value,
+                        )
                     },
-                    images = if(isTripActive) images else emptyList(),
-                    isTripActive = isTripActive,
-                    scrollState = scrollState,
-                    padding = it
-                )
+                ) {
+                    HomeScreen(
+                        trip = trip!!,
+                        location = location,
+                        changeActivePlace = viewModel::activePlaceId::set,
+                        onPlaceClick = { place ->
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(
+                                    if (isTripActive)
+                                        "google.navigation:q=${place.location.latitude},${place.location.longitude}&mode=w"
+                                    else
+                                        place.googleMapsUri
+                                )
+                            )
+                            context.startActivity(intent)
+                        },
+                        onPlaceCameraClick = {
+                            if (isTripActive) {
+                                if (cameraPermissionGranted) {
+                                    cameraManager.launch()
+                                } else {
+                                    cameraPermissionHandler.requestPermission()
+                                }
+                            }
+                        },
+                        images = if (isTripActive) images else emptyList(),
+                        isTripActive = isTripActive,
+                        scrollState = scrollState,
+                        padding = it
+                    )
+                }
             }
         } else {
             EmptyHomeScreen(

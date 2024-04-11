@@ -26,8 +26,8 @@ internal class PlaceRepositoryImpl(
         }
     }
 
-    override suspend fun searchPlacesWithBias(query: String, lat: Double, lng: Double): Result<List<Place>> {
-        return remoteSource.searchPlacesWithBias(query, lat, lng).map {
+    override suspend fun searchPlacesWithBias(query: String, location: Location): Result<List<Place>> {
+        return remoteSource.searchPlacesWithBias(query, location).map {
             it.places?.map(PlaceDto::asDomain) ?: emptyList()
         }
     }
@@ -48,16 +48,6 @@ internal class PlaceRepositoryImpl(
         }
     }
 
-    override suspend fun saveDistance(fromPlaceId: String, toPlaceId: String, distance: Trip.Distance) {
-        localSource.insertOrReplaceDistance(DistanceEntity(fromPlaceId = fromPlaceId, toPlaceId = toPlaceId, distance = distance.distance, duration = distance.duration))
-    }
-
-    override suspend fun getDistance(fromPlaceId: String, toPlaceId: String): Trip.Distance? {
-        return localSource.getDistance(fromPlaceId, toPlaceId).let {
-            it?.let { it1 -> Trip.Distance(distance = it1.distance, duration = it.duration) }
-        }
-    }
-
     override suspend fun getDistanceMatrix(places: List<String>): Result<List<List<Trip.Distance>>> {
         return remoteSource.getDistanceMatrix(places).map {
             it.rows.map { row -> row.elements.map { column ->
@@ -69,21 +59,20 @@ internal class PlaceRepositoryImpl(
         }
     }
 
-    override suspend fun getPlacesById(id: String): List<Place> {
-        return localSource.getById(id).map { it.asDomain }
+    override suspend fun getPlacesById(placeId: String, tripId: Long): List<Place> {
+        return localSource.getById(placeId, tripId).map { it.asDomain }
     }
 
-    override suspend fun deleteById(id: String) {
-        localSource.deleteById(id)
+    override suspend fun deleteById(placeId: String, tripId: Long) {
+        localSource.deleteById(placeId, tripId)
+    }
+
+    override suspend fun deleteByTripId(tripId: Long) {
+        localSource.deleteByTripId(tripId)
     }
 
     override suspend fun insertOrReplace(places: List<Place>, tripId: Long) {
         localSource.insertOrReplace(places.map { it.asEntity(tripId) })
-    }
-
-
-    override suspend fun deleteAllPlaces() {
-        localSource.deleteAllPlaces()
     }
 
     override suspend fun getPlacesByTripID(tripID: Long): List<Place> {

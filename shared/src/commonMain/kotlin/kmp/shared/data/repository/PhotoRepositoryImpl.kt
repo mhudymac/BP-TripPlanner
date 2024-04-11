@@ -24,7 +24,7 @@ internal class PhotoRepositoryImpl(
         source.insertOrReplacePhotos(photo.asEntity)
     }
 
-    override suspend fun deletePhotoByPlace(placeId: String) {
-        source.deletePhotosByPlaceID(placeId)
+    override suspend fun deletePhotoByTripId(tripId: Long) {
+        source.deletePhotosByTripId(tripId)
     }
 }

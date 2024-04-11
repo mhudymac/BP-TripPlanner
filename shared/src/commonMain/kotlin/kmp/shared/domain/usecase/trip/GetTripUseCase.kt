@@ -5,6 +5,7 @@ import kmp.shared.base.Result
 import kmp.shared.base.usecase.UseCaseFlowResult
 import kmp.shared.domain.model.Place
 import kmp.shared.domain.model.Trip
+import kmp.shared.domain.repository.DistanceRepository
 import kmp.shared.domain.repository.PlaceRepository
 import kmp.shared.domain.repository.TripRepository
 import kotlinx.coroutines.flow.Flow
@@ -14,31 +15,25 @@ interface GetTripUseCase: UseCaseFlowResult<Long, Trip>
 
 internal class GetTripUseCaseImpl(
     private val tripRepository: TripRepository,
-    private val placeRepository: PlaceRepository,
+    private val distanceRepository: DistanceRepository
 ): GetTripUseCase {
-
-
 
     override suspend fun invoke(params: Long): Flow<Result<Trip>> {
 
         return tripRepository.getTripById(params).map { trip ->
             if (trip != null) {
-                val places = placeRepository.getPlacesByTripID(trip.id)
-                val itinerary: List<Place> = trip.order.mapNotNull {
-                    order -> places.firstOrNull { it.id == order } ?: return@map Result.Error(ErrorResult("Place not found"))
-                }
-                val distances = trip.order.indices.map { originIndex ->
-                    trip.order.indices.map { destinationIndex ->
-                        Pair(trip.order[originIndex], trip.order[destinationIndex]) to placeRepository.getDistance(trip.order[originIndex], trip.order[destinationIndex])
+
+                val distances = trip.order.indices.mapNotNull { originIndex ->
+                    trip.order.indices.mapNotNull { destinationIndex ->
+                        val pair = Pair(trip.order[originIndex], trip.order[destinationIndex])
+                        distanceRepository.getDistance(pair.first, pair.second)?.let { distance ->
+                            pair to distance
+                        }?: return@map Result.Error(ErrorResult("Distance not found"))
                     }
-                }.flatten().mapNotNull { (pair, distance) ->
-                    if(distance == null) return@map Result.Error(ErrorResult("Place not found"))
-                    distance.let { pair to it }
-                }.toMap()
+                }.flatten().toMap()
 
                 Result.Success(
                     trip.copy(
-                        itinerary = itinerary,
                         distances = distances
                     )
                 )

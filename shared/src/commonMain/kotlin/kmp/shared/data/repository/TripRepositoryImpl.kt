@@ -5,8 +5,12 @@ import kmp.shared.domain.model.Trip
 import kmp.shared.domain.repository.TripRepository
 import kmp.shared.extension.asDomain
 import kmp.shared.extension.asEntity
+import kmp.shared.extension.asPlace
+import kmp.shared.extension.asTrip
 import kmp.shared.infrastructure.local.TripEntity
+import kmp.shared.infrastructure.local.TripWithPlaces
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 internal class TripRepositoryImpl(
@@ -21,22 +25,17 @@ internal class TripRepositoryImpl(
         return source.getCompletedTrips().map { it.map(TripEntity::asDomain) }
     }
 
-    override suspend fun getTripByName(name: String): Flow<Trip?> {
-        return source.getTripByName(name).map { it?.asDomain }
-    }
-
     override suspend fun getTripById(id: Long): Flow<Trip?> {
-        return source.getTripById(id).map { it?.asDomain }
+        return source.getTripById(id).map { tripWithPlaces ->
+            tripWithPlaces.first().asTrip.copy(
+                itinerary = tripWithPlaces.mapNotNull { it.asPlace }
+            )
+        }
     }
 
     override suspend fun deleteTripById(id: Long) {
         source.deleteTripById(id)
     }
-
-    override suspend fun deleteTripByName(name: String) {
-        source.deleteTripByName(name)
-    }
-
     override suspend fun deleteAllTrips() {
         source.deleteAllTrips()
     }
@@ -45,8 +44,8 @@ internal class TripRepositoryImpl(
         source.updateOrInsert(trips.map(Trip::asEntity))
     }
 
-    override suspend fun getNearestTrip(): Flow<Trip?> {
-        return source.getNearestTrip().map { it?.asDomain }
+    override suspend fun getNearestTrip(): Flow<List<Trip>> {
+        return source.getNearestTrip().map { it.map(TripEntity::asDomain) }
     }
 
     override suspend fun insertWithoutId(trip: Trip): Long {

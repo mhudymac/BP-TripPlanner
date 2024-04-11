@@ -1,6 +1,7 @@
 package kmp.android.trip.ui.gallery
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Card
@@ -102,34 +105,49 @@ internal fun GalleryRoute(
     Scaffold(
         topBar = {
             TopBar(
-                title = trip?.name ?: "",
-                onBackArrow = navigateUp
+                title = trip?.name ?: "Gallery",
+                onBackArrow = navigateUp,
+                showBackArrow = !editing
             ) {
+                IconButton(onClick = { viewModel.delete() ;navigateUp() }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete icon"
+                    )
+                }
                 IconButton(onClick = { viewModel.editing = !editing}) {
                     Icon(
-                        imageVector = if(editing) Icons.Filled.Edit else Icons.Outlined.Edit,
+                        imageVector = if(editing) Icons.Filled.Done else Icons.Outlined.Edit,
                         contentDescription = "Edit icon"
                     )
                 }
             }
         }
     ) {
-        if(trip != null) {
-            GalleryScreen(
-                trip = trip!!,
-                photos = photos,
-                editing = editing,
-                onAddPhoto = { placeId ->
-                    viewModel.currentPlaceId = placeId
-                    if(cameraPermissionGranted) {
-                        galleryManager.launch()
-                    } else {
-                        Log.d("don't have permission", "-----------------------")
-                        galleryPermissionHandler.requestPermission()
-                    }
-                },
-                padding = it
-            )
+        if(loading){
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            if (trip != null) {
+                GalleryScreen(
+                    trip = trip!!,
+                    photos = photos,
+                    editing = editing,
+                    onAddPhoto = { placeId ->
+                        viewModel.currentPlaceId = placeId
+                        if (cameraPermissionGranted) {
+                            galleryManager.launch()
+                        } else {
+                            galleryPermissionHandler.requestPermission()
+                        }
+                    },
+                    padding = it
+                )
+            }
         }
     }
 }
@@ -172,7 +190,12 @@ private fun GalleryScreen(
                                     .size(170.dp)
                                     .clip(MaterialTheme.shapes.medium),
                                 loading = {
-                                    CircularProgressIndicator()
+                                    Box(
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
                                 }
                             )
                         }

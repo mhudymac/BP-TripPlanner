@@ -12,10 +12,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Reorder
 import androidx.compose.material.icons.rounded.Menu
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -34,14 +32,16 @@ import androidx.navigation.NavGraphBuilder
 import kmp.android.shared.core.util.get
 import kmp.android.shared.navigation.composableDestination
 import kmp.android.trip.navigation.TripGraph
+import kmp.android.trip.ui.create.ComponentWithLabel
 import kmp.android.trip.ui.create.CreateScreen
+import kmp.android.trip.ui.create.CreateViewModel
 import kmp.android.trip.ui.create.PlaceCard
 import kmp.android.trip.ui.detail.TopBar
 import kmp.shared.domain.model.Place
 import org.koin.androidx.compose.getViewModel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyColumnState
-import kmp.android.trip.ui.edit.EditViewModel.ViewState as State
+import kmp.android.trip.ui.create.CreateViewModel.ViewState as State
 
 fun NavController.navigateToEditScreen(tripId: Long, navigateUp: () -> Unit) {
     navigate(TripGraph.Edit(tripId))
@@ -63,11 +63,10 @@ internal fun NavGraphBuilder.editScreenRoute(navigateUp: () -> Unit) {
 internal fun EditRoute (
     tripId: Long,
     navigateUp: () -> Unit,
-    viewModel: EditViewModel = getViewModel()
+    viewModel: CreateViewModel = getViewModel()
 ) {
     val name by viewModel[State::name].collectAsState("")
     val date by viewModel[State::date].collectAsState(null)
-    val start by viewModel[State::start].collectAsState(null)
     val itinerary by viewModel[State::itinerary].collectAsState(emptyList())
     val reordering by viewModel[State::reordering].collectAsState(false)
     val saveSuccess by viewModel[State::saveSuccess].collectAsState(false)
@@ -82,55 +81,44 @@ internal fun EditRoute (
         }
     }
 
-    if(start != null && date != null && itinerary.isNotEmpty() && name.isNotEmpty()) {
-        Scaffold(
-            topBar = {
-                if (!reordering) {
-                    TopBar(
-                        title = "Edit Trip",
-                        onBackArrow = { viewModel.saveTrip() },
-                        actions = {
-                            IconButton(onClick = { viewModel.toggleReordering() }) {
-                                Icon(
-                                    imageVector = Icons.Default.Menu,
-                                    contentDescription = "Reorder"
-                                )
-                            }
-                        }
-                    )
-                }
-            },
-            floatingActionButton = {
-                if (reordering) {
-                    FloatingActionButton(onClick = { viewModel.toggleReordering() }) {
-                        Icon(imageVector = Icons.Default.Done, contentDescription = "Done")
+    Scaffold(
+        topBar = {
+            TopBar(
+                title = "Edit Trip",
+                onBackArrow = { viewModel.saveTrip() },
+                actions = {
+                    IconButton(onClick = { viewModel.toggleReordering() }) {
+                        Icon(
+                            imageVector = Icons.Default.Reorder,
+                            contentDescription = "Reorder"
+                        )
                     }
                 }
-            },
-        ) {
-            when (reordering) {
-                true -> {
-                    ReorderingScreen(
-                        start = start!!,
-                        itinerary = itinerary,
-                        updateTripOrder = viewModel::updateTripOrder,
-                        padding = it
-                    )
-                }
+            )
 
-                false -> {
-                    CreateScreen(
-                        name = name,
-                        date = date,
-                        start = start,
-                        itinerary = itinerary,
-                        loading = false,
-                        padding = it,
-                        onNameChange = viewModel::onNameChange,
-                        onDateSelected = viewModel::onDateSelected,
-                        onAddPlace = viewModel::onAddPlace
-                    )
-                }
+        },
+    ) {
+        when (reordering) {
+            true -> {
+                ReorderingScreen(
+                    itinerary = itinerary,
+                    updateTripOrder = viewModel::updateTripOrder,
+                    padding = it
+                )
+            }
+
+            false -> {
+                CreateScreen(
+                    name = name,
+                    date = date,
+                    itinerary = itinerary,
+                    loading = false,
+                    padding = it,
+                    onNameChange = viewModel::updateName,
+                    onDateSelected = viewModel::updateDate,
+                    onAddPlace = viewModel::addPlace,
+                    onRemovePlace = viewModel::removePlace,
+                )
             }
         }
     }
@@ -139,7 +127,6 @@ internal fun EditRoute (
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ReorderingScreen(
-    start: Place,
     itinerary: List<Place>,
     updateTripOrder: (List<Place>) -> Unit,
     padding: PaddingValues
@@ -162,38 +149,39 @@ fun ReorderingScreen(
             .padding(padding)
             .padding(horizontal = 8.dp)
     ) {
-        PlaceCard(start)
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            state = lazyListState,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(places, key = { it.id }) { place ->
-                ReorderableItem(reorderableLazyColumnState, key = place.id) {
-                    PlaceCard(
-                        place,
-                        trailingIcon = {
-                            Icon(
-                                modifier = Modifier
-                                    .draggableHandle(
-                                        onDragStarted = {
-                                            view.performHapticFeedback(
-                                                HapticFeedbackConstants.LONG_PRESS
-                                            )
-                                        },
-                                        onDragStopped = {
-                                            view.performHapticFeedback(
-                                                HapticFeedbackConstants.VIRTUAL_KEY
-                                            )
-                                        }
-                                    )
-                                    .size(32.dp)
-                                    .padding(end = 8.dp),
-                                imageVector = Icons.Rounded.Menu,
-                                contentDescription = "Reorder"
-                            )
-                        }
-                    )
+        ComponentWithLabel(label = "Itinerary") {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                state = lazyListState,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(places, key = { it.id }) { place ->
+                    ReorderableItem(reorderableLazyColumnState, key = place.id) {
+                        PlaceCard(
+                            place,
+                            trailingIcon = {
+                                Icon(
+                                    modifier = Modifier
+                                        .draggableHandle(
+                                            onDragStarted = {
+                                                view.performHapticFeedback(
+                                                    HapticFeedbackConstants.LONG_PRESS
+                                                )
+                                            },
+                                            onDragStopped = {
+                                                view.performHapticFeedback(
+                                                    HapticFeedbackConstants.VIRTUAL_KEY
+                                                )
+                                            }
+                                        )
+                                        .size(32.dp)
+                                        .padding(end = 8.dp),
+                                    imageVector = Icons.Rounded.Menu,
+                                    contentDescription = "Reorder"
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }

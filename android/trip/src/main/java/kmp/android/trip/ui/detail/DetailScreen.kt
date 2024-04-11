@@ -2,6 +2,7 @@ package kmp.android.trip.ui.detail
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,8 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -77,18 +81,29 @@ internal fun DetailRoute(
         snackbarHost = { SnackbarHost(snackHost) },
         topBar = {
             TopBar(
-                title = trip?.name?: "",
+                title = trip?.name?: "Detail",
                 onBackArrow = navigateUp
             ) {
+                IconButton(onClick = { viewModel.delete(); navigateUp() }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete icon"
+                    )
+                }
                 IconButton(onClick = { navigateToEdit(tripId) }) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = ""
+                        contentDescription = "Edit Icon"
                     )
                 }
             }
         },
     ) {
+        if(loading){
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        } else {
         trip?.let { trip ->
             DetailScreen(
                 trip = trip,
@@ -99,6 +114,7 @@ internal fun DetailRoute(
                 padding = it
             )
         }
+            }
     }
 }
 

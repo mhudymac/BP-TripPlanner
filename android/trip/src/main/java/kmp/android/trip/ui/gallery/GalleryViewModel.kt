@@ -9,9 +9,11 @@ import kmp.shared.base.Result
 import kmp.shared.domain.model.Photo
 import kmp.shared.domain.usecase.photos.GetPhotosByTripUseCase
 import kmp.shared.domain.usecase.photos.SavePhotoUseCase
+import kmp.shared.domain.usecase.trip.DeleteTripUseCase
 
 internal class GalleryViewModel(
     private val getTripUseCase: GetTripUseCase,
+    private val deleteTripUseCase: DeleteTripUseCase,
     private val getPhotosByTripUseCase: GetPhotosByTripUseCase,
     private val savePhotoUseCase: SavePhotoUseCase
 ) : BaseStateViewModel<GalleryViewModel.ViewState>(ViewState()) {
@@ -30,6 +32,15 @@ internal class GalleryViewModel(
                 }
           }
      }
+
+    fun delete(){
+        launch {
+            lastState().trip?.let {
+                deleteTripUseCase(it)
+            }
+        }
+
+    }
 
     private fun getPhotos(tripId: Long) {
         launch {

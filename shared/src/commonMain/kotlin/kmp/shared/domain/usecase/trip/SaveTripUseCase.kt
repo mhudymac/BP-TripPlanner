@@ -3,16 +3,17 @@ package kmp.shared.domain.usecase.trip
 import kmp.shared.base.Result
 import kmp.shared.base.usecase.UseCaseResult
 import kmp.shared.domain.model.Trip
+import kmp.shared.domain.repository.DistanceRepository
 import kmp.shared.domain.repository.PlaceRepository
 import kmp.shared.domain.repository.TripRepository
-import kmp.shared.domain.usecase.distances.GetDistancesUseCase
-import kmp.shared.system.Log
+import kmp.shared.domain.usecase.place.GetDistancesUseCase
 
 interface SaveTripUseCase : UseCaseResult<Pair<Trip,Boolean>, Unit>
 
 internal class SaveTripUseCaseImpl internal constructor(
     private val tripRepository: TripRepository,
     private val placeRepository: PlaceRepository,
+    private val distanceRepository: DistanceRepository,
     private val getDistancesUseCase: GetDistancesUseCase
 ) : SaveTripUseCase {
     override suspend fun invoke(params: Pair<Trip,Boolean>): Result<Unit> {
@@ -26,7 +27,7 @@ internal class SaveTripUseCaseImpl internal constructor(
                     placeRepository.insertOrReplace(params.first.itinerary, tripId = tripWithDistances.data.id)
 
                     for((pair, distance) in tripWithDistances.data.distances){
-                        placeRepository.saveDistance(pair.first, pair.second, distance)
+                        distanceRepository.saveDistance(pair.first, pair.second, distance, tripWithDistances.data.id)
                     }
                 }
             }

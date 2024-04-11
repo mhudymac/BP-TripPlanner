@@ -9,7 +9,7 @@ import kmp.shared.domain.model.Trip
 internal interface PlaceRepository {
     suspend fun searchPlaces(query: String): Result<List<Place>>
 
-    suspend fun searchPlacesWithBias(query: String, lat: Double, lng: Double): Result<List<Place>>
+    suspend fun searchPlacesWithBias(query: String, location: Location): Result<List<Place>>
 
     suspend fun getPhoto(photoName: String): Result<String>
 
@@ -19,17 +19,13 @@ internal interface PlaceRepository {
 
     suspend fun getDistanceMatrix(places: List<String>): Result<List<List<Trip.Distance>>>
 
-    suspend fun getPlacesById(id: String): List<Place>
+    suspend fun getPlacesById(placeId: String, tripId: Long): List<Place>
 
-    suspend fun deleteById(id: String)
+    suspend fun deleteById(placeId: String, tripId: Long)
+
+    suspend fun deleteByTripId(tripId: Long)
 
     suspend fun insertOrReplace(places: List<Place>, tripId: Long)
 
-    suspend fun deleteAllPlaces()
-
     suspend fun getPlacesByTripID(tripID: Long): List<Place>
-
-    suspend fun saveDistance(fromPlaceId: String, toPlaceId: String, distance: Trip.Distance)
-
-    suspend fun getDistance(fromPlaceId: String, toPlaceId: String): Trip.Distance?
 }

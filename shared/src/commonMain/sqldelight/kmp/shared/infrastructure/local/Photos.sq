@@ -21,8 +21,8 @@ SELECT * FROM PhotoEntity WHERE trip_id = :tripID;
 deletePhotoByUri:
 DELETE FROM PhotoEntity WHERE photo_uri = :photoUri;
 
-deletePhotosByPlace:
-DELETE FROM PhotoEntity WHERE place_id = :placeId;
+deletePhotosByTrip:
+DELETE FROM PhotoEntity WHERE trip_id = :tripId;
 
 deleteAll:
 DELETE FROM PhotoEntity;

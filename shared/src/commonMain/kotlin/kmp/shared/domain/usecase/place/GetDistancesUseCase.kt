@@ -1,4 +1,4 @@
-package kmp.shared.domain.usecase.distances
+package kmp.shared.domain.usecase.place
 
 import kmp.shared.base.Result
 import kmp.shared.base.usecase.UseCaseResult

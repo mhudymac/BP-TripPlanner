@@ -1,6 +1,7 @@
 package kmp.shared.data.source
 
 import kmp.shared.infrastructure.local.TripEntity
+import kmp.shared.infrastructure.local.TripWithPlaces
 import kotlinx.coroutines.flow.Flow
 
 internal interface TripLocalSource {
@@ -11,15 +12,10 @@ internal interface TripLocalSource {
     fun updateOrInsert(items: List<TripEntity>)
 
     fun deleteAllTrips()
-
-    fun getTripByName(name: String): Flow<TripEntity?>
-
-    fun deleteTripByName(name: String)
-
-    fun getNearestTrip(): Flow<TripEntity?>
+    fun getNearestTrip(): Flow<List<TripEntity>>
     fun insertWithoutId( item: TripEntity): Long
 
-    fun getTripById(id: Long): Flow<TripEntity?>
+    fun getTripById(id: Long): Flow<List<TripWithPlaces>>
 
     fun deleteTripById(id: Long)
 }
