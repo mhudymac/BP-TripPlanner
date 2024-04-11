@@ -12,11 +12,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Reorder
+import androidx.compose.material.icons.outlined.Reorder
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,7 +47,7 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyColumnState
 import kmp.android.trip.ui.create.CreateViewModel.ViewState as State
 
-fun NavController.navigateToEditScreen(tripId: Long, navigateUp: () -> Unit) {
+fun NavController.navigateToEditScreen(tripId: Long) {
     navigate(TripGraph.Edit(tripId))
 }
 
@@ -85,15 +89,22 @@ internal fun EditRoute (
         topBar = {
             TopBar(
                 title = "Edit Trip",
-                onBackArrow = { viewModel.saveTrip() },
+                onBackArrow = {},
+                showBackArrow = false,
                 actions = {
-                    IconButton(onClick = { viewModel.toggleReordering() }) {
+                    Switch(checked = reordering, onCheckedChange = {viewModel.toggleReordering()}, thumbContent = {
                         Icon(
-                            imageVector = Icons.Default.Reorder,
-                            contentDescription = "Reorder"
+                            imageVector = Icons.Outlined.Reorder,
+                            contentDescription = "Reorder",
+                        )
+                    })
+                    IconButton(onClick = { viewModel.saveTrip() }) {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = "Save"
                         )
                     }
-                }
+                },
             )
 
         },

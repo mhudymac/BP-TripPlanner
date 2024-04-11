@@ -27,7 +27,7 @@ internal class TripRepositoryImpl(
 
     override suspend fun getTripById(id: Long): Flow<Trip?> {
         return source.getTripById(id).map { tripWithPlaces ->
-            tripWithPlaces.first().asTrip.copy(
+            tripWithPlaces.firstOrNull()?.asTrip?.copy(
                 itinerary = tripWithPlaces.mapNotNull { it.asPlace }
             )
         }

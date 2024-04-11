@@ -26,7 +26,7 @@ fun NavGraphBuilder.tripNavGraph(
             navigateToCreateScreen = { navHostController.navigateToCreateScreen() },
             navigateToDetailScreen = { tripId -> navHostController.navigateToDetailScreen(tripId) },
             navigateToGalleryScreen = { tripId -> navHostController.navigateToGalleryScreen(tripId) },
-            navigateToEditScreen = { tripId -> navHostController.navigateToEditScreen( tripId, navigateUp = { navHostController.navigateUp() })}
+            navigateToEditScreen = { tripId -> navHostController.navigateToEditScreen( tripId)}
         )
         createScreenRoute { navHostController.navigateUp() }
         detailScreenRoute(
@@ -34,7 +34,6 @@ fun NavGraphBuilder.tripNavGraph(
             navigateToEdit = { tripId ->
                 navHostController.navigateToEditScreen(
                     tripId = tripId,
-                    navigateUp = { navHostController.navigateUp() }
                 )
             }
         )

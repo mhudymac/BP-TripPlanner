@@ -27,9 +27,12 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -52,6 +55,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import kmp.android.shared.core.ui.util.rememberCameraManager
@@ -66,11 +70,14 @@ import kmp.android.trip.ui.create.PlaceCard
 import kmp.shared.domain.model.Location
 import kmp.shared.domain.model.Place
 import kmp.shared.domain.model.Trip
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.daysUntil
+import kotlinx.datetime.toJavaLocalDate
 import org.koin.androidx.compose.getViewModel
+import java.time.format.DateTimeFormatter
 import kotlin.reflect.KFunction1
 import kmp.android.trip.ui.home.HomeViewModel.ViewState as State
 
@@ -110,6 +117,7 @@ internal fun HomeScreenRoute(
     }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
     val isFloatingButtonExpanded = remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset <= 0 } }
 
@@ -130,6 +138,11 @@ internal fun HomeScreenRoute(
             cameraManager.launch()
     }
 
+    LaunchedEffect(trips) {
+        if(trips.size > 1)
+            coroutineScope.launch { drawerState.open() }
+    }
+
     var showDialog by remember { mutableStateOf(false) }
 
     if(showDialog) {
@@ -148,27 +161,20 @@ internal fun HomeScreenRoute(
         }
     } else {
         if(trip != null) {
-
             ModalNavigationDrawer(
                 drawerState = drawerState,
                 drawerContent = {
                     ModalDrawerSheet(
-                        modifier = Modifier.width(150.dp),
+                        modifier = Modifier.width(200.dp),
+                        drawerContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
                     ) {
-                        LazyColumn{
-                            items(trips){
-                                Card(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    onClick = { viewModel.setActiveTrip(it) }
-                                ) {
-                                    Text(
-                                        text = it.name,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        modifier = Modifier.padding(8.dp)
-                                    )
-                                }
+                        TripOnThisDayList(
+                            trips = trips,
+                            onTripClick = {
+                                viewModel.setActiveTrip(it)
+                                coroutineScope.launch { drawerState.close() }
                             }
-                        }
+                        )
                     }
                 },
             ) {
@@ -228,6 +234,49 @@ internal fun HomeScreenRoute(
             EmptyHomeScreen(
                 navigateToCreateScreen
             )
+        }
+    }
+}
+
+@Composable
+private fun TripOnThisDayList(
+    trips: List<Trip>,
+    onTripClick: (Trip) -> Unit,
+) {
+    Column(
+        modifier = Modifier.padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Card(
+            colors = CardDefaults.cardColors().copy( containerColor = MaterialTheme.colorScheme.surface ),
+        ) {
+            Text(
+                text = "Trips on ${
+                    trips.first().date.toJavaLocalDate().format(
+                        DateTimeFormatter.ofPattern("dd.MM.yyyy")
+                    )
+                }:",
+                style = MaterialTheme.typography.headlineSmall,
+                textAlign = TextAlign.Center,
+            )
+        }
+        HorizontalDivider( modifier = Modifier.padding (bottom = 8.dp))
+        LazyColumn {
+            items(trips) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { onTripClick(it) },
+                ) {
+                    Text(
+                        text = it.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
         }
     }
 }

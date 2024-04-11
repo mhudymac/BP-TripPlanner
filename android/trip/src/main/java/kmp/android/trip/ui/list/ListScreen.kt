@@ -1,15 +1,15 @@
 package kmp.android.trip.ui.list
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -18,10 +18,13 @@ import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -30,13 +33,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraphBuilder
 import kmp.android.shared.core.util.get
 import kmp.android.shared.navigation.composableDestination
@@ -134,9 +137,19 @@ internal fun TripListScreenRoute(
                     navigateToDetailScreen,
                     loadingUpcoming
                 ) {
-                    Button(onClick = { viewModel.startTrip(it) }) {
-                        Icon(Icons.Default.PlayCircle, "Start Icon")
-                        Text("Start trip")
+                    OutlinedButton(
+                        onClick = { viewModel.startTrip(it) },
+                        shape = MaterialTheme.shapes.medium,
+                        border = null,
+                        contentPadding = PaddingValues(4.dp)
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(Icons.Default.PlayCircle, "Start Icon")
+                            Text("Start trip", style = MaterialTheme.typography.labelMedium)
+                        }
                     }
                 }
                 1 -> TripList(
@@ -144,9 +157,19 @@ internal fun TripListScreenRoute(
                     navigateToGalleryScreen,
                     loadingCompleted,
                 ) {
-                    Button(onClick = { viewModel.repeatTrip(it) }) {
-                        Icon(Icons.Default.Repeat, "Repeat Icon")
-                        Text("Repeat trip")
+                    OutlinedButton(
+                        onClick = { viewModel.repeatTrip(it)},
+                        shape = MaterialTheme.shapes.medium,
+                        border = null,
+                        contentPadding = PaddingValues(4.dp)
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(Icons.Default.Repeat, "Repeat Icon")
+                            Text("Repeat trip", style = MaterialTheme.typography.labelMedium)
+                        }
                     }
                 }
             }
@@ -155,7 +178,12 @@ internal fun TripListScreenRoute(
 }
 
 @Composable
-private fun TripList(trips: List<Trip>, onTripClick: (Long) -> Unit, loading: Boolean, content: @Composable (Trip) -> Unit = {}) {
+private fun TripList(
+    trips: List<Trip>,
+    onTripClick: (Long) -> Unit,
+    loading: Boolean,
+    button: @Composable (Trip) -> Unit = {}
+) {
     if(loading){
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -165,11 +193,11 @@ private fun TripList(trips: List<Trip>, onTripClick: (Long) -> Unit, loading: Bo
         }
     } else {
         LazyColumn(
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 8.dp)
         ) {
             items(trips) { trip ->
                 TripCard(trip = trip, onClick = { onTripClick(trip.id) }) {
-                    content(trip)
+                    button(trip)
                 }
             }
         }
@@ -179,39 +207,39 @@ private fun TripList(trips: List<Trip>, onTripClick: (Long) -> Unit, loading: Bo
 @Composable
 internal fun TripCard(
     trip: Trip,
-    onClick: () -> Unit = {},
-    content: @Composable () -> Unit = {}
+    onClick: () -> Unit,
+    button: @Composable () -> Unit = {}
 ) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp)
             .padding(vertical = 8.dp),
         shape = MaterialTheme.shapes.large,
         onClick = onClick,
     ) {
         Row(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(8.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .weight(1f)
                     .padding(8.dp),
-                verticalArrangement = Arrangement.Top,
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start,
             ) {
                 Text(
                     text = trip.name,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Medium,
                 )
                 Text(
                     text = trip.date.toJavaLocalDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
-                content()
             }
+            button()
         }
     }
 }
