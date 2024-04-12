@@ -25,6 +25,8 @@ import kmp.shared.domain.usecase.photos.GetPhotosByTripUseCase
 import kmp.shared.domain.usecase.photos.GetPhotosByTripUseCaseImpl
 import kmp.shared.domain.usecase.photos.GetPhotosUseCase
 import kmp.shared.domain.usecase.photos.GetPhotosUseCaseImpl
+import kmp.shared.domain.usecase.photos.RemovePhotoByUriUseCase
+import kmp.shared.domain.usecase.photos.RemovePhotoByUriUseCaseImpl
 import kmp.shared.domain.usecase.photos.SavePhotoUseCase
 import kmp.shared.domain.usecase.photos.SavePhotoUseCaseImpl
 import kmp.shared.domain.usecase.place.DeletePlaceByIdUseCase
@@ -125,6 +127,7 @@ private val commonModule = module {
     factory<SavePhotoUseCase> { SavePhotoUseCaseImpl(get()) }
     factory<GetPhotosUseCase> { GetPhotosUseCaseImpl(get()) }
     factory<GetPhotosByTripUseCase> { GetPhotosByTripUseCaseImpl(get()) }
+    factory<RemovePhotoByUriUseCase> { RemovePhotoByUriUseCaseImpl(get()) }
 
     // Repositories
     single<PlaceRepository> { PlaceRepositoryImpl(get(), get()) }

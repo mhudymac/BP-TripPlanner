@@ -29,6 +29,6 @@ internal class PhotoRepositoryImpl(
     }
 
     override suspend fun deletePhotoByUri(uri: String) {
-        TODO("Not yet implemented")
+        source.deletePhotoByUri(uri)
     }
 }

@@ -1,5 +1,7 @@
 package kmp.android.trip.ui.gallery
 
+import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
@@ -31,10 +34,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -145,6 +151,9 @@ internal fun GalleryRoute(
                             galleryPermissionHandler.requestPermission()
                         }
                     },
+                    onRemovePhoto = { photoUri ->
+                        viewModel.deletePhoto(photoUri)
+                    },
                     padding = it
                 )
             } else {
@@ -165,63 +174,113 @@ private fun GalleryScreen(
     photos: List<Photo>,
     editing: Boolean,
     onAddPhoto: (String) -> Unit,
+    onRemovePhoto: (String) -> Unit,
     padding: PaddingValues  = PaddingValues(0.dp)
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .padding(padding),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
-        items(trip.itinerary) { place ->
-            val placePhotos = photos.filter { it.placeId == place.id }
 
-            if(placePhotos.isNotEmpty() || editing) {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = place.name,
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
-                    )
-                    LazyRow(
-                        contentPadding = PaddingValues(start = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    var showFullScreen by remember { mutableStateOf(false) }
+    var selectedImage by remember { mutableStateOf("") }
+
+    if(showFullScreen){
+        Box(modifier = Modifier.fillMaxSize()) {
+            SubcomposeAsyncImage(
+                model = selectedImage,
+                contentDescription = "Full Screen Image",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.fillMaxSize(),
+                loading = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
                     ) {
-                        items(placePhotos) { photo ->
-                            SubcomposeAsyncImage(
-                                model = photo.photoUri,
-                                contentDescription = "Place Image",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .size(170.dp)
-                                    .clip(MaterialTheme.shapes.medium),
-                                loading = {
-                                    Box(
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        CircularProgressIndicator()
+                        CircularProgressIndicator()
+                    }
+                }
+            )
+            IconButton(
+                onClick = { showFullScreen = false },
+                modifier = Modifier.align(Alignment.TopEnd)
+            ) {
+                Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
+            }
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .padding(padding),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            items(trip.itinerary) { place ->
+                val placePhotos = photos.filter { it.placeId == place.id }
+
+                if (placePhotos.isNotEmpty() || editing) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = place.name,
+                            style = MaterialTheme.typography.headlineSmall,
+                            modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
+                        )
+                        LazyRow(
+                            contentPadding = PaddingValues(start = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            items(placePhotos) { photo ->
+                                Box(
+                                    modifier = Modifier.size(170.dp)
+                                ) {
+                                    SubcomposeAsyncImage(
+                                        model = photo.photoUri,
+                                        contentDescription = "Place Image",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .size(170.dp)
+                                            .clip(MaterialTheme.shapes.medium)
+                                            .clickable {
+                                                selectedImage = photo.photoUri
+                                                showFullScreen = true
+                                            },
+                                        loading = {
+                                            Box(
+                                                modifier = Modifier.fillMaxSize(),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                CircularProgressIndicator()
+                                            }
+                                        }
+                                    )
+                                    if (editing) {
+                                        IconButton(
+                                            onClick = { onRemovePhoto(photo.photoUri) },
+                                            modifier = Modifier.align(Alignment.TopEnd)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Delete,
+                                                contentDescription = "Delete icon",
+                                                tint = Color.Red
+                                            )
+                                        }
                                     }
                                 }
-                            )
-                        }
-                        if (editing) {
-                            item {
-                                Card(
-                                    onClick = { onAddPhoto(place.id) },
-                                    modifier = Modifier.size(170.dp),
-                                ) {
-                                    Row(
-                                        modifier = Modifier.fillMaxSize(),
-                                        horizontalArrangement = Arrangement.Center,
-                                        verticalAlignment = Alignment.CenterVertically
+                            }
+                            if (editing) {
+                                item {
+                                    Card(
+                                        onClick = { onAddPhoto(place.id) },
+                                        modifier = Modifier.size(170.dp),
                                     ) {
-                                        Icon(
-                                            imageVector = Icons.Filled.Add,
-                                            contentDescription = "Add Photo",
-                                            modifier = Modifier.size(100.dp)
-                                        )
+                                        Row(
+                                            modifier = Modifier.fillMaxSize(),
+                                            horizontalArrangement = Arrangement.Center,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Filled.Add,
+                                                contentDescription = "Add Photo",
+                                                modifier = Modifier.size(100.dp)
+                                            )
+                                        }
                                     }
                                 }
                             }

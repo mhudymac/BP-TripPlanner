@@ -8,6 +8,7 @@ import kmp.shared.domain.usecase.trip.GetTripUseCase
 import kmp.shared.base.Result
 import kmp.shared.domain.model.Photo
 import kmp.shared.domain.usecase.photos.GetPhotosByTripUseCase
+import kmp.shared.domain.usecase.photos.RemovePhotoByUriUseCase
 import kmp.shared.domain.usecase.photos.SavePhotoUseCase
 import kmp.shared.domain.usecase.trip.DeleteTripUseCase
 
@@ -15,7 +16,8 @@ internal class GalleryViewModel(
     private val getTripUseCase: GetTripUseCase,
     private val deleteTripUseCase: DeleteTripUseCase,
     private val getPhotosByTripUseCase: GetPhotosByTripUseCase,
-    private val savePhotoUseCase: SavePhotoUseCase
+    private val savePhotoUseCase: SavePhotoUseCase,
+    private val removePhotoByUriUseCase: RemovePhotoByUriUseCase
 ) : BaseStateViewModel<GalleryViewModel.ViewState>(ViewState()) {
 
     var currentPlaceId: String = ""
@@ -39,7 +41,12 @@ internal class GalleryViewModel(
                 deleteTripUseCase(it)
             }
         }
+    }
 
+    fun deletePhoto(photoUri: String){
+        launch {
+            removePhotoByUriUseCase(photoUri.toString())
+        }
     }
 
     private fun getPhotos(tripId: Long) {
