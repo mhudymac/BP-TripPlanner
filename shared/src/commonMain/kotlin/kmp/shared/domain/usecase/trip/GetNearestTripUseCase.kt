@@ -33,22 +33,22 @@ internal class GetNearestTripUseCaseImpl(
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun invoke(): Flow<List<Trip>> {
         return getLocationFlowUseCase().flatMapLatest { location ->
-            tripRepository.getNearestTrip().flatMapLatest { trips ->
+            tripRepository.getNearestTrip().flatMapLatest inner@ { trips ->
                 if (trips.isEmpty()) {
-                    return@flatMapLatest flowOf(emptyList())
+                    return@inner flowOf(emptyList())
                 }
 
                 trips.mapNotNull { trip ->
                     getTripUseCase(trip.id).first().getOrNull()
-                }.let { trips ->
-                    combine(trips.map { trip ->
+                }.let { trips1 ->
+                    combine(trips1.map { trip ->
                         getPhotosByTripUseCase(trip.id).map { photos ->
                             trip.photos = photos
                             trip
                         }
                     }) { it.toList() }
-                }.map { trips ->
-                    trips.onEach { trip ->
+                }.map { trips2 ->
+                    trips2.onEach { trip ->
                         val closestPlace = trip.itinerary.minByOrNull { place ->
                             distanceBetween(location, place.location)
                         }

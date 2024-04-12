@@ -349,26 +349,6 @@ internal fun OutlinedTextFieldLikeButton(
     }
 }
 
-@Composable
-private fun CardDialog(
-    onDismiss: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(0.80f)
-                .fillMaxHeight(0.75f),
-            shape = MaterialTheme.shapes.large,
-
-            ) {
-            content()
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
