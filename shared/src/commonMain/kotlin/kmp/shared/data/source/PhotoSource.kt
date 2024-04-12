@@ -11,4 +11,6 @@ internal interface PhotoLocalSource {
     suspend fun insertOrReplacePhotos(photo: PhotoEntity)
 
     suspend fun deletePhotosByTripId(tripId: Long)
+
+    suspend fun deletePhotoByUri(uri: String)
 }

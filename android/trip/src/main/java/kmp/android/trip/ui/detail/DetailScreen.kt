@@ -39,7 +39,10 @@ import kmp.android.trip.ui.home.ActivePlaceTripList
 import kmp.android.trip.ui.home.InactiveTripPlaceList
 import kmp.shared.domain.model.Place
 import kmp.shared.domain.model.Trip
+import kotlinx.datetime.toJavaLocalDate
 import org.koin.androidx.compose.getViewModel
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import kmp.android.trip.ui.detail.DetailViewModel.ViewState as State
 
 fun NavController.navigateToDetailScreen(tripId: Long) {
@@ -130,7 +133,7 @@ internal fun DetailScreen(
             .padding(padding)
             .padding(horizontal = 8.dp)
     ) {
-        Text(text = "${trip.date.dayOfMonth}.${trip.date.monthNumber}.${trip.date.year} ")
+        Text(text =  trip.date.toJavaLocalDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)))
 
         InactiveTripPlaceList(trip = trip, onPlaceClick = onPlaceClick, scrollState = rememberLazyListState())
     }

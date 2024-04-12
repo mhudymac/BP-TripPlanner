@@ -54,7 +54,8 @@ internal fun NavGraphBuilder.tripListRoute(
     navigateToCreateScreen: () -> Unit,
     navigateToDetailScreen: (Long) -> Unit,
     navigateToGalleryScreen: (Long) -> Unit,
-    navigateToEditScreen: (Long) -> Unit
+    navigateToEditScreen: (Long) -> Unit,
+    navigateToHomeScreen: () -> Unit
 ) {
     composableDestination(
         destination = TripGraph.List
@@ -63,7 +64,8 @@ internal fun NavGraphBuilder.tripListRoute(
             navigateToCreateScreen,
             navigateToDetailScreen,
             navigateToGalleryScreen,
-            navigateToEditScreen
+            navigateToEditScreen,
+            navigateToHomeScreen
         )
     }
 }
@@ -74,6 +76,7 @@ internal fun TripListScreenRoute(
     navigateToDetailScreen: (Long) -> Unit,
     navigateToGalleryScreen: (Long) -> Unit,
     navigateToEditScreen: (Long) -> Unit,
+    navigateToHomeScreen: () -> Unit,
     viewModel: ListViewModel = getViewModel()
 ) {
     val loadingUpcoming by viewModel[State::loadingUpcoming].collectAsState(false)
@@ -138,7 +141,7 @@ internal fun TripListScreenRoute(
                     loadingUpcoming
                 ) {
                     OutlinedButton(
-                        onClick = { viewModel.startTrip(it) },
+                        onClick = { viewModel.startTrip(it); navigateToHomeScreen() },
                         shape = MaterialTheme.shapes.medium,
                         border = null,
                         contentPadding = PaddingValues(4.dp)
@@ -158,7 +161,7 @@ internal fun TripListScreenRoute(
                     loadingCompleted,
                 ) {
                     OutlinedButton(
-                        onClick = { viewModel.repeatTrip(it)},
+                        onClick = { viewModel.repeatTrip(it) },
                         shape = MaterialTheme.shapes.medium,
                         border = null,
                         contentPadding = PaddingValues(4.dp)

@@ -27,4 +27,10 @@ class PhotoLocalSourceImpl(
     override suspend fun deletePhotosByTripId(tripId: Long) {
         queries.deletePhotosByTrip(tripId)
     }
+
+    override suspend fun deletePhotoByUri(uri: String) {
+        queries.deletePhotoByUri(uri)
+    }
+
+
 }

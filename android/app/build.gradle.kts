@@ -10,6 +10,4 @@ dependencies {
     implementation(project(":shared"))
     implementation(project(":android:shared"))
     implementation(project(":android:trip"))
-    implementation(project(":android:login"))
-    implementation(project(":android:login"))
 }

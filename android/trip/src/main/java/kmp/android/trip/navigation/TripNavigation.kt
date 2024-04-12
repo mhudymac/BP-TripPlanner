@@ -11,6 +11,7 @@ import kmp.android.trip.ui.edit.editScreenRoute
 import kmp.android.trip.ui.edit.navigateToEditScreen
 import kmp.android.trip.ui.gallery.galleryScreenRoute
 import kmp.android.trip.ui.gallery.navigateToGalleryScreen
+import kmp.android.trip.ui.home.navigateToHomeScreen
 import kmp.android.trip.ui.home.tripHomeRoute
 import kmp.android.trip.ui.list.tripListRoute
 
@@ -26,7 +27,8 @@ fun NavGraphBuilder.tripNavGraph(
             navigateToCreateScreen = { navHostController.navigateToCreateScreen() },
             navigateToDetailScreen = { tripId -> navHostController.navigateToDetailScreen(tripId) },
             navigateToGalleryScreen = { tripId -> navHostController.navigateToGalleryScreen(tripId) },
-            navigateToEditScreen = { tripId -> navHostController.navigateToEditScreen( tripId)}
+            navigateToEditScreen = { tripId -> navHostController.navigateToEditScreen( tripId)},
+            navigateToHomeScreen = { navHostController.navigateToHomeScreen()}
         )
         createScreenRoute { navHostController.navigateUp() }
         detailScreenRoute(

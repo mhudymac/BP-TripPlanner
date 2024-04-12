@@ -27,4 +27,8 @@ internal class PhotoRepositoryImpl(
     override suspend fun deletePhotoByTripId(tripId: Long) {
         source.deletePhotosByTripId(tripId)
     }
+
+    override suspend fun deletePhotoByUri(uri: String) {
+        TODO("Not yet implemented")
+    }
 }

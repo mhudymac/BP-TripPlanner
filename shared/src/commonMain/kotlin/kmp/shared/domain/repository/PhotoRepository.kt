@@ -12,4 +12,6 @@ internal interface PhotoRepository {
     suspend fun insertPhoto(photo: Photo)
 
     suspend fun deletePhotoByTripId(tripId: Long)
+
+    suspend fun deletePhotoByUri(uri: String)
 }

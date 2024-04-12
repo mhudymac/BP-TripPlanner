@@ -132,7 +132,7 @@ internal fun GalleryRoute(
                 CircularProgressIndicator()
             }
         } else {
-            if (trip != null) {
+            if (trip != null && photos.isNotEmpty()) {
                 GalleryScreen(
                     trip = trip!!,
                     photos = photos,
@@ -147,6 +147,13 @@ internal fun GalleryRoute(
                     },
                     padding = it
                 )
+            } else {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No saved images with this trip", style = MaterialTheme.typography.bodyLarge)
+                }
             }
         }
     }

@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -29,7 +28,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -48,7 +46,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +54,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import kmp.android.shared.core.ui.util.rememberCameraManager
 import kmp.android.shared.core.ui.util.rememberCameraPermissionRequest
@@ -78,9 +76,12 @@ import kotlinx.datetime.daysUntil
 import kotlinx.datetime.toJavaLocalDate
 import org.koin.androidx.compose.getViewModel
 import java.time.format.DateTimeFormatter
-import kotlin.reflect.KFunction1
+import java.time.format.FormatStyle
 import kmp.android.trip.ui.home.HomeViewModel.ViewState as State
 
+fun NavController.navigateToHomeScreen() {
+    navigate(TripGraph.Home())
+}
 
 internal fun NavGraphBuilder.tripHomeRoute(
     navigateToCreateScreen: () -> Unit
@@ -251,11 +252,7 @@ private fun TripOnThisDayList(
             colors = CardDefaults.cardColors().copy( containerColor = MaterialTheme.colorScheme.surface ),
         ) {
             Text(
-                text = "Trips on ${
-                    trips.first().date.toJavaLocalDate().format(
-                        DateTimeFormatter.ofPattern("dd.MM.yyyy")
-                    )
-                }:",
+                text = "Trips on ${trips.first().date.toJavaLocalDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))}:",
                 style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center,
             )
