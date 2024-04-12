@@ -6,26 +6,25 @@ import kmp.shared.domain.model.Trip
 import kmp.shared.domain.repository.DistanceRepository
 import kmp.shared.domain.repository.PlaceRepository
 import kmp.shared.domain.repository.TripRepository
-import kmp.shared.domain.usecase.place.GetDistancesUseCase
+import kmp.shared.domain.usecase.place.SaveDistancesUseCase
+import kmp.shared.system.Log
 
 interface SaveTripWithoutIdUseCase : UseCaseResult<Trip, Unit>
 
 internal class SaveTripWithoutIdUseCaseImpl internal constructor(
     private val tripRepository: TripRepository,
     private val placeRepository: PlaceRepository,
-    private val distanceRepository: DistanceRepository,
-    private val getDistancesUseCase: GetDistancesUseCase
+    private val saveDistancesUseCase: SaveDistancesUseCase
 ) : SaveTripWithoutIdUseCase {
     override suspend fun invoke(params: Trip): Result<Unit> {
-        when (val tripWithDistances = getDistancesUseCase(params)) {
-            is Result.Error -> return Result.Error(tripWithDistances.error)
+        when(val tripId = tripRepository.insertWithoutId( params )){
             is Result.Success -> {
-                val tripId = tripRepository.insertWithoutId( tripWithDistances.data )
-                tripWithDistances.data.itinerary.let { placeRepository.insertOrReplace(it, tripId = tripId) }
-                for((pair, distance) in tripWithDistances.data.distances){
-                    distanceRepository.saveDistance(pair.first, pair.second, distance, tripId)
-                }
+                params.itinerary.let { placeRepository.insertOrReplace(it, tripId = tripId.data) }
+
+                val distances = saveDistancesUseCase(params.copy(id = tripId.data))
+                if(distances is Result.Error) return Result.Error(distances.error)
             }
+            is Result.Error -> return Result.Error(tripId.error)
         }
         return Result.Success(Unit)
     }

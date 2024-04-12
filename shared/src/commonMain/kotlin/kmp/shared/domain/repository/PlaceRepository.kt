@@ -21,11 +21,11 @@ internal interface PlaceRepository {
 
     suspend fun getPlacesById(placeId: String, tripId: Long): List<Place>
 
-    suspend fun deleteById(placeId: String, tripId: Long)
+    suspend fun deleteById(placeId: String, tripId: Long): Result<Unit>
 
-    suspend fun deleteByTripId(tripId: Long)
+    suspend fun deleteByTripId(tripId: Long): Result<Unit>
 
-    suspend fun insertOrReplace(places: List<Place>, tripId: Long)
+    suspend fun insertOrReplace(places: List<Place>, tripId: Long): Result<Unit>
 
     suspend fun getPlacesByTripID(tripID: Long): List<Place>
 }

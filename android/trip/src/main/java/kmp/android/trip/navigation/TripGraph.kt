@@ -4,6 +4,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import kmp.android.shared.navigation.Destination
 import kmp.android.shared.navigation.FeatureGraph
+import kmp.shared.domain.model.Location
 
 object TripGraph : FeatureGraph(parent = null) {
     override val path: String = "trips"

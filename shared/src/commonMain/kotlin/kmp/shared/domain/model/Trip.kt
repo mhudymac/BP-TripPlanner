@@ -9,6 +9,8 @@ data class Trip(
     val itinerary: List<Place>,
     val order: List<String>,
     val completed: Boolean = false,
+    var activePlace: String = "",
+    var photos: List<Photo> = emptyList(),
     val distances: Map<Pair<String, String>, Distance> = emptyMap(),
 ){
     data class Distance(

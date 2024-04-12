@@ -1,5 +1,6 @@
 package kmp.shared.data.repository
 
+import kmp.shared.base.Result
 import kmp.shared.data.source.PhotoLocalSource
 import kmp.shared.domain.model.Photo
 import kmp.shared.domain.repository.PhotoRepository
@@ -20,15 +21,15 @@ internal class PhotoRepositoryImpl(
         return source.getPhotosByTrip(tripId).map { it.map(PhotoEntity::asDomain) }
     }
 
-    override suspend fun insertPhoto(photo: Photo) {
-        source.insertOrReplacePhotos(photo.asEntity)
+    override suspend fun insertPhoto(photo: Photo): Result<Unit> {
+        return source.insertOrReplacePhotos(photo.asEntity)
     }
 
-    override suspend fun deletePhotoByTripId(tripId: Long) {
-        source.deletePhotosByTripId(tripId)
+    override suspend fun deletePhotoByTripId(tripId: Long): Result<Unit> {
+        return source.deletePhotosByTripId(tripId)
     }
 
-    override suspend fun deletePhotoByUri(uri: String) {
-        source.deletePhotoByUri(uri)
+    override suspend fun deletePhotoByUri(uri: String): Result<Unit> {
+        return source.deletePhotoByUri(uri)
     }
 }

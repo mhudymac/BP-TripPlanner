@@ -1,4 +1,4 @@
-package kmp.shared.infrastructure.remote.geocoding
+package kmp.shared.infrastructure.remote.maps
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine

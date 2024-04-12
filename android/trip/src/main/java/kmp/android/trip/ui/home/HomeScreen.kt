@@ -102,7 +102,6 @@ internal fun HomeScreenRoute(
     val trip by viewModel[State::trip].collectAsState(initial = null)
     val trips by viewModel[State::trips].collectAsState(initial = emptyList())
     val error by viewModel[State::error].collectAsState(initial = "")
-    val images by viewModel[State::images].collectAsState(initial = emptyList())
     val isTripActive by viewModel[State::isActive].collectAsState(initial = false)
 
     var location by remember { mutableStateOf<Location?>(null) }
@@ -125,11 +124,7 @@ internal fun HomeScreenRoute(
     val context = LocalContext.current
 
     LaunchedEffect(locationPermissionGranted) {
-        if (locationPermissionGranted) {
-            viewModel.getLocationFlow().collect {
-                location = it
-            }
-        } else {
+        if (!locationPermissionGranted) {
             locationPermissionHandler.requestPermission()
         }
     }
@@ -137,11 +132,6 @@ internal fun HomeScreenRoute(
     LaunchedEffect(cameraPermissionGranted) {
         if (cameraPermissionGranted)
             cameraManager.launch()
-    }
-
-    LaunchedEffect(trips) {
-        if(trips.size > 1)
-            coroutineScope.launch { drawerState.open() }
     }
 
     var showDialog by remember { mutableStateOf(false) }
@@ -201,8 +191,6 @@ internal fun HomeScreenRoute(
                 ) {
                     HomeScreen(
                         trip = trip!!,
-                        location = location,
-                        changeActivePlace = viewModel::activePlaceId::set,
                         onPlaceClick = { place ->
                             val intent = Intent(
                                 Intent.ACTION_VIEW,
@@ -224,7 +212,6 @@ internal fun HomeScreenRoute(
                                 }
                             }
                         },
-                        images = if (isTripActive) images else emptyList(),
                         isTripActive = isTripActive,
                         scrollState = scrollState,
                         padding = it
@@ -327,11 +314,8 @@ private fun EmptyHomeScreen(
 @Composable
 private fun HomeScreen(
     trip: Trip,
-    location: Location?,
-    changeActivePlace: (String) -> Unit,
     onPlaceClick: (Place) -> Unit,
     onPlaceCameraClick: () -> Unit,
-    images: List<Uri>,
     isTripActive: Boolean,
     scrollState: LazyListState,
     padding: PaddingValues = PaddingValues(0.dp),
@@ -366,11 +350,8 @@ private fun HomeScreen(
         if(isTripActive) {
             ActivePlaceTripList(
                 trip = trip,
-                location = location,
-                changeActivePlace = changeActivePlace,
                 onPlaceClick = onPlaceClick,
                 onPlaceCameraClick = onPlaceCameraClick,
-                images = images,
                 scrollState = scrollState
             )
         } else {
@@ -387,16 +368,10 @@ private fun HomeScreen(
 @Composable
 internal fun ActivePlaceTripList(
     trip: Trip,
-    location: Location?,
-    changeActivePlace: (String) -> Unit,
     onPlaceClick: (Place) -> Unit,
     onPlaceCameraClick: () -> Unit,
-    images: List<Uri>,
     scrollState: LazyListState,
 ){
-    var lastActivePlaceId by remember{ mutableStateOf("") }
-    var activePlaceId by remember{ mutableStateOf("") }
-
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         state = scrollState,
@@ -407,21 +382,12 @@ internal fun ActivePlaceTripList(
             val currentPlace = places.first()
             val nextPlace = places.getOrNull(1)
 
-            val distance = location?.distanceTo(currentPlace.location)
-            if(distance != null && distance < 200) {
-                activePlaceId = currentPlace.id
-                changeActivePlace(currentPlace.id)
-            } else if(activePlaceId == currentPlace.id) {
-                lastActivePlaceId = activePlaceId
-                activePlaceId = ""
-            }
-
-            if(activePlaceId == currentPlace.id) {
+            if(trip.activePlace == currentPlace.id) {
                 ActivePlaceCard(
                     place = currentPlace,
                     onClick = { onPlaceClick(currentPlace) },
                     onCameraClick = onPlaceCameraClick,
-                    images = images,
+                    images = trip.photos.filter { it.placeId == currentPlace.id }.map { Uri.parse(it.photoUri) }
                 )
             } else {
                 PlaceCard(
@@ -433,7 +399,7 @@ internal fun ActivePlaceTripList(
             if(nextPlace != null) {
                 val duration = trip.distances[currentPlace.id to nextPlace.id]?.duration?.div(60)
                 if(duration != null) {
-                    DistanceCard(distanceInMinutes = duration, isActive = currentPlace.id == lastActivePlaceId && activePlaceId == "")
+                    DistanceCard(distanceInMinutes = duration, isActive = false)
                 }
             }
         }

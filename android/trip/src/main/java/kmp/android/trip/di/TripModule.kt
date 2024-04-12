@@ -14,6 +14,6 @@ val tripModule = module {
     viewModel { CreateViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { ListViewModel(get(), get(), get(),get()) }
     viewModel { DetailViewModel(get(), get()) }
-    viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get()) }
     viewModel { GalleryViewModel(get(), get(), get(), get(), get()) }
 }

@@ -19,6 +19,8 @@ class SearchViewModel(
 
     var location: Location? = null
     fun search(query: String) {
+        require(query.isNotBlank())
+
         launch {
             loading = true
             when (val res = location?.let { searchPlacesWithBias(Pair(query, it)) }?: searchPlaces(query)) {
@@ -49,6 +51,10 @@ class SearchViewModel(
         )}
     }
 
+    fun toggleSearch(bool: Boolean){
+        update { copy(isSearching = bool) }
+    }
+
     fun changeQuery(query: String) {
         update { copy(searchedQuery = query) }
     }
@@ -61,6 +67,7 @@ class SearchViewModel(
         val searchedQuery: String = "",
         val places: List<Place> = emptyList(),
         val isLoading: Boolean = false,
+        val isSearching: Boolean = true,
         val error: String? = null,
     ) : State
 }

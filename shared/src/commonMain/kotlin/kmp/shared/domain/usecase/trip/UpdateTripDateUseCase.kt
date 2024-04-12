@@ -13,8 +13,6 @@ internal class UpdateOnlyTripDetailsUseCaseImpl(
 ): UpdateTripDateUseCase {
 
     override suspend fun invoke(params: Trip): Result<Unit> {
-        tripRepository.insertOrReplace(listOf(params))
-
-        return Result.Success(Unit)
+        return tripRepository.insertOrReplace(listOf(params))
     }
 }

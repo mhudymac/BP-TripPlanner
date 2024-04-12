@@ -63,16 +63,16 @@ internal class PlaceRepositoryImpl(
         return localSource.getById(placeId, tripId).map { it.asDomain }
     }
 
-    override suspend fun deleteById(placeId: String, tripId: Long) {
-        localSource.deleteById(placeId, tripId)
+    override suspend fun deleteById(placeId: String, tripId: Long): Result<Unit> {
+        return localSource.deleteById(placeId, tripId)
     }
 
-    override suspend fun deleteByTripId(tripId: Long) {
-        localSource.deleteByTripId(tripId)
+    override suspend fun deleteByTripId(tripId: Long): Result<Unit> {
+        return localSource.deleteByTripId(tripId)
     }
 
-    override suspend fun insertOrReplace(places: List<Place>, tripId: Long) {
-        localSource.insertOrReplace(places.map { it.asEntity(tripId) })
+    override suspend fun insertOrReplace(places: List<Place>, tripId: Long): Result<Unit> {
+        return localSource.insertOrReplace(places.map { it.asEntity(tripId) })
     }
 
     override suspend fun getPlacesByTripID(tripID: Long): List<Place> {

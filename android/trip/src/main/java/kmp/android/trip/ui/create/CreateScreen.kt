@@ -23,12 +23,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -42,6 +39,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -174,6 +172,7 @@ private fun CreateRoute(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CreateScreen(
     name: String,
@@ -187,6 +186,10 @@ internal fun CreateScreen(
     onRemovePlace: (Place) -> Unit,
     onCurrentLocationClick: () -> Unit = {},
 ) {
+    val focusManager = LocalFocusManager.current
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showSearchBottomSheet by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -195,11 +198,6 @@ internal fun CreateScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start,
     ) {
-
-        val focusManager = LocalFocusManager.current
-        var showDatePicker by remember { mutableStateOf(false) }
-        var showSearchDialog by remember { mutableStateOf(false) }
-
         TripNameComponent(name = name, onNameChange = onNameChange, focusManager = focusManager)
 
         TripDateComponent(date = date, onShowDatePicker = { showDatePicker = true })
@@ -217,7 +215,7 @@ internal fun CreateScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         EmptyPlaceCard(
-                            onClick = { showSearchDialog = true },
+                            onClick = { showSearchBottomSheet = true },
                             modifier = Modifier
                                 .weight(0.5f)
                         ){
@@ -245,7 +243,7 @@ internal fun CreateScreen(
                     reverseLayout = true,
                 ) {
                     item {
-                        AddPlaceCard(onClick = { showSearchDialog = true })
+                        AddPlaceCard(onClick = { showSearchBottomSheet = true })
                     }
                     items(itinerary.reversed()) { place ->
                         PlaceCard(
@@ -256,26 +254,26 @@ internal fun CreateScreen(
                 }
             }
         }
+    }
 
-        if(showDatePicker) {
-            SelectDate(
-                onDateSelected = { onDateSelected(it) },
-                onDismiss = { showDatePicker = false},
+    if(showDatePicker) {
+        SelectDate(
+            onDateSelected = { onDateSelected(it) },
+            onDismiss = { showDatePicker = false},
+        )
+    }
+
+    if (showSearchBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showSearchBottomSheet = false }
+        ) {
+            SearchScreen(
+                onPlaceSelected = { selectedPlace ->
+                    onAddPlace(selectedPlace)
+                    showSearchBottomSheet = false
+                },
+                location = itinerary.firstOrNull()?.location,
             )
-        }
-
-        if (showSearchDialog) {
-            CardDialog(
-                onDismiss = { showSearchDialog = false }
-            ) {
-                SearchScreen(
-                    onPlaceSelected = { selectedPlace ->
-                        onAddPlace(selectedPlace)
-                        showSearchDialog = false
-                    },
-                    location = itinerary.firstOrNull()?.location,
-                )
-            }
         }
     }
 }

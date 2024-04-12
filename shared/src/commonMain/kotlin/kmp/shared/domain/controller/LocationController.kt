@@ -7,4 +7,6 @@ internal expect class LocationController {
     val locationFlow: Flow<Location>
     var lastLocation: Location?
         private set
+
+    suspend fun getCurrentLocation(): Location?
 }

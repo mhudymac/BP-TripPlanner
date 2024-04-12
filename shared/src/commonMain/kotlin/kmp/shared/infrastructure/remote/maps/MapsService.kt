@@ -1,4 +1,4 @@
-package kmp.shared.infrastructure.remote.geocoding
+package kmp.shared.infrastructure.remote.maps
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -6,7 +6,6 @@ import io.ktor.client.request.get
 import kmp.shared.base.Result
 import kmp.shared.base.error.util.runCatchingCommonNetworkExceptions
 import kmp.shared.domain.model.Location
-import kmp.shared.domain.model.Place
 import kmp.shared.infrastructure.model.DistanceMatrixDto
 import kmp.shared.infrastructure.model.GeocodingDto
 

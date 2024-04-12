@@ -13,7 +13,6 @@ internal class RemoveTripUseCaseImpl internal constructor(
     private val tripRepository: TripRepository
 ) : RemoveTripUseCase {
     override suspend fun invoke(params: Long): Result<Unit> {
-        tripRepository.deleteTripById(params)
-        return Result.Success(Unit)
+        return tripRepository.deleteTripById(params)
     }
 }

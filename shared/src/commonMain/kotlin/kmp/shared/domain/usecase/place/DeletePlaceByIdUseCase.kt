@@ -10,7 +10,6 @@ internal class DeletePlaceByIdUseCaseImpl(
     private val placeRepository: PlaceRepository
 ) : DeletePlaceByIdUseCase {
     override suspend fun invoke(params: Pair<String, Long>): Result<Unit> {
-        placeRepository.deleteById(params.first, params.second)
-        return Result.Success(Unit)
+        return placeRepository.deleteById(params.first, params.second)
     }
 }

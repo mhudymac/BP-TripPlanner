@@ -1,5 +1,7 @@
 package kmp.shared.infrastructure.source
 
+import kmp.shared.base.ErrorResult
+import kmp.shared.base.Result
 import kmp.shared.data.source.PlaceLocalSource
 import kmp.shared.infrastructure.local.DistanceEntity
 import kmp.shared.infrastructure.local.PlaceEntity
@@ -12,16 +14,34 @@ internal class PlaceLocalSourceImpl(
         return queries.getById(placeId, tripId).executeAsList()
     }
 
-    override suspend fun insertOrReplace(places: List<PlaceEntity>) {
-        places.forEach { queries.insertOrReplace(it) }
+    override suspend fun insertOrReplace(places: List<PlaceEntity>): Result<Unit> {
+        places.forEach {
+            try {
+                queries.insertOrReplace(it)
+            }
+            catch (e: Exception) {
+                return Result.Error(ErrorResult(message = e.message, throwable = e))
+            }
+        }
+        return Result.Success(Unit)
     }
 
-    override suspend fun deleteById(placeId: String, tripId: Long) {
-        queries.deleteById(placeId, tripId)
+    override suspend fun deleteById(placeId: String, tripId: Long): Result<Unit> {
+        try {
+            queries.deleteById(placeId, tripId)
+        } catch (e: Exception) {
+            return Result.Error(ErrorResult(message = e.message, throwable = e))
+        }
+        return Result.Success(Unit)
     }
 
-    override suspend fun deleteByTripId(tripId: Long) {
-        queries.deleteByTripId(tripId)
+    override suspend fun deleteByTripId(tripId: Long): Result<Unit> {
+        try {
+            queries.deleteByTripId(tripId)
+        } catch (e: Exception) {
+            return Result.Error(ErrorResult(message = e.message, throwable = e))
+        }
+        return Result.Success(Unit)
     }
 
     override suspend fun getPlacesByTripID(tripID: Long): List<PlaceEntity> {

@@ -2,6 +2,8 @@ package kmp.shared.infrastructure.source
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import kmp.shared.base.ErrorResult
+import kmp.shared.base.Result
 import kmp.shared.data.source.TripLocalSource
 import kmp.shared.infrastructure.local.TripEntity
 import kmp.shared.infrastructure.local.TripQueries
@@ -24,12 +26,25 @@ class TripLocalSourceImpl(
         return tripQueries.getCompletedTrips().asFlow().mapToList(Dispatchers.IO)
     }
 
-    override fun updateOrInsert(items: List<TripEntity>) {
-        items.forEach { tripQueries.insertOrReplace(it) }
+    override fun updateOrInsert(items: List<TripEntity>): Result<Unit> {
+        items.forEach {
+            try {
+                tripQueries.insertOrReplace(it)
+            } catch (e: Exception) {
+                return Result.Error(ErrorResult(message = e.message, throwable = e))
+            }
+        }
+        return Result.Success(Unit)
     }
 
-    override fun deleteAllTrips() {
-        tripQueries.deleteAll()
+    override fun deleteAllTrips(): Result<Unit> {
+        try {
+            tripQueries.deleteAll()
+        } catch (e: Exception) {
+            return Result.Error(ErrorResult(message = e.message, throwable = e))
+        }
+
+        return Result.Success(Unit)
     }
 
     override fun getNearestTrip(): Flow<List<TripEntity>> {
@@ -37,16 +52,26 @@ class TripLocalSourceImpl(
         return tripQueries.getNearestTrip(date).asFlow().mapToList(Dispatchers.IO)
     }
 
-    override fun insertWithoutId(item: TripEntity): Long {
-        tripQueries.insertWithoutId(item.name, item.date, item.place_order, item.completed)
-        return tripQueries.lastInsertedId().executeAsOne()
+    override fun insertWithoutId(item: TripEntity): Result<Long> {
+        try {
+            tripQueries.insertWithoutId(item.name, item.date, item.place_order, item.completed)
+        } catch (e: Exception) {
+            return Result.Error(ErrorResult(message = e.message, throwable = e))
+        }
+
+        return Result.Success(tripQueries.lastInsertedId().executeAsOne())
     }
 
     override fun getTripById(id: Long): Flow<List<TripWithPlaces>> {
         return tripQueries.tripWithPlaces(id).asFlow().mapToList(Dispatchers.IO)
     }
 
-    override fun deleteTripById(id: Long) {
-        tripQueries.deleteById(id)
+    override fun deleteTripById(id: Long): Result<Unit> {
+        try {
+            tripQueries.deleteById(id)
+        } catch (e: Exception) {
+            return Result.Error(ErrorResult(message = e.message, throwable = e))
+        }
+        return Result.Success(Unit)
     }
 }

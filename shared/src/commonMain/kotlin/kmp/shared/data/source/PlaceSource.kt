@@ -28,11 +28,11 @@ internal interface PlaceRemoteSource {
 internal interface PlaceLocalSource {
     suspend fun getById(placeId: String, tripId: Long): List<PlaceEntity>
 
-    suspend fun insertOrReplace(places: List<PlaceEntity>)
+    suspend fun insertOrReplace(places: List<PlaceEntity>): Result<Unit>
 
-    suspend fun deleteById(placeId: String, tripId: Long)
+    suspend fun deleteById(placeId: String, tripId: Long): Result<Unit>
 
-    suspend fun deleteByTripId(tripId: Long)
+    suspend fun deleteByTripId(tripId: Long): Result<Unit>
 
     suspend fun getPlacesByTripID(tripID: Long): List<PlaceEntity>
 }
