@@ -48,15 +48,32 @@ internal class PlaceRepositoryImpl(
         }
     }
 
-    override suspend fun getDistanceMatrix(places: List<String>): Result<List<List<Trip.Distance>>> {
-        return remoteSource.getDistanceMatrix(places).map {
-            it.rows.map { row -> row.elements.map { column ->
-                Trip.Distance(
-                    distance = column.distance.value,
-                    duration = column.duration.value
-                )
-            } }
+    override suspend fun getDistanceMatrix(places: List<String>): Result<List<Triple<String, String, Trip.Distance>>> {
+        val maxPlaces = 10
+        val results = mutableListOf<Triple<String, String, Trip.Distance>>()
+
+        for (i in places.indices step maxPlaces) {
+            val origins = places.subList(i, minOf(i + maxPlaces, places.size))
+            for (j in places.indices step maxPlaces) {
+                val destinations = places.subList(j, minOf(j + maxPlaces, places.size))
+                val result = remoteSource.getDistanceMatrix(origins = origins, destinations = destinations).map {
+                    it.rows.mapIndexed { rowIndex, row ->
+                        row.elements.mapIndexed { columnIndex, column ->
+                            Triple(origins[rowIndex], destinations[columnIndex], Trip.Distance(
+                                distance = column.distance.value,
+                                duration = column.duration.value
+                            ))
+                        }
+                    }.flatten()
+                }
+                when (result) {
+                    is Result.Success -> results.addAll(result.data)
+                    is Result.Error -> return Result.Error(result.error)
+                }
+            }
         }
+
+        return Result.Success(results)
     }
 
     override suspend fun getPlacesById(placeId: String, tripId: Long): List<Place> {

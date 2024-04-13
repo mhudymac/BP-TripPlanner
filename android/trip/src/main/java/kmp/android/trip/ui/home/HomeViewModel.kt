@@ -1,20 +1,18 @@
 package kmp.android.trip.ui.home
 
-import android.net.Uri
 import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
 import kmp.shared.domain.model.Photo
 import kmp.shared.domain.model.Trip
 import kmp.shared.domain.usecase.photos.SavePhotoUseCase
 import kmp.shared.domain.usecase.trip.GetNearestTripUseCase
-import kmp.shared.domain.usecase.trip.UpdateTripDateUseCase
-import kmp.shared.system.Log
+import kmp.shared.domain.usecase.trip.UpdateOnlyTripDetailsUseCase
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
 
 class HomeViewModel(
     private val getNearestTripUseCase: GetNearestTripUseCase,
-    private val updateTripDateUseCase: UpdateTripDateUseCase,
+    private val updateOnlyTripDetailsUseCase: UpdateOnlyTripDetailsUseCase,
     private val savePhotosUseCase: SavePhotoUseCase
 ) : BaseStateViewModel<HomeViewModel.ViewState>(ViewState()) {
 
@@ -39,7 +37,7 @@ class HomeViewModel(
         if(trip != null) {
             update { copy(trip = trip, isActive = true) }
             launch {
-                updateTripDateUseCase(trip)
+                updateOnlyTripDetailsUseCase(trip)
             }
         }
     }
@@ -48,7 +46,7 @@ class HomeViewModel(
         val trip = lastState().trip?.copy(completed = true)
         if(trip != null) {
             launch {
-                updateTripDateUseCase(trip)
+                updateOnlyTripDetailsUseCase(trip)
             }
         }
     }

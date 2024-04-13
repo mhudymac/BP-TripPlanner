@@ -1,24 +1,20 @@
 package kmp.android.trip.ui.search
 
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,18 +24,32 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import coil.compose.AsyncImage
+import kmp.android.home.R
 import kmp.android.shared.core.util.get
-import kmp.android.shared.navigation.bottomSheetDestination
-import kmp.android.shared.navigation.dialogDestination
-import kmp.android.trip.navigation.TripGraph
-import kmp.android.trip.ui.create.PlaceCard
+import kmp.android.trip.ui.components.FullScreenLoading
+import kmp.android.trip.ui.components.PlaceCard
 import kmp.shared.domain.model.Location
 import kmp.shared.domain.model.Place
+import okhttp3.Request
 import org.koin.androidx.compose.getViewModel
 import kmp.android.trip.ui.search.SearchViewModel.ViewState as State
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomBarSearch(
+    onDismissRequest: () -> Unit,
+    onPlaceSelected: (Place) -> Unit,
+    location: Location? = null
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest
+    ) {
+        SearchScreen(
+            onPlaceSelected = onPlaceSelected,
+            location = location,
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,12 +100,7 @@ internal fun SearchScreen(
             }
         )
         if (loading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                CircularProgressIndicator()
-            }
+            FullScreenLoading("Searching for places...")
         } else {
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,

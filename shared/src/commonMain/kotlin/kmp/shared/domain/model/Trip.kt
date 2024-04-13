@@ -4,10 +4,10 @@ import kotlinx.datetime.LocalDate
 
 data class Trip(
     val id: Long,
-    val name: String,
+    val name: String = "",
     val date: LocalDate,
     val itinerary: List<Place>,
-    val order: List<String>,
+    val order: List<String> = emptyList(),
     val completed: Boolean = false,
     var activePlace: String = "",
     var photos: List<Photo> = emptyList(),

@@ -5,13 +5,14 @@ import constants.WINDOWS_PROJECT_HOME_FOLDER_ARG
 import extensions.getStringProperty
 import org.gradle.api.Project
 import org.gradle.internal.os.OperatingSystem
+import java.io.File
 
 fun Project.configureTwine() {
     tasks.register("generateTwine") {
         Twine(
             project = project,
             twineFolderArg = TWINE_HOME_FOLDER_ARG,
-            twineFileName = "devstack/strings.txt",
+            twineFileName = "kmp/strings.txt",
             moduleName = "android/shared",
             windowsProjectFolderArg = WINDOWS_PROJECT_HOME_FOLDER_ARG,
         ).generate()
@@ -44,7 +45,7 @@ private class Twine(
             val twinePath = project.findProperty("twinePath")
             if (twinePath != null) {
                 environment["PATH"] =
-                    "${environment["PATH"]}${System.getProperty("path.separator")}$twinePath"
+                    "${environment["PATH"]}${File.pathSeparator}$twinePath"
             }
 
             if (OperatingSystem.current().isMacOsX || OperatingSystem.current().isLinux) {

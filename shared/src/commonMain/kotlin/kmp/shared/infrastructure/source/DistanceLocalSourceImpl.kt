@@ -31,4 +31,8 @@ class DistanceLocalSourceImpl(
         }
         return Result.Success(Unit)
     }
+
+    override suspend fun getDistancesByTripId(tripId: Long): Result<List<DistanceEntity>> {
+        return queries.getByTripId(tripId).executeAsList().let { if(it.isNotEmpty()) Result.Success(it) else Result.Error(ErrorResult(message = "Distances not found"))}
+    }
 }

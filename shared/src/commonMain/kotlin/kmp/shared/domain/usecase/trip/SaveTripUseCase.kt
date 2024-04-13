@@ -20,7 +20,8 @@ internal class SaveTripUseCaseImpl internal constructor(
                 is Result.Error -> return Result.Error(tripWithDistances.error)
                 is Result.Success -> {
                     tripRepository.insertOrReplace( listOf(params.first) )
-                    placeRepository.insertOrReplace(params.first.itinerary, tripId = params.first.id)
+                    placeRepository.deleteByTripId(tripId = params.first.id)
+                    placeRepository.insertOrReplace(places = params.first.itinerary, tripId = params.first.id)
                 }
             }
         } else {

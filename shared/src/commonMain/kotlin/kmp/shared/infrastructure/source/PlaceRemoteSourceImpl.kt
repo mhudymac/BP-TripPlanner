@@ -57,9 +57,9 @@ internal class PlaceRemoteSourceImpl(
         }
     }
 
-    override suspend fun getDistanceMatrix(places: List<String>): Result<DistanceMatrixDto> {
+    override suspend fun getDistanceMatrix(origins: List<String>, destinations: List<String>): Result<DistanceMatrixDto> {
         return try{
-            mapsService.getDistanceMatrix(places)
+            mapsService.getDistanceMatrix(origins = origins, destinations = destinations)
         }catch (e: Exception) {
             return Result.Error(ErrorResult(message = e.message, throwable = e))
         }

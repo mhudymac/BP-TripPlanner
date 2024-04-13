@@ -1,6 +1,5 @@
 package kmp.android.trip.ui.gallery
 
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,11 +15,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircleOutline
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,19 +44,17 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
-import kmp.android.shared.core.ui.util.rememberCameraManager
-import kmp.android.shared.core.ui.util.rememberCameraPermissionRequest
 import kmp.android.shared.core.ui.util.rememberGalleryManager
 import kmp.android.shared.core.ui.util.rememberGalleryPermissionRequest
 import kmp.android.shared.core.util.get
 import kmp.android.shared.navigation.composableDestination
 import kmp.android.trip.navigation.TripGraph
-import kmp.android.trip.ui.detail.TopBar
+import kmp.android.trip.ui.components.DeleteDialog
+import kmp.android.trip.ui.components.FullScreenLoading
+import kmp.android.trip.ui.components.TopBar
 import kmp.shared.domain.model.Photo
 import kmp.shared.domain.model.Trip
-import kmp.shared.system.Log
 import org.koin.androidx.compose.getViewModel
 import kmp.android.trip.ui.gallery.GalleryViewModel.ViewState as State
 
@@ -90,6 +85,7 @@ internal fun GalleryRoute(
     val loading by viewModel[State::loading].collectAsState(false)
     val photos by viewModel[State::photos].collectAsState(emptyList())
     val editing by viewModel[State::editing].collectAsState(false)
+    val error by viewModel[State::error].collectAsState("")
 
     val galleryPermissionHandler = rememberGalleryPermissionRequest()
     val cameraPermissionGranted by galleryPermissionHandler.granted
@@ -100,6 +96,21 @@ internal fun GalleryRoute(
 
     var showFullScreen by remember { mutableStateOf(false) }
     var selectedImage by remember { mutableStateOf("") }
+
+    var showDialog by remember { mutableStateOf(false) }
+
+    if(showDialog) {
+        DeleteDialog(
+            onConfirm = { viewModel.delete(); navigateUp() },
+            onDismiss = { showDialog = false },
+        )
+    }
+
+    LaunchedEffect(error) {
+        if(error.isNotEmpty()) {
+            snackHost.showSnackbar(error)
+        }
+    }
 
     LaunchedEffect(tripId) {
         viewModel.getAll(tripId)
@@ -124,7 +135,7 @@ internal fun GalleryRoute(
                 onBackArrow = navigateUp,
                 showBackArrow = !editing
             ) {
-                IconButton(onClick = { viewModel.delete() ;navigateUp() }) {
+                IconButton(onClick = { showDialog = true }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Delete icon"
@@ -137,7 +148,8 @@ internal fun GalleryRoute(
                     )
                 }
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(snackHost) }
     ) { paddingValues ->
         if(loading){
             Box(
@@ -229,13 +241,8 @@ private fun GalleryScreen(
                                             onImageClick(photo.photoUri)
                                         },
                                     loading = {
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            CircularProgressIndicator()
-                                        }
-                                    }
+                                        FullScreenLoading()
+                                    },
                                 )
                                 if (editing) {
                                     IconButton(
@@ -292,14 +299,12 @@ internal fun CardDialogImage(
             model = imageUrl,
             contentDescription = "Full Screen Image",
             contentScale = ContentScale.Fit,
-            modifier = Modifier.fillMaxWidth(0.9f).clip(MaterialTheme.shapes.medium),
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .clip(MaterialTheme.shapes.medium),
             loading = {
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
+                FullScreenLoading()
+            },
         )
     }
 }

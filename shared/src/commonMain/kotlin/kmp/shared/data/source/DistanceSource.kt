@@ -9,4 +9,6 @@ internal interface DistanceLocalSource {
     suspend fun getDistance(fromPlaceId: String, toPlaceId: String): Result<DistanceEntity>
 
     suspend fun deleteDistancesByTripId(tripId: Long): Result<Unit>
+
+    suspend fun getDistancesByTripId(tripId: Long): Result<List<DistanceEntity>>
 }

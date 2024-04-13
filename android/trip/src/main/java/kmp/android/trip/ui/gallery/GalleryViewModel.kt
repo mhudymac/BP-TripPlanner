@@ -45,7 +45,7 @@ internal class GalleryViewModel(
 
     fun deletePhoto(photoUri: String){
         launch {
-            removePhotoByUriUseCase(photoUri.toString())
+            removePhotoByUriUseCase(photoUri)
         }
     }
 

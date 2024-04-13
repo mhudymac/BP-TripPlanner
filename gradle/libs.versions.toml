@@ -2,11 +2,11 @@
 sdk-min = "26"
 sdk-target = "34"
 sdk-compile = "34"
-kotlin = "1.9.22"
-gradlePlugin = "8.2.2"
-coroutines = "1.7.3"
+kotlin = "1.9.23"
+gradlePlugin = "8.3.2"
+coroutines = "1.8.0"
 dateTime = "0.4.0"
-atomicFu = "0.22.0"
+atomicFu = "0.23.1"
 koin = "3.5.0"
 koinCompose = "3.5.0"
 androidXCore = "1.12.0"
@@ -14,7 +14,7 @@ lifecycle = "2.7.0"
 paging = "3.2.1"
 pagingCompose = "3.2.1"
 compose = "1.6.5"
-composeCompilerExtensionVersion = "1.5.10"
+composeCompilerExtensionVersion = "1.5.11"
 activity = "1.8.2"
 navigation = "2.7.7"
 constraintLayout = "1.0.1"
@@ -22,7 +22,7 @@ accompanist = "0.30.0"
 ktor = "2.3.5"
 kermit = "2.0.1"
 settings = "1.1.0"
-sqlDelight = "2.0.1"
+sqlDelight = "2.0.2"
 googlePlayServices = "21.2.0"
 ktLintRules = "0.3.0"
 kotlinxImmutableCollections = "0.3.6"
@@ -44,7 +44,7 @@ kotlinx-immutableCollections = { module = "org.jetbrains.kotlinx:kotlinx-collect
 androidTools-gradle = { module = "com.android.tools.build:gradle", version.ref = "gradlePlugin" }
 # Coroutines
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-coroutines-android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
+coroutines-android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
 # Date time
 dateTime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "dateTime" }
 # AtomicFu

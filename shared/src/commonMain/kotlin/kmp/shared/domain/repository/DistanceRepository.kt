@@ -8,5 +8,7 @@ internal interface DistanceRepository {
 
     suspend fun getDistance(fromPlaceId: String, toPlaceId: String): Result<Trip.Distance>
 
+    suspend fun getDistancesByTripId(tripId: Long): Result<Map<Pair<String, String>, Trip.Distance>>
+
     suspend fun deleteDistancesByTripId(tripId: Long): Result<Unit>
 }

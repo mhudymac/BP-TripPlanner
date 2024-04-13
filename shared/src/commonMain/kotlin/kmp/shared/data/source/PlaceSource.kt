@@ -22,7 +22,7 @@ internal interface PlaceRemoteSource {
 
     suspend fun getPlaceByLocation(location: Location): Result<GeocodingDto>
 
-    suspend fun getDistanceMatrix(places: List<String>): Result<DistanceMatrixDto>
+    suspend fun getDistanceMatrix(origins: List<String>, destinations: List<String>): Result<DistanceMatrixDto>
 }
 
 internal interface PlaceLocalSource {

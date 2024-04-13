@@ -20,6 +20,22 @@ internal class DistanceRepositoryImpl(
         }
     }
 
+    override suspend fun getDistancesByTripId(tripId: Long): Result<Map<Pair<String, String>, Trip.Distance>> {
+        return localSource.getDistancesByTripId(tripId).let {
+            it.map { distanceEntities ->
+                distanceEntities.associate { distanceEntity ->
+                    Pair(
+                        distanceEntity.fromPlaceId to distanceEntity.toPlaceId,
+                        Trip.Distance(
+                            distance = distanceEntity.distance,
+                            duration = distanceEntity.duration,
+                        ),
+                    )
+                }
+            }
+        }
+    }
+
     override suspend fun deleteDistancesByTripId(tripId: Long): Result<Unit> {
         return localSource.deleteDistancesByTripId(tripId)
     }

@@ -4,13 +4,12 @@ import kmp.shared.base.Result
 import kmp.shared.base.usecase.UseCaseResult
 import kmp.shared.domain.model.Trip
 import kmp.shared.domain.repository.TripRepository
-import kmp.shared.system.Log
 
-interface UpdateTripDateUseCase: UseCaseResult<Trip, Unit>
+interface UpdateOnlyTripDetailsUseCase: UseCaseResult<Trip, Unit>
 
-internal class UpdateOnlyTripDetailsUseCaseImpl(
+internal class UpdateOnlyOnlyTripDetailsUseCaseImpl(
     private val tripRepository: TripRepository
-): UpdateTripDateUseCase {
+): UpdateOnlyTripDetailsUseCase {
 
     override suspend fun invoke(params: Trip): Result<Unit> {
         return tripRepository.insertOrReplace(listOf(params))

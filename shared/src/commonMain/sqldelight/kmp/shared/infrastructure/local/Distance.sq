@@ -17,3 +17,6 @@ SELECT * FROM DistanceEntity WHERE (fromPlaceId = :fromPlace AND toPlaceId = :to
 
 deleteByTripId:
 DELETE FROM DistanceEntity WHERE trip_id = ?;
+
+getByTripId:
+SELECT * FROM DistanceEntity WHERE trip_id = ?;

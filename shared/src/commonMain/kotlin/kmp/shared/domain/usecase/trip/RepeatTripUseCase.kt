@@ -1,5 +1,6 @@
 package kmp.shared.domain.usecase.trip
 
+import kmp.shared.base.ErrorResult
 import kmp.shared.base.Result
 import kmp.shared.base.usecase.UseCaseResult
 import kmp.shared.domain.model.Trip
@@ -25,28 +26,28 @@ internal class RepeatTripUseCaseImpl(
     override suspend fun invoke(params: Trip): Result<Long> {
         return when (val trip = getTripUseCase(params.id).first()) {
             is Result.Success -> {
-                val tripId = tripRepository.insertWithoutId(
-                    trip.data.copy(
-                        name = trip.data.name + " Repeated",
-                        completed = false,
-                        date = Clock.System.now()
-                            .toLocalDateTime(TimeZone.currentSystemDefault()).date
+                when(
+                    tripRepository.insertOrReplace(
+                        listOf(
+                            trip.data.copy(
+                                id = 0,
+                                name = "",
+                                completed = false,
+                                date = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+                            )
+                        )
                     )
-                )
-
-                when (tripId) {
+                ){
                     is Result.Success -> {
-                        trip.data.itinerary.let { placeRepository.insertOrReplace(it, tripId = tripId.data) }
-                        saveDistancesUseCase(trip.data.copy(id = tripId.data))
+                        trip.data.itinerary.let { placeRepository.insertOrReplace(it, tripId = 0L) }
+                        saveDistancesUseCase(trip.data.copy(id = 0L))
 
-                        tripId
+                        Result.Success(0L)
                     }
 
-                    is Result.Error -> tripId
+                    is Result.Error -> Result.Error(ErrorResult("Error repeating trip"))
                 }
-
             }
-
             is Result.Error -> Result.Error(trip.error)
         }
     }

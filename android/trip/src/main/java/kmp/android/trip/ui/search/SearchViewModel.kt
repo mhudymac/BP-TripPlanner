@@ -19,7 +19,7 @@ class SearchViewModel(
 
     var location: Location? = null
     fun search(query: String) {
-        require(query.isNotBlank())
+        if(query.isEmpty()) return
 
         launch {
             loading = true

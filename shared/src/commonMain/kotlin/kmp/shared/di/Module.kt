@@ -49,6 +49,8 @@ import kmp.shared.domain.usecase.trip.GetNearestTripUseCase
 import kmp.shared.domain.usecase.trip.GetNearestTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.GetTripUseCase
 import kmp.shared.domain.usecase.trip.GetTripUseCaseImpl
+import kmp.shared.domain.usecase.trip.OptimiseTripUseCase
+import kmp.shared.domain.usecase.trip.OptimiseTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.RemoveTripUseCase
 import kmp.shared.domain.usecase.trip.RemoveTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.RepeatTripUseCase
@@ -57,8 +59,8 @@ import kmp.shared.domain.usecase.trip.SaveTripUseCase
 import kmp.shared.domain.usecase.trip.SaveTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCase
 import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCaseImpl
-import kmp.shared.domain.usecase.trip.UpdateTripDateUseCase
-import kmp.shared.domain.usecase.trip.UpdateOnlyTripDetailsUseCaseImpl
+import kmp.shared.domain.usecase.trip.UpdateOnlyTripDetailsUseCase
+import kmp.shared.domain.usecase.trip.UpdateOnlyOnlyTripDetailsUseCaseImpl
 import kmp.shared.infrastructure.local.createDatabase
 import kmp.shared.infrastructure.remote.maps.MapsClient
 import kmp.shared.infrastructure.remote.maps.MapsService
@@ -101,15 +103,16 @@ private val commonModule = module {
 
     // Trip UseCases
     factory<SaveTripUseCase> { SaveTripUseCaseImpl(get(), get(), get()) }
-    factory<SaveTripWithoutIdUseCase> { SaveTripWithoutIdUseCaseImpl(get(),get(),get()) }
+    factory<SaveTripWithoutIdUseCase> { SaveTripWithoutIdUseCaseImpl(get(),get(),get(), get()) }
     factory<GetUncompletedTripsWithoutPlacesUseCase> { GetUncompletedTripsWithoutPlacesUseCaseImpl(get()) }
     factory<GetCompletedTripsWithoutPlacesUseCase> { GetCompletedTripsWithoutPlacesUseCaseImpl(get()) }
     factory<GetTripUseCase> { GetTripUseCaseImpl(get(), get()) }
     factory<GetNearestTripUseCase> { GetNearestTripUseCaseImpl(get(), get(), get(), get()) }
     factory<RemoveTripUseCase> { RemoveTripUseCaseImpl(get()) }
-    factory<UpdateTripDateUseCase> { UpdateOnlyTripDetailsUseCaseImpl(get()) }
+    factory<UpdateOnlyTripDetailsUseCase> { UpdateOnlyOnlyTripDetailsUseCaseImpl(get()) }
     factory<DeleteTripUseCase> { DeleteTripUseCaseImpl(get(), get(), get(), get()) }
     factory<RepeatTripUseCase> { RepeatTripUseCaseImpl(get(), get(), get(), get()) }
+    factory<OptimiseTripUseCase> { OptimiseTripUseCaseImpl(get(), get()) }
 
     // Place UseCases
     factory<SearchPlacesUseCase> { SearchPlacesUseCaseImpl(get()) }
@@ -117,7 +120,7 @@ private val commonModule = module {
     factory<UpdatePhotoUrlUseCase> { UpdatePhotoUrlUseCaseImpl(get()) }
     factory<GetLocationFlowUseCase> { GetLocationFlowUseCaseImpl(get()) }
     factory<GetLocationUseCase> { GetLocationUseCaseImpl(get()) }
-    factory<GetPlaceByLocationUseCase> { GetPlaceByLocationUseCaseImpl(get()) }
+    factory<GetPlaceByLocationUseCase> { GetPlaceByLocationUseCaseImpl(get(), get()) }
     factory<DeletePlaceByIdUseCase> { DeletePlaceByIdUseCaseImpl(get()) }
 
     // Distance UseCases

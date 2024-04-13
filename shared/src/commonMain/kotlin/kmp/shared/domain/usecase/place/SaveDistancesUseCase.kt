@@ -16,11 +16,9 @@ internal class SaveDistancesUseCaseImpl(
     override suspend fun invoke(params: Trip): Result<Unit> {
         when(val distances = placeRepository.getDistanceMatrix(params.order)){
             is Result.Success -> {
-                params.order.indices.mapIndexed { i, originIndex ->
-                    params.order.indices.mapIndexed { j, destinationIndex ->
-                        Log.d("Saving distance-----------------", "${params.order[originIndex]} to ${params.order[destinationIndex]}: ${distances.data[i][j]}")
-                        distancesRepository.saveDistance(params.order[originIndex], params.order[destinationIndex], distances.data[i][j], params.id)
-                   }
+                distances.data.forEach {
+                    val (origin, destination, distance) = it
+                    distancesRepository.saveDistance(origin, destination, distance, params.id)
                 }
             }
             is Result.Error -> return Result.Error(distances.error)

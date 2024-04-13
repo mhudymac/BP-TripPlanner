@@ -17,7 +17,7 @@ internal interface PlaceRepository {
 
     suspend fun getPlaceByLocation(location: Location): Result<Place>
 
-    suspend fun getDistanceMatrix(places: List<String>): Result<List<List<Trip.Distance>>>
+    suspend fun getDistanceMatrix(places: List<String>): Result<List<Triple<String, String, Trip.Distance>>>
 
     suspend fun getPlacesById(placeId: String, tripId: Long): List<Place>
 

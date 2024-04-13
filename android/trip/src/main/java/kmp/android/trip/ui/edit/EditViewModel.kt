@@ -1,21 +1,16 @@
-package kmp.android.trip.ui.create
+package kmp.android.trip.ui.edit
 
 import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
 import kmp.shared.base.Result
 import kmp.shared.domain.model.Place
 import kmp.shared.domain.model.Trip
-import kmp.shared.domain.usecase.location.GetLocationFlowUseCase
-import kmp.shared.domain.usecase.location.GetLocationUseCase
-import kmp.shared.domain.usecase.place.DeletePlaceByIdUseCase
 import kmp.shared.domain.usecase.place.GetPlaceByLocationUseCase
+import kmp.shared.domain.usecase.trip.DeleteTripUseCase
 import kmp.shared.domain.usecase.trip.GetTripUseCase
 import kmp.shared.domain.usecase.trip.SaveTripUseCase
 import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCase
-import kmp.shared.system.Log
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
@@ -23,46 +18,52 @@ import java.time.LocalDate
 
 import kotlin.random.Random
 
-class CreateViewModel(
+class EditViewModel(
     private val getTripById: GetTripUseCase,
-    private val getLocationUseCase: GetLocationUseCase,
     private val getPlaceByLocationUseCase: GetPlaceByLocationUseCase,
     private val saveTripWithoutIdUseCase: SaveTripWithoutIdUseCase,
     private val saveTripUseCase: SaveTripUseCase,
-    private val deletePlaceUseCase: DeletePlaceByIdUseCase
-    ) : BaseStateViewModel<CreateViewModel.ViewState>(ViewState()) {
+    private val deleteTripUseCase: DeleteTripUseCase,
+    private val saveAndOptimiseTripWithoutIdUseCase: SaveTripWithoutIdUseCase,
+    ) : BaseStateViewModel<EditViewModel.ViewState>(ViewState()) {
 
     private var id: Long = -1
-    private var wasPlaceAdded = false
+    private var wasItineraryChanged = false
     fun getTrip(tripId: Long) {
+        if(tripId == -1L) return
         launch {
-            loading = true
-            getTripById(tripId).map {
-                when (it) {
-                    is Result.Success -> { update { copy(
-                        name = it.data.name,
-                        date = it.data.date.toJavaLocalDate(),
-                        itinerary = it.data.itinerary,
-                    ) }
-                        id = it.data.id
+            update { copy(screenLoading = true) }
+            when(val trip = getTripById(tripId).first()){
+                is Result.Success -> {
+                    if (trip.data.id == 0L) {
+                        update {
+                            copy(itinerary = trip.data.itinerary)
+                        }
+                        deleteTripUseCase(trip.data)
+                    } else {
+                        update {
+                            copy(
+                                name = trip.data.name,
+                                date = trip.data.date.toJavaLocalDate(),
+                                itinerary = trip.data.itinerary,
+                            )
+                        }
+                        id = trip.data.id
                     }
-                    is Result.Error -> { update { copy(error = Pair(it.error.message?: "Error getting place", Random.nextInt())) }}
                 }
-            }.collect()
-            loading = false
+                is Result.Error -> update { copy(error = Pair(trip.error.message?: "Error getting place", Random.nextInt())) }
+            }
+            update { copy(screenLoading = false) }
         }
     }
 
     fun addPlace(place: Place) {
+        wasItineraryChanged = true
         update { copy(itinerary = itinerary + place) }
     }
 
     fun removePlace(place: Place) {
-        if(id != -1L) {
-            launch {
-                deletePlaceUseCase(Pair(place.id, id))
-            }
-        }
+        wasItineraryChanged = true
         update { copy(itinerary = itinerary - place) }
     }
 
@@ -84,23 +85,17 @@ class CreateViewModel(
 
     fun getLocation() {
         launch {
-            loading = true
-            when(val location = getLocationUseCase()){
-                is Result.Success -> {
-                    when(val place = getPlaceByLocationUseCase(location.data)){
-                        is Result.Success -> addPlace(place.data)
-                        is Result.Error -> update { copy(error = Pair("Error getting address", Random.nextInt())) }
-                    }
-                }
-                is Result.Error -> update { copy(error = Pair("Error getting location", Random.nextInt())) }
+            update { copy(locationLoading = true) }
+            when(val place = getPlaceByLocationUseCase()){
+                is Result.Success -> addPlace(place.data)
+                is Result.Error -> update { copy(error = Pair("Error getting address", Random.nextInt())) }
             }
-            loading = false
+            update { copy(locationLoading = true) }
         }
     }
-
-    fun saveTrip() {
+    fun saveTrip(optimise: Boolean) {
+        update { copy(savingLoading = true) }
         launch {
-            loading = true
             if( lastState().name.isEmpty() )
                 update { copy(error = Pair("Name is required", Random.nextInt())) }
             else if( lastState().date == null )
@@ -118,29 +113,30 @@ class CreateViewModel(
                     )
                 }
 
-                if(id == -1L){
-                    saveTripWithoutIdUseCase(trip)
-                    update{ copy(saveSuccess = true) }
-                } else {
-                    when(val saved = saveTripUseCase(Pair(trip, wasPlaceAdded))) {
+                if (id == -1L) {
+                    when(val result = saveTripWithoutIdUseCase(Pair(trip, optimise))){
                         is Result.Success -> update { copy(saveSuccess = true) }
-                        is Result.Error -> update { copy(error = Pair(saved.error.message ?: "An error occurred while saving", Random.nextInt())) }
+                        is Result.Error -> update { copy(error = Pair(result.error.message ?: "An error occurred while saving", Random.nextInt())) }
+                    }
+                } else {
+                    when (val result = saveTripUseCase(Pair(trip, wasItineraryChanged))) {
+                        is Result.Success -> update { copy(saveSuccess = true) }
+                        is Result.Error -> update { copy(error = Pair(result.error.message ?: "An error occurred while saving", Random.nextInt())) }
                     }
                 }
+
             }
-            loading = false
+            update { copy(savingLoading = false) }
         }
     }
-
-    var loading: Boolean
-        get() = lastState().loading
-        set(value) { update { copy(loading = value) } }
 
     data class ViewState(
         val name: String = "",
         val date: LocalDate? = null,
         val itinerary: List<Place> = emptyList(),
-        val loading: Boolean = false,
+        val locationLoading: Boolean = false,
+        val savingLoading: Boolean = false,
+        val screenLoading: Boolean = false,
         val error: Pair<String,Int> = Pair("",0),
         val reordering: Boolean = false,
         val saveSuccess: Boolean = false

@@ -27,12 +27,12 @@ internal class MapsService(private val client: HttpClient) {
         }
     }
 
-    suspend fun getDistanceMatrix(places: List<String>): Result<DistanceMatrixDto> {
+    suspend fun getDistanceMatrix(origins: List<String>, destinations: List<String>): Result<DistanceMatrixDto> {
         return runCatchingCommonNetworkExceptions {
             client.get(MapsPaths.routeMatrix) {
                 url {
-                    parameters["origins"] = places.joinToString("|") { "place_id:$it" }
-                    parameters["destinations"] = places.joinToString("|") { "place_id:$it" }
+                    parameters["origins"] = origins.joinToString("|") { "place_id:$it" }
+                    parameters["destinations"] = destinations.joinToString("|") { "place_id:$it" }
                     parameters["mode"] = "walking"
                 }
             }.body()

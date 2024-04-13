@@ -7,7 +7,7 @@ import kmp.shared.domain.model.Trip
 import kmp.shared.domain.usecase.trip.GetCompletedTripsWithoutPlacesUseCase
 import kmp.shared.domain.usecase.trip.GetUncompletedTripsWithoutPlacesUseCase
 import kmp.shared.domain.usecase.trip.RepeatTripUseCase
-import kmp.shared.domain.usecase.trip.UpdateTripDateUseCase
+import kmp.shared.domain.usecase.trip.UpdateOnlyTripDetailsUseCase
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
 
@@ -16,7 +16,7 @@ class ListViewModel(
     private val getUncompletedTripsWithoutPlacesUseCase: GetUncompletedTripsWithoutPlacesUseCase,
     private val getCompletedTripsWithoutPlacesUseCase: GetCompletedTripsWithoutPlacesUseCase,
     private val repeatTripUseCase: RepeatTripUseCase,
-    private val updateTripDate: UpdateTripDateUseCase
+    private val updateTripDate: UpdateOnlyTripDetailsUseCase
 ) : BaseStateViewModel<ListViewModel.ViewState>(ViewState()) {
 
     init {
@@ -59,7 +59,10 @@ class ListViewModel(
 
     fun startTrip(trip: Trip) {
         launch {
-            updateTripDate(trip.copy(date = LocalDate.now().toKotlinLocalDate()))
+            val result = updateTripDate(trip.copy(date = LocalDate.now().toKotlinLocalDate()))
+            if(result is Result.Error) {
+                update { copy(error = result.error.message?: "Error") }
+            }
         }
     }
 
