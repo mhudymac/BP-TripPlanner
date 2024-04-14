@@ -33,10 +33,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
-import kmp.android.home.R
 import kmp.shared.domain.model.Place
+import kmp.android.shared.R
+
 
 @Composable
 internal fun ActivePlaceCard(
@@ -62,7 +64,7 @@ internal fun ActivePlaceCard(
             IconButton(onClick = onCameraClick) {
                 Icon(
                     imageVector = Icons.Default.CameraAlt,
-                    contentDescription = "Take Picture"
+                    contentDescription = stringResource(id = R.string.take_picture),
                 )
             }
             PhotoRow(images = images)
@@ -76,7 +78,7 @@ internal fun PhotoRow(images: List<Uri>){
         items(images) { imageUri ->
             SubcomposeAsyncImage(
                 model = imageUri,
-                contentDescription = "Place Image",
+                contentDescription = stringResource(R.string.place_image),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(50.dp)
@@ -126,7 +128,7 @@ internal fun PlaceCard(
                 ) {
                     SubcomposeAsyncImage(
                         model = place.photoUri,
-                        contentDescription = "Place Image",
+                        contentDescription = stringResource(id = R.string.place_image),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(112.dp)
@@ -138,13 +140,15 @@ internal fun PlaceCard(
                         error = {
                             Image(
                                 painter = painterResource(id = R.drawable.placeholder_view_vector),
-                                contentDescription = "Placeholder Image",
+                                contentDescription = stringResource(id = R.string.place_image),
                                 contentScale = ContentScale.Crop,
                             )
                         },
                     )
 
-                    PlaceInfo(place = place, modifier = Modifier.weight(1f).padding(8.dp))
+                    PlaceInfo(place = place, modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp))
 
                     trailingIcon()
                 }
@@ -161,9 +165,9 @@ internal fun PlaceCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(id = R.string.delete),
                     modifier = Modifier.size(26.dp),
-                    tint = Color.Red
+                    tint = Color.Red,
                 )
             }
         }
@@ -218,8 +222,8 @@ internal fun AddPlaceCard(
     EmptyPlaceCard(onClick = onClick, modifier = modifier) {
         Icon(
             imageVector = Icons.Default.Add,
-            contentDescription = "Add Place"
+            contentDescription = stringResource(id = R.string.add_place),
         )
-        Text(text = "Add place")
+        Text(text = stringResource(id = R.string.add_place))
     }
 }

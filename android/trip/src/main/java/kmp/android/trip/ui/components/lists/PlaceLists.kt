@@ -24,7 +24,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import kmp.android.shared.R
 import kmp.android.trip.ui.components.ActivePlaceCard
 import kmp.android.trip.ui.components.ComponentWithLabel
 import kmp.android.trip.ui.components.DistanceCard
@@ -59,7 +61,7 @@ fun PlaceReorderingList(
             .padding(padding)
             .padding(horizontal = 8.dp)
     ) {
-        ComponentWithLabel(label = "Itinerary") {
+        ComponentWithLabel(label = stringResource(id = R.string.itinerary_lable)) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 state = lazyListState,
@@ -87,7 +89,7 @@ fun PlaceReorderingList(
                                         .size(32.dp)
                                         .padding(end = 8.dp),
                                     imageVector = Icons.Rounded.Menu,
-                                    contentDescription = "Reorder"
+                                    contentDescription = stringResource(R.string.reorder_icon)
                                 )
                             }
                         )

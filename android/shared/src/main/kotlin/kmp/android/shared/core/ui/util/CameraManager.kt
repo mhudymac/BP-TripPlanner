@@ -16,6 +16,13 @@ import kmp.android.shared.R
 import java.io.File
 import java.util.Objects
 
+/**
+ * This composable function creates and returns a CameraManager.
+ * It sets up a launcher for taking a picture and handles the result.
+ *
+ * @param onResult The function to call with the URI of the taken picture.
+ * @return A CameraManager.
+ */
 @Composable
 fun rememberCameraManager(onResult: (Uri?) -> Unit): CameraManager {
     val context = LocalContext.current
@@ -39,6 +46,12 @@ fun rememberCameraManager(onResult: (Uri?) -> Unit): CameraManager {
     }
 }
 
+/**
+ * This class represents a manager for a camera.
+ * It provides a function to launch the camera.
+ *
+ * @property onLaunch The function to call to launch the camera.
+ */
 class CameraManager(
     private val onLaunch: () -> Unit,
 ) {
@@ -47,6 +60,10 @@ class CameraManager(
     }
 }
 
+/**
+ * This class is a file provider for the application.
+ * It provides a function to get a URI for a temporary image file.
+ */
 class ComposeFileProvider : FileProvider(
     R.xml.path_provider
 ) {

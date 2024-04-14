@@ -57,6 +57,9 @@ internal data class TextSearchRequestBody(
     )
 }
 
+/**
+ * Returns a mask for searching
+ */
 internal fun searchFieldMask(param: String = "places."): String {
     val fieldNames = listOf(
         param + "displayName",

@@ -10,9 +10,5 @@ interface SavePhotoUseCase: UseCaseResult<Photo, Unit>
 internal class SavePhotoUseCaseImpl internal constructor(
     private val photoRepository: PhotoRepository
 ) : SavePhotoUseCase {
-    override suspend fun invoke(params: Photo): Result<Unit> {
-        photoRepository.insertPhoto(params)
-
-        return Result.Success(Unit)
-    }
+    override suspend fun invoke(params: Photo): Result<Unit> = photoRepository.insertPhoto(params)
 }

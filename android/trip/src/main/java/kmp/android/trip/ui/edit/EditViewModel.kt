@@ -14,17 +14,24 @@ import kotlinx.coroutines.flow.first
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
+import kmp.android.shared.R
+import kmp.shared.base.error.domain.TripError
 
 
 import kotlin.random.Random
 
+/**
+ * This class represents the ViewModel for the Edit view.
+ * It provides functions to get a trip by its ID, add a place to a trip, remove a place from a trip,
+ * update the name of a trip, update the date of a trip, update the order of places in a trip,
+ * toggle the reordering of places in a trip, get the location of a place, and save a trip.
+ */
 class EditViewModel(
     private val getTripById: GetTripUseCase,
     private val getPlaceByLocationUseCase: GetPlaceByLocationUseCase,
     private val saveTripWithoutIdUseCase: SaveTripWithoutIdUseCase,
     private val saveTripUseCase: SaveTripUseCase,
     private val deleteTripUseCase: DeleteTripUseCase,
-    private val saveAndOptimiseTripWithoutIdUseCase: SaveTripWithoutIdUseCase,
     ) : BaseStateViewModel<EditViewModel.ViewState>(ViewState()) {
 
     private var id: Long = -1
@@ -51,7 +58,7 @@ class EditViewModel(
                         id = trip.data.id
                     }
                 }
-                is Result.Error -> update { copy(error = Pair(trip.error.message?: "Error getting place", Random.nextInt())) }
+                is Result.Error -> update { copy(error = Pair(trip.error.message?: "", Random.nextInt())) }
             }
             update { copy(screenLoading = false) }
         }
@@ -88,20 +95,20 @@ class EditViewModel(
             update { copy(locationLoading = true) }
             when(val place = getPlaceByLocationUseCase()){
                 is Result.Success -> addPlace(place.data)
-                is Result.Error -> update { copy(error = Pair("Error getting address", Random.nextInt())) }
+                is Result.Error -> update { copy(error = Pair(place.error.message?: "", Random.nextInt())) }
             }
-            update { copy(locationLoading = true) }
+            update { copy(locationLoading = false) }
         }
     }
     fun saveTrip(optimise: Boolean) {
         update { copy(savingLoading = true) }
         launch {
             if( lastState().name.isEmpty() )
-                update { copy(error = Pair("Name is required", Random.nextInt())) }
+                update { copy(error = Pair(TripError.TripNameNecessaryError.message!!, Random.nextInt())) }
             else if( lastState().date == null )
-                update { copy(error = Pair("Date is required", Random.nextInt())) }
+                update { copy(error = Pair(TripError.TripDateNecessaryError.message!!, Random.nextInt())) }
             else if( lastState().itinerary.isEmpty() )
-                update { copy(error = Pair("At least two places are required", Random.nextInt())) }
+                update { copy(error = Pair(TripError.TripItineraryNecessaryError.message!!, Random.nextInt())) }
             else{
                 val trip = lastState().let { state ->
                     Trip(
@@ -116,12 +123,12 @@ class EditViewModel(
                 if (id == -1L) {
                     when(val result = saveTripWithoutIdUseCase(Pair(trip, optimise))){
                         is Result.Success -> update { copy(saveSuccess = true) }
-                        is Result.Error -> update { copy(error = Pair(result.error.message ?: "An error occurred while saving", Random.nextInt())) }
+                        is Result.Error -> update { copy(error = Pair(result.error.message ?: "", Random.nextInt())) }
                     }
                 } else {
                     when (val result = saveTripUseCase(Pair(trip, wasItineraryChanged))) {
                         is Result.Success -> update { copy(saveSuccess = true) }
-                        is Result.Error -> update { copy(error = Pair(result.error.message ?: "An error occurred while saving", Random.nextInt())) }
+                        is Result.Error -> update { copy(error = Pair(result.error.message ?: "", Random.nextInt())) }
                     }
                 }
 

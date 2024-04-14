@@ -59,6 +59,8 @@ import kmp.shared.domain.usecase.trip.SaveTripUseCase
 import kmp.shared.domain.usecase.trip.SaveTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCase
 import kmp.shared.domain.usecase.trip.SaveTripWithoutIdUseCaseImpl
+import kmp.shared.domain.usecase.trip.UpdateDistancesUseCase
+import kmp.shared.domain.usecase.trip.UpdateDistancesUseCaseImpl
 import kmp.shared.domain.usecase.trip.UpdateOnlyTripDetailsUseCase
 import kmp.shared.domain.usecase.trip.UpdateOnlyOnlyTripDetailsUseCaseImpl
 import kmp.shared.infrastructure.local.createDatabase
@@ -113,6 +115,7 @@ private val commonModule = module {
     factory<DeleteTripUseCase> { DeleteTripUseCaseImpl(get(), get(), get(), get()) }
     factory<RepeatTripUseCase> { RepeatTripUseCaseImpl(get(), get(), get(), get()) }
     factory<OptimiseTripUseCase> { OptimiseTripUseCaseImpl(get(), get()) }
+    factory<UpdateDistancesUseCase> { UpdateDistancesUseCaseImpl(get(), get()) }
 
     // Place UseCases
     factory<SearchPlacesUseCase> { SearchPlacesUseCaseImpl(get()) }

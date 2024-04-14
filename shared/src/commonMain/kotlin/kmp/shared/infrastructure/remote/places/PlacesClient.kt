@@ -17,8 +17,20 @@ import kotlin.native.concurrent.ThreadLocal
 import co.touchlab.kermit.Logger as KermitLogger
 import kotlinx.serialization.json.Json as JsonConfig
 
+/**
+ * This object provides a client for interacting with the Google Places API.
+ */
 internal object PlacesClient {
 
+    /**
+     * This function initializes and returns an HttpClient configured for interacting with the Google Places API.
+     * It sets up the client with the necessary plugins and default request parameters.
+     *
+     * @param config The configuration object containing the application settings.
+     * @param engine The HttpClientEngine to use for the client.
+     * @param apiKey The API key to use for the Google Places API.
+     * @return An HttpClient configured for interacting with the Google Places API.
+     */
     fun init( config: Config, engine: HttpClientEngine, apiKey: String) = HttpClient(engine) {
         expectSuccess = true
         developmentMode = !config.isRelease

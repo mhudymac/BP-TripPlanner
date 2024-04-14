@@ -1,17 +1,21 @@
 package kmp.android.trip.ui.gallery
 
-import android.net.Uri
 import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
-import kmp.shared.domain.model.Trip
-import kmp.shared.domain.usecase.trip.GetTripUseCase
 import kmp.shared.base.Result
 import kmp.shared.domain.model.Photo
+import kmp.shared.domain.model.Trip
 import kmp.shared.domain.usecase.photos.GetPhotosByTripUseCase
 import kmp.shared.domain.usecase.photos.RemovePhotoByUriUseCase
 import kmp.shared.domain.usecase.photos.SavePhotoUseCase
 import kmp.shared.domain.usecase.trip.DeleteTripUseCase
+import kmp.shared.domain.usecase.trip.GetTripUseCase
 
+/**
+ * This class represents the ViewModel for the Gallery view.
+ * It provides functions to get a trip by its ID, delete a trip, delete a photo, get photos by trip ID,
+ * get all information for a trip, add a user photo, and toggle editing mode.
+ */
 internal class GalleryViewModel(
     private val getTripUseCase: GetTripUseCase,
     private val deleteTripUseCase: DeleteTripUseCase,
@@ -28,7 +32,7 @@ internal class GalleryViewModel(
               getTripUseCase(tripId).collect {
                     when (it) {
                          is Result.Success -> { update { copy(trip = it.data) }}
-                         is Result.Error -> { update { copy(error = it.error.message?: "Trip wasn't found") }}
+                         is Result.Error -> { update { copy(error = it.error.message?: "") }}
                     }
                     update { copy(loading = false) }
                 }

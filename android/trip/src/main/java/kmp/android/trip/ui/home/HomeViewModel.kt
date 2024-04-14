@@ -2,6 +2,7 @@ package kmp.android.trip.ui.home
 
 import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
+import kmp.shared.base.Result
 import kmp.shared.domain.model.Photo
 import kmp.shared.domain.model.Trip
 import kmp.shared.domain.usecase.photos.SavePhotoUseCase
@@ -10,6 +11,10 @@ import kmp.shared.domain.usecase.trip.UpdateOnlyTripDetailsUseCase
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
 
+/**
+ * This class represents the ViewModel for the Home view.
+ * It provides functions to get the nearest trip, start a trip, finish a trip, add a user photo to a trip, and set the active trip.
+ */
 class HomeViewModel(
     private val getNearestTripUseCase: GetNearestTripUseCase,
     private val updateOnlyTripDetailsUseCase: UpdateOnlyTripDetailsUseCase,
@@ -37,7 +42,11 @@ class HomeViewModel(
         if(trip != null) {
             update { copy(trip = trip, isActive = true) }
             launch {
-                updateOnlyTripDetailsUseCase(trip)
+                val result = updateOnlyTripDetailsUseCase(trip)
+                if(result is Result.Error){
+                    update { copy(error = result.error.message ?: "") }
+
+                }
             }
         }
     }
@@ -46,7 +55,11 @@ class HomeViewModel(
         val trip = lastState().trip?.copy(completed = true)
         if(trip != null) {
             launch {
-                updateOnlyTripDetailsUseCase(trip)
+                val result = updateOnlyTripDetailsUseCase(trip)
+                if(result is Result.Error){
+                    update { copy(error = result.error.message ?: "") }
+
+                }
             }
         }
     }
@@ -54,8 +67,13 @@ class HomeViewModel(
     fun addUserPhoto(photoUri: String) {
         launch {
             val trip = lastState().trip
-            if(trip != null)
-                savePhotosUseCase(Photo(trip.activePlace, trip.id, photoUri))
+            if(trip != null) {
+                val result = savePhotosUseCase(Photo(trip.activePlace, trip.id, photoUri))
+                if(result is Result.Error){
+                    update { copy(error = result.error.message ?: "") }
+
+                }
+            }
         }
     }
 

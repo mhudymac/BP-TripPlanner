@@ -9,7 +9,5 @@ interface RemovePhotoByUriUseCase: UseCaseResult<String, Unit>
 internal class RemovePhotoByUriUseCaseImpl(
     private val photoRepository: PhotoRepository
 ): RemovePhotoByUriUseCase {
-    override suspend fun invoke(params: String): Result<Unit> {
-        return photoRepository.deletePhotoByUri(params)
-    }
+    override suspend fun invoke(params: String): Result<Unit> = photoRepository.deletePhotoByUri(params)
 }

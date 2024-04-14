@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bottom_bar_item_1">Home</string>
+    <string name="bottom_bar_item_2">Trips</string>
+
+    <string name="tab_1_text">Upcoming trips</string>
+    <string name="tab_2_text">Completed trips</string>
+
+    <string name="unknown_error">Unknown error</string>
+    <string name="error_no_internet_connection">No internet connection</string>
+    <string name="error_finding_trip">Trip wasn\'t found</string>
+    <string name="error_optimizing_trip">Error optimizing trip</string>
+    <string name="error_deleting_trip">Error deleting trip</string>
+    <string name="error_getting_place">Error getting place</string>
+    <string name="error_saving_trip">Error saving trip</string>
+    <string name="error_updating_trip">Erro updating trip</string>
+    <string name="error_deleting_distance">Error deleting distance</string>
+    <string name="error_deleting_photo">Error deleting photo</string>
+    <string name="error_deleting_place">Error deleting place</string>
+    <string name="error_getting_distance">Error getting distance</string>
+    <string name="error_getting_photo">Error getting photo</string>
+    <string name="error_getting_loaction">Error getting location</string>
+    <string name="error_repeating_trip">Error repeating trip</string>
+    <string name="error_saving_distance">Error saving distance</string>
+    <string name="error_saving_photo">Error saving photo</string>
+    <string name="error_saving_place">Error saving place</string>
+    <string name="error_searching">Searching error</string>
+    <string name="error_missing_name">Trip name is missing</string>
+    <string name="error_missing_date">Trip date is missing</string>
+    <string name="error_itinerary_missing">At least two places are necessary</string>
+    <string name="update_trip_error">Error updating trip</string>
+
+    <string name="trips_on">Trips on </string>
+    <string name="trip_date_label">Trip date</string>
+    <string name="reorder_icon">Reorder Icon</string>
+    <string name="itinerary_lable">Itinerary</string>
+    <string name="trip_name_label">Trip name</string>
+    <string name="trip_detail_label">Trip detail</string>
+    <string name="trip_loading">Loading trip…</string>
+    <string name="trip_optimizing">Optimizing trip</string>
+    <string name="trip_saving">Saving trip…</string>
+    <string name="trip_gallery_label">Trip gallery</string>
+    <string name="finish_trip">Finish trip</string>
+    <string name="start_trip">Start trip</string>
+    <string name="no_trip">No trip found</string>
+    <string name="trip_repeat">Repeat trip</string>
+    <string name="enter_name">Enter trip name</string>
+    <string name="no_trips">No trips</string>
+
+
+    <string name="place_image">Place image</string>
+    <string name="placeholder">Placeholder</string>
+    <string name="add_place">Add place</string>
+    <string name="place_search">Search place</string>
+    <string name="search_place">Search for a place</string>
+    <string name="place_search_loading">Searching for places…</string>
+
+
+    <string name="finish_trip_dialog">Do you really want to finish this trip?</string>
+    <string name="delete_trip_dialog">Do you really want to delete this trip?</string>
+    <string name="optimize_dialog">Our smart order algorithm can create the best itinerary tailored just for you!\\nDo you want to use it?</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="minutes">minutes</string>
+    <string name="take_picture">Take picture</string>
+    <string name="delete">Delete</string>
+    <string name="affirmative">Yes</string>
+    <string name="negative">No</string>
+    <string name="lightbulb">Light bulb</string>
+    <string name="select_date">Select Date</string>
+    <string name="edit">Edit</string>
+    <string name="optimize">Optimize</string>
+    <string name="create">Create</string>
+    <string name="save">Save</string>
+    <string name="search">Search</string>
+    <string name="current_location">Current location</string>
+    <string name="use_current_locaiton">Use current location</string>
+    <string name="no_images">No saved images with this trip</string>
+    <string name="drawer_menu">Drawer menu</string>
+    <string name="today">Today</string>
+    <string name="upcoming_in">Upcoming in</string>
+    <string name="days">days</string>
+    <string name="clear">Clear</string>
+</resources>

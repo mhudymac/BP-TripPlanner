@@ -42,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -64,6 +65,7 @@ import kmp.shared.domain.model.Trip
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import org.koin.androidx.compose.getViewModel
+import kmp.android.shared.R
 import kmp.android.trip.ui.home.HomeViewModel.ViewState as State
 
 fun NavController.navigateToHomeScreen() {
@@ -138,7 +140,7 @@ internal fun HomeScreenRoute(
     }
 
     if(loading){
-        FullScreenLoading("Loading today's trips...")
+        FullScreenLoading(stringResource(id = R.string.trip_loading))
     } else {
         if(trip != null) {
             ModalNavigationDrawer(
@@ -164,22 +166,25 @@ internal fun HomeScreenRoute(
                                     onClick = { coroutineScope.launch { drawerState.open() } },
                                     tripCount = trips.size,
                                     icon = {
-                                        Icon(Icons.Default.Menu, contentDescription = "Open Drawer")
-                                    }
+                                        Icon(
+                                            Icons.Default.Menu,
+                                            contentDescription = stringResource(id = R.string.drawer_menu),
+                                        )
+                                    },
                                 )
-                            }
+                            },
                         )
                     },
                     floatingActionButton = {
                         ExtendedFloatingActionButton(
-                            text = { if (isTripActive) Text("Finish Trip") else Text("Start Trip") },
+                            text = { if (isTripActive) Text(stringResource(id = R.string.finish_trip)) else Text(stringResource(id = R.string.start_trip)) },
                             icon = {
                                 if (isTripActive) Icon(
                                     Icons.Default.Done,
-                                    contentDescription = "Finish Trip"
+                                    contentDescription = stringResource(id = R.string.finish_trip),
                                 ) else Icon(
                                     Icons.Default.PlayArrow,
-                                    contentDescription = "Start trip"
+                                    contentDescription = stringResource(id = R.string.start_trip),
                                 )
                             },
                             onClick = {
@@ -253,16 +258,16 @@ private fun EmptyHomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "No trip found",
+            text = stringResource(id = R.string.no_trip),
             style = MaterialTheme.typography.titleLarge,
         )
 
         Button(
             onClick = navigateToCreateTrip,
         ) {
-            Icon(Icons.Default.AddCircleOutline, contentDescription = "Create Trip", modifier = Modifier.padding(end = 8.dp))
+            Icon(Icons.Default.AddCircleOutline, contentDescription = stringResource(id = R.string.create), modifier = Modifier.padding(end = 8.dp))
             Text(
-                text = "Create new trip",
+                text = stringResource(id = R.string.create),
                 style = MaterialTheme.typography.titleMedium,
             )
         }
@@ -311,13 +316,13 @@ fun HomeScreenDateText(
     isTripActive: Boolean
 ){
     Text(
-        text = if(isTripActive){
-            "Today"
+        text = if (isTripActive) {
+            stringResource(id = R.string.today)
         } else {
-            "Upcoming Trip in ${ date.daysUntil } days"
+            stringResource(id = R.string.upcoming_in) + " " + date.daysUntil + " " + stringResource(id = R.string.days)
         },
         style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.Thin,
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
     )
 }

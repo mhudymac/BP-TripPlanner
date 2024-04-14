@@ -11,7 +11,5 @@ internal class UpdateOnlyOnlyTripDetailsUseCaseImpl(
     private val tripRepository: TripRepository
 ): UpdateOnlyTripDetailsUseCase {
 
-    override suspend fun invoke(params: Trip): Result<Unit> {
-        return tripRepository.insertOrReplace(listOf(params))
-    }
+    override suspend fun invoke(params: Trip): Result<Unit> = tripRepository.insertOrReplace(listOf(params))
 }

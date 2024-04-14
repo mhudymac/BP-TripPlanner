@@ -20,11 +20,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kmp.android.shared.extension.localizedString
 import kmp.android.trip.ui.components.TripCard
 import kmp.shared.domain.model.Trip
+import kmp.android.shared.R
+import kmp.android.trip.ui.components.FullScreenLoading
 
 @Composable
 internal fun TripOnThisDayList(
@@ -39,7 +42,7 @@ internal fun TripOnThisDayList(
             colors = CardDefaults.cardColors().copy( containerColor = MaterialTheme.colorScheme.surface ),
         ) {
             Text(
-                text = "Trips on ${trips.first().date.localizedString}:",
+                text = stringResource(id = R.string.trips_on) + " " + "${trips.first().date.localizedString}:",
                 style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center,
             )
@@ -75,11 +78,16 @@ internal fun TripListWithButtons(
     buttonContent: @Composable () -> Unit = {}
 ) {
     if(loading){
+        FullScreenLoading()
+    } else if (trips.isEmpty()) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator()
+            Text(
+                text = stringResource(id = R.string.no_trips),
+                style = MaterialTheme.typography.headlineSmall
+            )
         }
     } else {
         LazyColumn(

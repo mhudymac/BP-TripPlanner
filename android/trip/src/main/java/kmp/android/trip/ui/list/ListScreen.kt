@@ -1,27 +1,15 @@
 package kmp.android.trip.ui.list
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Repeat
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -34,19 +22,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import kmp.android.shared.core.util.get
 import kmp.android.shared.navigation.composableDestination
 import kmp.android.trip.navigation.TripGraph
 import kmp.android.trip.ui.components.lists.TripListWithButtons
-import kmp.shared.domain.model.Trip
-import kotlinx.datetime.toJavaLocalDate
 import org.koin.androidx.compose.getViewModel
-import java.time.format.DateTimeFormatter
+import kmp.android.shared.R
 import kmp.android.trip.ui.list.ListViewModel.ViewState as State
 
 internal fun NavGraphBuilder.tripListRoute(
@@ -105,7 +90,7 @@ internal fun TripListScreenRoute(
         floatingActionButton = {
             if (selectedTab == 0) {
                 ExtendedFloatingActionButton(
-                    text = { Text("Create") },
+                    text = { Text(stringResource(id = R.string.create)) },
                     icon = { Icon(Icons.Filled.Add, "") },
                     onClick = { navigateToCreateScreen() },
                     expanded = isFloatingButtonExpanded.value,
@@ -125,15 +110,15 @@ internal fun TripListScreenRoute(
                     selected = selectedTab == 0,
                     onClick = { viewModel.selectedTab = 0 },
                     text = {
-                        TabText("Upcoming Trips", selectedTab == 0)
+                        TabText(stringResource(id = R.string.tab_1_text), selectedTab == 0)
                     },
                 )
                 Tab(
                     selected = selectedTab == 1,
                     onClick = { viewModel.selectedTab = 1 },
                     text = {
-                        TabText("Completed Trips", selectedTab == 1)
-                    }
+                        TabText(stringResource(id = R.string.tab_2_text), selectedTab == 1)
+                    },
                 )
             }
 
@@ -145,8 +130,8 @@ internal fun TripListScreenRoute(
                     loading = loadingUpcoming,
                     scrollState = scrollState,
                 ) {
-                    Icon(Icons.Default.PlayCircle, "Start Icon")
-                    Text("Start trip", style = MaterialTheme.typography.labelMedium)
+                    Icon(Icons.Default.PlayCircle, stringResource(id = R.string.start_trip))
+                    Text(stringResource(id = R.string.start_trip), style = MaterialTheme.typography.labelMedium)
                 }
                 1 -> TripListWithButtons(
                     trips = completedTrips,
@@ -155,8 +140,8 @@ internal fun TripListScreenRoute(
                     loading = loadingCompleted,
                     scrollState = scrollState
                 ) {
-                    Icon(Icons.Default.Repeat, "Repeat Icon")
-                    Text("Repeat trip", style = MaterialTheme.typography.labelMedium)
+                    Icon(Icons.Default.Repeat, stringResource(id = R.string.trip_repeat))
+                    Text(stringResource(id = R.string.trip_repeat), style = MaterialTheme.typography.labelMedium)
                 }
             }
         }

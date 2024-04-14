@@ -2,6 +2,7 @@ package kmp.shared.infrastructure.source
 
 import kmp.shared.base.ErrorResult
 import kmp.shared.base.Result
+import kmp.shared.base.error.domain.TripError
 import kmp.shared.data.source.PlaceRemoteSource
 import kmp.shared.domain.model.Location
 import kmp.shared.infrastructure.model.DistanceMatrixDto
@@ -20,7 +21,7 @@ internal class PlaceRemoteSourceImpl(
         return try{
             service.searchPlaces(query)
         }catch (e: Exception) {
-            return Result.Error(ErrorResult(message = e.message, throwable = e))
+            return Result.Error(TripError.SearchError)
         }
     }
 
@@ -29,7 +30,7 @@ internal class PlaceRemoteSourceImpl(
         return try{
             service.searchPlaces(query = query, location = location)
         }catch (e: Exception) {
-            return Result.Error(ErrorResult(message = e.message, throwable = e))
+            return Result.Error(TripError.SearchError)
         }
     }
 
@@ -37,7 +38,7 @@ internal class PlaceRemoteSourceImpl(
         return try{
             service.getPhoto(photoName)
         }catch (e: Exception) {
-            return Result.Error(ErrorResult(message = e.message, throwable = e))
+            return Result.Error(TripError.GettingPhotoError)
         }
     }
 
@@ -45,7 +46,7 @@ internal class PlaceRemoteSourceImpl(
         return try{
             service.getPlaceDetails(id)
         }catch (e: Exception) {
-            return Result.Error(ErrorResult(message = e.message, throwable = e))
+            return Result.Error(TripError.GettingPlaceError)
         }
     }
 
@@ -53,7 +54,7 @@ internal class PlaceRemoteSourceImpl(
         return try{
             mapsService.getAddressByLocation(location)
         }catch (e: Exception) {
-            return Result.Error(ErrorResult(message = e.message, throwable = e))
+            return Result.Error(TripError.GettingPlaceError)
         }
     }
 
@@ -61,7 +62,7 @@ internal class PlaceRemoteSourceImpl(
         return try{
             mapsService.getDistanceMatrix(origins = origins, destinations = destinations)
         }catch (e: Exception) {
-            return Result.Error(ErrorResult(message = e.message, throwable = e))
+            return Result.Error(TripError.GettingDistancesError)
         }
     }
 }

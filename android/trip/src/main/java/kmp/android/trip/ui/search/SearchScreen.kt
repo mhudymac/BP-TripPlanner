@@ -1,7 +1,6 @@
 package kmp.android.trip.ui.search
 
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,15 +21,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import kmp.android.home.R
 import kmp.android.shared.core.util.get
 import kmp.android.trip.ui.components.FullScreenLoading
 import kmp.android.trip.ui.components.PlaceCard
 import kmp.shared.domain.model.Location
 import kmp.shared.domain.model.Place
-import okhttp3.Request
 import org.koin.androidx.compose.getViewModel
+import kmp.android.shared.R
 import kmp.android.trip.ui.search.SearchViewModel.ViewState as State
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,11 +77,11 @@ internal fun SearchScreen(
             trailingIcon = {
                 if (searchedQuery.isNotEmpty()) {
                     IconButton(onClick = { viewModel.clear() }) {
-                        Icon(Icons.Filled.Clear, contentDescription = "Clear")
+                        Icon(Icons.Filled.Clear, contentDescription = stringResource(id = R.string.clear))
                     }
                 }
             },
-            placeholder = { Text("Search for a place") },
+            placeholder = { Text(stringResource(id = R.string.search_place)) },
             modifier = Modifier.fillMaxWidth(),
             content = {
                 LazyColumn(
@@ -97,10 +95,10 @@ internal fun SearchScreen(
                         )
                     }
                 }
-            }
+            },
         )
         if (loading) {
-            FullScreenLoading("Searching for places...")
+            FullScreenLoading(stringResource(id = R.string.place_search_loading))
         } else {
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,

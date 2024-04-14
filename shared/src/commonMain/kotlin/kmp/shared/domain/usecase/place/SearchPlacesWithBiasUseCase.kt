@@ -10,8 +10,9 @@ interface SearchPlacesWithBiasUseCase : UseCaseResult<Pair<String, Location>, Li
 internal class SearchPlacesWithBiasUseCaseImpl(
     private val repository: PlaceRepository,
 ) : SearchPlacesWithBiasUseCase {
-    override suspend fun invoke(params: Pair<String, Location>) = repository.searchPlacesWithBias(
-        query = params.first,
-        location = params.second
-    )
+    override suspend fun invoke(params: Pair<String, Location>) =
+        repository.searchPlacesWithBias(
+            query = params.first,
+            location = params.second
+        )
 }

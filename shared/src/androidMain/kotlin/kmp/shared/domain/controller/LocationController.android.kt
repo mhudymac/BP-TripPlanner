@@ -46,8 +46,7 @@ internal actual class LocationController(
     private val locationListeners: MutableList<LocationUpdateCallback> = mutableListOf()
     private var locationCallback: LocationCallback? = null
 
-    actual var lastLocation: Location? = null
-        private set
+    private var lastLocation: Location? = null
 
     actual val locationFlow = callbackFlow {
         if (locationListeners.isEmpty() ||  !listening) {

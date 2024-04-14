@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -56,6 +57,7 @@ import kmp.android.trip.ui.components.TopBar
 import kmp.shared.domain.model.Photo
 import kmp.shared.domain.model.Trip
 import org.koin.androidx.compose.getViewModel
+import kmp.android.shared.R
 import kmp.android.trip.ui.gallery.GalleryViewModel.ViewState as State
 
 fun NavController.navigateToGalleryScreen(tripId: Long) {
@@ -101,7 +103,7 @@ internal fun GalleryRoute(
 
     if(showDialog) {
         DeleteDialog(
-            onConfirm = { viewModel.delete(); navigateUp() },
+            onConfirm = { showDialog = false; viewModel.delete(); navigateUp() },
             onDismiss = { showDialog = false },
         )
     }
@@ -131,25 +133,25 @@ internal fun GalleryRoute(
     Scaffold(
         topBar = {
             TopBar(
-                title = trip?.name ?: "Gallery",
+                title = trip?.name ?: stringResource(id = R.string.trip_gallery_label),
                 onBackArrow = navigateUp,
-                showBackArrow = !editing
+                showBackArrow = !editing,
             ) {
                 IconButton(onClick = { showDialog = true }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete icon"
+                        contentDescription = stringResource(id = R.string.delete)
                     )
                 }
-                IconButton(onClick = { viewModel.editing = !editing}) {
+                IconButton(onClick = { viewModel.editing = !editing }) {
                     Icon(
-                        imageVector = if(editing) Icons.Filled.Done else Icons.Outlined.Edit,
-                        contentDescription = "Edit icon"
+                        imageVector = if (editing) Icons.Filled.Done else Icons.Outlined.Edit,
+                        contentDescription = stringResource(id = R.string.edit),
                     )
                 }
             }
         },
-        snackbarHost = { SnackbarHost(snackHost) }
+        snackbarHost = { SnackbarHost(snackHost) },
     ) { paddingValues ->
         if(loading){
             Box(
@@ -187,7 +189,7 @@ internal fun GalleryRoute(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("No saved images with this trip", style = MaterialTheme.typography.bodyLarge)
+                        Text(stringResource( id = R.string.no_images ), style = MaterialTheme.typography.bodyLarge)
                     }
                 }
             }
@@ -232,7 +234,7 @@ private fun GalleryScreen(
                             ) {
                                 SubcomposeAsyncImage(
                                     model = photo.photoUri,
-                                    contentDescription = "Place Image",
+                                    contentDescription = stringResource(id = R.string.place_image),
                                     contentScale = ContentScale.Crop,
                                     modifier = Modifier
                                         .size(170.dp)
@@ -251,8 +253,8 @@ private fun GalleryScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Delete,
-                                            contentDescription = "Delete icon",
-                                            tint = Color.Red
+                                            contentDescription = stringResource(id = R.string.delete),
+                                            tint = Color.Red,
                                         )
                                     }
                                 }
@@ -271,8 +273,8 @@ private fun GalleryScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Filled.Add,
-                                            contentDescription = "Add Photo",
-                                            modifier = Modifier.size(100.dp)
+                                            contentDescription = stringResource(id = R.string.add_place),
+                                            modifier = Modifier.size(100.dp),
                                         )
                                     }
                                 }
@@ -297,7 +299,7 @@ internal fun CardDialogImage(
     ) {
         SubcomposeAsyncImage(
             model = imageUrl,
-            contentDescription = "Full Screen Image",
+            contentDescription = stringResource(id = R.string.place_image),
             contentScale = ContentScale.Fit,
             modifier = Modifier
                 .fillMaxWidth(0.9f)

@@ -21,17 +21,26 @@ internal class DistanceRepositoryImpl(
     }
 
     override suspend fun getDistancesByTripId(tripId: Long): Result<Map<Pair<String, String>, Trip.Distance>> {
-        return localSource.getDistancesByTripId(tripId).let {
-            it.map { distanceEntities ->
-                distanceEntities.associate { distanceEntity ->
-                    Pair(
-                        distanceEntity.fromPlaceId to distanceEntity.toPlaceId,
-                        Trip.Distance(
-                            distance = distanceEntity.distance,
-                            duration = distanceEntity.duration,
+        return localSource.getDistancesByTripId(tripId).let { result ->
+            result.map { distanceEntities ->
+                distanceEntities.flatMap { distanceEntity ->
+                    listOf(
+                        Pair(
+                            distanceEntity.fromPlaceId to distanceEntity.toPlaceId,
+                            Trip.Distance(
+                                distance = distanceEntity.distance,
+                                duration = distanceEntity.duration,
+                            )
                         ),
+                        Pair(
+                            distanceEntity.toPlaceId to distanceEntity.fromPlaceId,
+                            Trip.Distance(
+                                distance = distanceEntity.distance,
+                                duration = distanceEntity.duration,
+                            )
+                        )
                     )
-                }
+                }.associate { it }
             }
         }
     }

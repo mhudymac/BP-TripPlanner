@@ -40,8 +40,6 @@ private class Twine(
             }
 
         project.exec {
-            // Add twine into path
-            // This should be also refactored
             val twinePath = project.findProperty("twinePath")
             if (twinePath != null) {
                 environment["PATH"] =

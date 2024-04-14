@@ -10,6 +10,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 
+/**
+ * This abstract class represents a permission request.
+ * It provides a function to request the permission.
+ *
+ * @property launcher The ActivityResultLauncher to use to request the permission.
+ * @property granted The state of whether the permission has been granted.
+ */
 abstract class PermissionRequest(
     protected open val launcher: ActivityResultLauncher<String>,
     open val granted: State<Boolean>,
@@ -17,6 +24,13 @@ abstract class PermissionRequest(
     abstract fun requestPermission()
 }
 
+/**
+ * This composable function creates and returns a PermissionRequest.
+ * It sets up a launcher for requesting a permission and handles the result.
+ *
+ * @param factory The factory function to create the PermissionRequest.
+ * @return A PermissionRequest.
+ */
 @Composable
 private fun <T : PermissionRequest> rememberPermissionRequest(
     factory: (

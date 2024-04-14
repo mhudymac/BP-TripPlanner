@@ -4,6 +4,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import kmp.shared.base.ErrorResult
 import kmp.shared.base.Result
+import kmp.shared.base.error.domain.TripError
 import kmp.shared.data.source.PhotoLocalSource
 import kmp.shared.infrastructure.local.PhotoEntity
 import kmp.shared.infrastructure.local.PhotosQueries
@@ -26,7 +27,7 @@ class PhotoLocalSourceImpl(
         try{
             queries.insertPhotoAsEntity(photo)
         } catch (e: Exception) {
-            return Result.Error(ErrorResult(message = e.message, throwable = e))
+            return Result.Error(TripError.SavingPhotoError)
         }
         return Result.Success(Unit)
     }
@@ -35,7 +36,7 @@ class PhotoLocalSourceImpl(
         try {
             queries.deletePhotosByTrip(tripId)
         } catch (e: Exception) {
-            return Result.Error(ErrorResult(message = e.message, throwable = e))
+            return Result.Error(TripError.DeletingPhotoError)
         }
         return Result.Success(Unit)
     }
@@ -44,7 +45,7 @@ class PhotoLocalSourceImpl(
         try {
             queries.deletePhotoByUri(uri)
         } catch (e: Exception) {
-            return Result.Error(ErrorResult(message = e.message, throwable = e))
+            return Result.Error(TripError.DeletingPhotoError)
         }
         return Result.Success(Unit)
     }

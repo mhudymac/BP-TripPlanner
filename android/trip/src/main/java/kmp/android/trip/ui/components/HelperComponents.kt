@@ -16,11 +16,8 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -40,11 +37,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
+import kmp.android.shared.R
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,22 +68,25 @@ internal fun SelectDateComponent(
     DatePickerDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
-            Button(onClick = {
-                onDateSelected(selectedDate)
-                onDismiss()
-            }
+            Button(
+                onClick = {
+                    onDateSelected(selectedDate)
+                    onDismiss()
+                }
 
             ) {
-                Text(text = "OK")
+                Text(text = stringResource(id = R.string.ok))
             }
         },
         dismissButton = {
-            Button(onClick = {
-                onDismiss()
-            }) {
-                Text(text = "Cancel")
+            Button(
+                onClick = {
+                    onDismiss()
+                }
+            ) {
+                Text(text = stringResource(id = R.string.cancel))
             }
-        }
+        },
     ) {
         DatePicker(
             state = datePickerState
@@ -203,7 +206,7 @@ internal fun DistanceCard(
             shape = MaterialTheme.shapes.extraLarge,
         ) {
             Text(
-                text = "$distanceInMinutes minutes",
+                text = "$distanceInMinutes " + stringResource(id = R.string.minutes),
                 modifier = Modifier.padding(8.dp),
             )
         }

@@ -9,7 +9,6 @@ interface DeletePlaceByIdUseCase: UseCaseResult<Pair<String, Long>, Unit>
 internal class DeletePlaceByIdUseCaseImpl(
     private val placeRepository: PlaceRepository
 ) : DeletePlaceByIdUseCase {
-    override suspend fun invoke(params: Pair<String, Long>): Result<Unit> {
-        return placeRepository.deleteById(params.first, params.second)
-    }
+    override suspend fun invoke(params: Pair<String, Long>): Result<Unit> = placeRepository.deleteById(params.first, params.second)
+
 }

@@ -13,7 +13,7 @@ insertOrReplaceDistance:
 INSERT OR REPLACE INTO DistanceEntity VALUES ?;
 
 getDistance:
-SELECT * FROM DistanceEntity WHERE (fromPlaceId = :fromPlace AND toPlaceId = :toPlace) OR (toPlaceId = :toPlace AND fromPlaceId = :fromPlace) LIMIT 1;
+SELECT * FROM DistanceEntity WHERE (fromPlaceId = :fromPlace AND toPlaceId = :toPlace) OR (toPlaceId = :fromPlace AND fromPlaceId = :toPlace) LIMIT 1;
 
 deleteByTripId:
 DELETE FROM DistanceEntity WHERE trip_id = ?;

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bottom_bar_item_1">Domov</string>
+    <string name="bottom_bar_item_2">Výlety</string>
+
+    <string name="tab_1_text">Nadchádzajúce výlety</string>
+    <string name="tab_2_text">Dokončené výlety</string>
+
+    <string name="unknown_error">Neznámy problém</string>
+    <string name="error_no_internet_connection">Žiaden internet</string>
+    <string name="error_deleting_trip">Chyba pri vymazávani výletu</string>
+    <string name="error_getting_place">Chyba pri získavaní miesta</string>
+    <string name="error_saving_trip">Chyba pri ukladaní miesta</string>
+    <string name="error_updating_trip">Chyba pri aktualizácii miesta</string>
+    <string name="error_deleting_distance">Chyba pri vymazávaní vzdialenosti</string>
+    <string name="error_deleting_photo">Chyba pri vymazávanií fotky</string>
+    <string name="error_deleting_place">Chyba pri vymazávání miesta</string>
+    <string name="error_getting_distance">Chyba pri získavaní vzdialenosti</string>
+    <string name="error_getting_photo">Chyba pri získavaní fotografie</string>
+    <string name="error_getting_loaction">Chyba pri získavaní lokácie</string>
+    <string name="error_repeating_trip">Chyba pri opakovaní výletu</string>
+    <string name="error_saving_distance">Chyba pri ukladaní vzdialenosti</string>
+    <string name="error_saving_photo">Chyba pri ukladaní fotky</string>
+    <string name="error_saving_place">Chyba pri ukladaní miesta</string>
+    <string name="error_searching">Chyba pri vyhľadávaní</string>
+    <string name="update_trip_error">Chyba aktualizácie výletu</string>
+    <string name="error_missing_name">Chýba názov výletu</string>
+    <string name="error_missing_date">Chýba dátum výletu</string>
+    <string name="error_itinerary_missing">Aspoň dve miesta v itinerári sú potrebné</string>
+    <string name="error_optimizing_trip">Chyba pri optimalizovaní výletu</string>
+    <string name="error_finding_trip">Výlet sa nenašiel</string>
+
+    <string name="trips_on">Výlety dňa </string>
+    <string name="trip_saving">Ukladám výlet…</string>
+    <string name="trip_gallery_label">Galéria výletu</string>
+    <string name="finish_trip">Dokončiť výlet</string>
+    <string name="start_trip">Začať výlet</string>
+    <string name="no_trip">Žiaden výlet nebol nájdený</string>
+    <string name="trip_repeat">Zopakovať výlet</string>
+    <string name="trip_date_label">Dátum výletu</string>
+    <string name="trip_name_label">Názov výletu</string>
+    <string name="trip_detail_label">Detaily</string>
+    <string name="trip_loading">Načítavam výlet</string>
+    <string name="trip_optimizing">Optimizujem výlet</string>
+    <string name="no_trips">Žiadne výlety</string>
+    <string name="select_date">Vyber dátum</string>
+    <string name="enter_name">Názov výletu</string>
+
+
+    <string name="place_image">Obrázok miesta</string>
+    <string name="add_place">Pridať miesto</string>
+    <string name="place_search">Vyhľadať miesto</string>
+    <string name="search_place">Vyhľadať miesto</string>
+    <string name="place_search_loading">Vyhľadávam…</string>
+
+    <string name="finish_trip_dialog">Naozaj chete dokončiť tento výlet?</string>
+    <string name="delete_trip_dialog">Naozaj chete vymazať tento výlet?</string>
+    <string name="optimize_dialog">Náš inteligentný algoritmus pre vás našiel najkratšiu cestu\\nChcete ju použiť?</string>
+
+    <string name="reorder_icon">Zmeniť poradie</string>
+    <string name="itinerary_lable">Itinerár</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Zrušiť</string>
+    <string name="minutes">minút</string>
+    <string name="take_picture">Odfoť</string>
+    <string name="placeholder">Dočasná náhrada</string>
+    <string name="delete">Vymazať</string>
+    <string name="affirmative">Áno</string>
+    <string name="negative">Nie</string>
+    <string name="create">Vytvoriť</string>
+    <string name="save">Uložiť</string>
+    <string name="search">Vyhľadať</string>
+    <string name="current_location">Moja lokácia</string>
+    <string name="use_current_locaiton">Použiť moju lokáciu</string>
+    <string name="no_images">Žiadne uložené fotky</string>
+    <string name="drawer_menu">Tlačidlo na zobrazenie bočného menu</string>
+    <string name="today">Dnes</string>
+    <string name="upcoming_in">O</string>
+    <string name="days">dní</string>
+    <string name="clear">Vymazať</string>
+    <string name="lightbulb">Žiarovka</string>
+    <string name="edit">Upraviť</string>
+    <string name="optimize">Optimizovať</string>
+
+</resources>

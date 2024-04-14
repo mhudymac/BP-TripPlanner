@@ -30,6 +30,15 @@ internal class GetNearestTripUseCaseImpl(
     private val getPhotosByTripUseCase: GetPhotosByTripUseCase
 ): GetNearestTripUseCase {
 
+    /**
+     * This function first gets the current location using the GetLocationFlowUseCase.
+     * Then, it gets the nearest trip using the TripRepository.
+     * If there are no trips, it returns a flow of empty list.
+     * If there are trips, it gets each trip by its id using the GetTripUseCase and sets the photos of each trip using the GetPhotosByTripUseCase.
+     * Finally, it sets the active place of each trip to the closest place to the current location if the distance is less than 0.2.
+     *
+     * @return A Flow of list of Trip objects.
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun invoke(): Flow<List<Trip>> {
         return getLocationFlowUseCase().flatMapLatest { location ->
@@ -61,6 +70,14 @@ internal class GetNearestTripUseCaseImpl(
         }
     }
 
+    /**
+     * This function is used to calculate the distance between two locations.
+     * It uses the haversine formula to calculate the great-circle distance between two points on a sphere given their longitudes and latitudes.
+     *
+     * @param location1 The first location.
+     * @param location2 The second location.
+     * @return The distance between the two locations.
+     */
     private fun distanceBetween(location1: Location, location2: Location): Double {
         val lat1 = location1.latitude.toRadians()
         val lon1 = location1.longitude.toRadians()
@@ -80,21 +97,3 @@ internal class GetNearestTripUseCaseImpl(
 
     private fun Double.toRadians(): Double = this * (PI / 180)
 }
-
-//override suspend fun invoke(): Flow<List<Trip>> {
-//    return getLocationFlowUseCase().flatMapLatest { location ->
-//        tripRepository.getNearestTrip().map { trips ->
-//            trips.mapNotNull { trip ->
-//                getTripUseCase(trip.id).first().getOrNull()
-//            }.onEach { trip ->
-//                val closestPlace = trip.itinerary.minByOrNull { place ->
-//                    distanceBetween(location, place.location)
-//                }
-//                if (closestPlace != null && distanceBetween(location, closestPlace.location) < 0.2) {
-//                    trip.activePlace = closestPlace.id
-//                }
-//
-//            }
-//        }
-//    }
-//}

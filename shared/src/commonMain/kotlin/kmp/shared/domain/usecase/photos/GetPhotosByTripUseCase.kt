@@ -10,7 +10,5 @@ interface GetPhotosByTripUseCase: UseCaseFlow<Long, List<Photo>>
 internal class GetPhotosByTripUseCaseImpl(
     private val photoRepository: PhotoRepository
 ): GetPhotosByTripUseCase {
-    override suspend fun invoke(params: Long): Flow<List<Photo>> {
-        return photoRepository.getPhotosByTrip(params)
-    }
+    override suspend fun invoke(params: Long): Flow<List<Photo>> = photoRepository.getPhotosByTrip(params)
 }

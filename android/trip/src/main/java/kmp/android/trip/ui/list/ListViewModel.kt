@@ -11,7 +11,10 @@ import kmp.shared.domain.usecase.trip.UpdateOnlyTripDetailsUseCase
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.LocalDate
 
-
+/**
+ * This class represents the ViewModel for the List view.
+ * It provides functions to load trips, repeat a trip, start a trip, and clear the edit state.
+ */
 class ListViewModel(
     private val getUncompletedTripsWithoutPlacesUseCase: GetUncompletedTripsWithoutPlacesUseCase,
     private val getCompletedTripsWithoutPlacesUseCase: GetCompletedTripsWithoutPlacesUseCase,
@@ -52,7 +55,7 @@ class ListViewModel(
         launch {
             when(val result = repeatTripUseCase(trip)) {
                 is Result.Success -> update { copy(editId = result.data) }
-                is Result.Error -> update { copy(error = result.error.message?: "Error") }
+                is Result.Error -> update { copy(error = result.error.message?: "") }
             }
         }
     }
@@ -61,7 +64,7 @@ class ListViewModel(
         launch {
             val result = updateTripDate(trip.copy(date = LocalDate.now().toKotlinLocalDate()))
             if(result is Result.Error) {
-                update { copy(error = result.error.message?: "Error") }
+                update { copy(error = result.error.message?: "") }
             }
         }
     }

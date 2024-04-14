@@ -58,8 +58,6 @@ val DarkColors = darkColorScheme(
 
 )
 
-val typography = Typography()
-
 @Composable
 fun AppTheme(darkTheme: Boolean = isSystemInDarkTheme(),
              content: @Composable () -> Unit

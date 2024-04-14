@@ -14,8 +14,20 @@ import io.ktor.serialization.kotlinx.json.json
 import kmp.shared.infrastructure.remote.places.globalJson
 import kmp.shared.system.Config
 
+/**
+ * This object provides a client for interacting with the Google Maps API.
+ */
 internal object MapsClient {
 
+    /**
+     * This function initializes and returns an HttpClient configured for interacting with the Google Maps API.
+     * It sets up the client with the necessary plugins and default request parameters.
+     *
+     * @param config The configuration object containing the application settings.
+     * @param engine The HttpClientEngine to use for the client.
+     * @param apiKey The API key to use for the Google Maps API.
+     * @return An HttpClient configured for interacting with the Google Maps API.
+     */
     fun init(config: Config, engine: HttpClientEngine, apiKey: String) = HttpClient(engine) {
         expectSuccess = true
         developmentMode = !config.isRelease

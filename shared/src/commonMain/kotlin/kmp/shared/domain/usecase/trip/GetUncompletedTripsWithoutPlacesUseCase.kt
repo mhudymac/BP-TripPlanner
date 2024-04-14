@@ -10,7 +10,5 @@ interface GetUncompletedTripsWithoutPlacesUseCase : UseCaseFlowNoParams<List<Tri
 internal class GetUncompletedTripsWithoutPlacesUseCaseImpl(
     private val tripRepository: TripRepository
 ) : GetUncompletedTripsWithoutPlacesUseCase {
-    override suspend fun invoke(): Flow<List<Trip>> {
-        return tripRepository.getUncompletedTrips()
-    }
+    override suspend fun invoke(): Flow<List<Trip>> = tripRepository.getUncompletedTrips()
 }

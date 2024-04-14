@@ -11,6 +11,10 @@ import kmp.shared.domain.usecase.place.UpdatePhotoUrlUseCase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 
+/**
+ * This class represents the ViewModel for the Search view.
+ * It provides functions to search for places, clear the search results, toggle the search status, and change the search query.
+ */
 class SearchViewModel(
     private val searchPlaces: SearchPlacesUseCase,
     private val searchPlacesWithBias: SearchPlacesWithBiasUseCase,

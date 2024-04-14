@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -54,6 +55,7 @@ import kmp.android.trip.ui.search.BottomBarSearch
 import kmp.shared.domain.model.Place
 import org.koin.androidx.compose.getViewModel
 import java.time.LocalDate
+import kmp.android.shared.R
 import kmp.android.trip.ui.edit.EditViewModel.ViewState as State
 
 fun NavController.navigateToEditScreen(tripId: Long) {
@@ -124,8 +126,8 @@ internal fun EditRoute (
 
     if(showOptimiseDialog) {
         OptimiseTripDialog(
-            onConfirm = { viewModel.saveTrip(true) },
-            onDismiss = { viewModel.saveTrip(false) }
+            onConfirm = { showOptimiseDialog = false; viewModel.saveTrip(true) },
+            onDismiss = { showOptimiseDialog = false; viewModel.saveTrip(false) }
         )
     }
 
@@ -134,16 +136,19 @@ internal fun EditRoute (
         snackbarHost = { SnackbarHost(hostState = snackHost )},
         topBar = {
             TopBar(
-                title = if(tripId > 0L) "Edit Trip" else "Create Trip",
+                title = if(tripId > 0L) stringResource(id = R.string.edit) else stringResource(id = R.string.create),
                 onBackArrow = {},
                 showBackArrow = false,
                 actions = {
-                    Switch(checked = reordering, onCheckedChange = { viewModel.toggleReordering()}, thumbContent = {
-                        Icon(
-                            imageVector = Icons.Outlined.Reorder,
-                            contentDescription = "Reorder",
-                        )
-                    })
+                    Switch(
+                        checked = reordering, onCheckedChange = { viewModel.toggleReordering() },
+                        thumbContent = {
+                            Icon(
+                                imageVector = Icons.Outlined.Reorder,
+                                contentDescription = stringResource(id = R.string.reorder_icon),
+                            )
+                        },
+                    )
                     IconButton(onClick = {
                         if(tripId == -1L){
                             showOptimiseDialog = true
@@ -153,7 +158,7 @@ internal fun EditRoute (
                     }) {
                         Icon(
                             imageVector = Icons.Default.Done,
-                            contentDescription = "Save"
+                            contentDescription = stringResource(id = R.string.save),
                         )
                     }
                 },
@@ -162,7 +167,7 @@ internal fun EditRoute (
         },
     ) {
         if(screenLoading){
-            FullScreenLoading(text = "Loading Trip")
+            FullScreenLoading(text = stringResource(id = R.string.trip_loading))
         } else if (reordering) {
             PlaceReorderingList(
                 itinerary = itinerary,
@@ -193,7 +198,7 @@ internal fun EditRoute (
     }
 
     if(savingLoading){
-        OverlayLoading(text = "Saving Trip")
+        OverlayLoading(text = stringResource(id = R.string.trip_saving))
     }
 }
 
@@ -226,7 +231,7 @@ internal fun CreateScreen(
 
         TripDateButtonComponent(date = date, onShowDatePicker = { showDatePicker = true })
 
-        ComponentWithLabel(label = "Itinerary") {
+        ComponentWithLabel(label = stringResource(id = R.string.itinerary_lable)) {
             if(itinerary.isEmpty()){
                 if(loading) {
                     EmptyPlaceCard(onClick = {}) {
@@ -237,13 +242,19 @@ internal fun CreateScreen(
                         onClickLeft = { showSearchBottomSheet = true },
                         onClickRight = onCurrentLocationClick,
                         contentLeft = {
-                            Icon(imageVector = Icons.Default.Search, contentDescription = "Search Place")
-                            Text(text = "Search place")
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = stringResource(id = R.string.search,),
+                            )
+                            Text(text = stringResource(id = R.string.place_search))
                         },
                         contentRight = {
-                            Icon(imageVector = Icons.Default.LocationOn, contentDescription = "Current Place")
-                            Text(text = "Use Current Location")
-                        }
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = stringResource(id = R.string.current_location),
+                            )
+                            Text(text = stringResource(id = R.string.use_current_locaiton))
+                        },
                     )
                 }
             } else {

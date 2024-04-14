@@ -2,7 +2,6 @@ package kmp.android.trip.ui.detail
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Lightbulb
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,17 +27,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import kmp.android.shared.R
 import kmp.android.shared.core.util.get
 import kmp.android.shared.navigation.composableDestination
 import kmp.android.trip.navigation.TripGraph
 import kmp.android.trip.ui.components.DeleteDialog
-import kmp.android.trip.ui.components.FinishTripAlertDialog
 import kmp.android.trip.ui.components.FullScreenLoading
 import kmp.android.trip.ui.components.OverlayLoading
 import kmp.android.trip.ui.components.TopBar
@@ -88,7 +86,7 @@ internal fun DetailRoute(
 
     if(showDialog) {
         DeleteDialog(
-            onConfirm = { viewModel.delete(); navigateUp() },
+            onConfirm = { showDialog = false; viewModel.delete(); navigateUp() },
             onDismiss = { showDialog = false },
         )
     }
@@ -107,34 +105,39 @@ internal fun DetailRoute(
         snackbarHost = { SnackbarHost(snackHost) },
         topBar = {
             TopBar(
-                title = trip?.name ?: "Detail",
-                onBackArrow = navigateUp
+                title = trip?.name ?: stringResource(id = R.string.trip_detail_label),
+                onBackArrow = navigateUp,
             ) {
                 IconButton(onClick = { showDialog = true }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete icon"
+                        contentDescription = stringResource(id = R.string.delete),
                     )
                 }
                 IconButton(onClick = { navigateToEdit(tripId) }) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit Icon"
+                        contentDescription = stringResource(id = R.string.edit),
                     )
                 }
             }
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                icon = { Icon(imageVector = Icons.Outlined.Lightbulb, contentDescription = "Optimise") },
-                text = { Text("Optimise") },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Outlined.Lightbulb,
+                        contentDescription = stringResource(id = R.string.optimize),
+                    )
+                },
+                text = { Text(stringResource(id = R.string.optimize)) },
                 onClick = { viewModel.optimise() },
-                expanded = isFloatingButtonExpanded.value
+                expanded = isFloatingButtonExpanded.value,
             )
         },
     ) {
         if(loading){
-            FullScreenLoading("Loading trip...")
+            FullScreenLoading(stringResource(id = R.string.trip_loading))
         } else {
             trip?.let { trip ->
                 DetailScreen(
@@ -150,7 +153,7 @@ internal fun DetailRoute(
         }
     }
     if(optimisingLoading){
-        OverlayLoading("Optimising trip...")
+        OverlayLoading(stringResource(id = R.string.trip_optimizing))
     }
 }
 

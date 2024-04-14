@@ -1,16 +1,13 @@
 package kmp.shared.domain.usecase.trip
 
-import kmp.shared.base.ErrorResult
 import kmp.shared.base.Result
+import kmp.shared.base.error.domain.TripError
 import kmp.shared.base.usecase.UseCaseResult
 import kmp.shared.domain.model.Trip
-import kmp.shared.domain.repository.DistanceRepository
 import kmp.shared.domain.repository.PlaceRepository
 import kmp.shared.domain.repository.TripRepository
 import kmp.shared.domain.usecase.place.SaveDistancesUseCase
-import kmp.shared.system.Log
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -23,6 +20,15 @@ internal class RepeatTripUseCaseImpl(
     private val saveDistancesUseCase: SaveDistancesUseCase,
     private val getTripUseCase: GetTripUseCase,
 ): RepeatTripUseCase {
+
+    /**
+     * This function first gets a trip by its id using the GetTripUseCase.
+     * If the trip is successfully retrieved, it inserts or replaces the trip using the TripRepository with a temporary id 0.
+     * If the trip, places, or distances are not successfully inserted or replaced, it returns an error.
+     *
+     * @param params The trip to repeat.
+     * @return A Result object containing either a tripId in case of success or an error.
+     */
     override suspend fun invoke(params: Trip): Result<Long> {
         return when (val trip = getTripUseCase(params.id).first()) {
             is Result.Success -> {
@@ -45,7 +51,7 @@ internal class RepeatTripUseCaseImpl(
                         Result.Success(0L)
                     }
 
-                    is Result.Error -> Result.Error(ErrorResult("Error repeating trip"))
+                    is Result.Error -> Result.Error(TripError.RepeatingTripError)
                 }
             }
             is Result.Error -> Result.Error(trip.error)

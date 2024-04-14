@@ -8,6 +8,7 @@ import kmp.shared.domain.model.Place
 import kmp.shared.extension.asDomain
 import kmp.shared.infrastructure.model.PlaceDto
 import kmp.shared.base.Result
+import kmp.shared.base.error.domain.TripError
 import kmp.shared.data.source.PlaceLocalSource
 import kmp.shared.domain.model.Location
 import kmp.shared.domain.model.Trip
@@ -44,18 +45,26 @@ internal class PlaceRepositoryImpl(
         val id = remoteSource.getPlaceByLocation(location).map { it.results.first().place_id }
         return when(id) {
             is Result.Success -> getPlace(id.data)
-            is Result.Error -> Result.Error(ErrorResult("No place found."))
+            is Result.Error -> Result.Error(id.error)
         }
     }
 
     override suspend fun getDistanceMatrix(places: List<String>): Result<List<Triple<String, String, Trip.Distance>>> {
-        val maxPlaces = 10
+        return updateDistanceMatrix(places, places)
+    }
+
+    override suspend fun updateDistanceMatrix(
+        originPlaces: List<String>,
+        destinationPlaces: List<String>,
+    ): Result<List<Triple<String, String, Trip.Distance>>> {
+        val originsStep = minOf(originPlaces.size, 25)
+        val destinationsStep = minOf(100/originsStep, destinationPlaces.size)
         val results = mutableListOf<Triple<String, String, Trip.Distance>>()
 
-        for (i in places.indices step maxPlaces) {
-            val origins = places.subList(i, minOf(i + maxPlaces, places.size))
-            for (j in places.indices step maxPlaces) {
-                val destinations = places.subList(j, minOf(j + maxPlaces, places.size))
+        for (i in originPlaces.indices step originsStep) {
+            val origins = originPlaces.subList(i, minOf(i + originsStep, originPlaces.size))
+            for (j in destinationPlaces.indices step destinationsStep) {
+                val destinations = destinationPlaces.subList(j, minOf(j + destinationsStep, destinationPlaces.size))
                 val result = remoteSource.getDistanceMatrix(origins = origins, destinations = destinations).map {
                     it.rows.mapIndexed { rowIndex, row ->
                         row.elements.mapIndexed { columnIndex, column ->

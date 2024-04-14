@@ -4,6 +4,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import kmp.shared.base.ErrorResult
 import kmp.shared.base.Result
+import kmp.shared.base.error.domain.TripError
 import kmp.shared.data.source.TripLocalSource
 import kmp.shared.infrastructure.local.TripEntity
 import kmp.shared.infrastructure.local.TripQueries
@@ -31,7 +32,7 @@ class TripLocalSourceImpl(
             try {
                 tripQueries.insertOrReplace(it)
             } catch (e: Exception) {
-                return Result.Error(ErrorResult(message = e.message, throwable = e))
+                return Result.Error(TripError.UpdatingTripError)
             }
         }
         return Result.Success(Unit)
@@ -41,7 +42,7 @@ class TripLocalSourceImpl(
         try {
             tripQueries.deleteAll()
         } catch (e: Exception) {
-            return Result.Error(ErrorResult(message = e.message, throwable = e))
+            return Result.Error(TripError.DeletingTripError)
         }
 
         return Result.Success(Unit)
@@ -56,7 +57,7 @@ class TripLocalSourceImpl(
         try {
             tripQueries.insertWithoutId(item.name, item.date, item.place_order, item.completed)
         } catch (e: Exception) {
-            return Result.Error(ErrorResult(message = e.message, throwable = e))
+            return Result.Error(TripError.SavingTripError)
         }
 
         return Result.Success(tripQueries.lastInsertedId().executeAsOne())
@@ -70,7 +71,7 @@ class TripLocalSourceImpl(
         try {
             tripQueries.deleteById(id)
         } catch (e: Exception) {
-            return Result.Error(ErrorResult(message = e.message, throwable = e))
+            return Result.Error(TripError.DeletingTripError)
         }
         return Result.Success(Unit)
     }

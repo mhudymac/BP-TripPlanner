@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +37,7 @@ import kmp.shared.domain.model.Trip
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kmp.android.shared.R
 
 @Composable
 internal fun FinishTripAlertDialog(
@@ -44,17 +46,17 @@ internal fun FinishTripAlertDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        text = { Text("Do you really want to finish trip?") },
+        text = { Text(stringResource(id = R.string.finish_trip_dialog)) },
         confirmButton = {
             Button(onClick = onConfirm) {
-                Text("Yes")
+                Text(stringResource(id = R.string.affirmative))
             }
         },
         dismissButton = {
             Button(onClick = onDismiss) {
-                Text("No")
+                Text(stringResource(id = R.string.negative))
             }
-        }
+        },
     )
 }
 
@@ -65,17 +67,17 @@ internal fun DeleteDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        text = { Text("Do you really want to delete this trip?") },
+        text = { Text(stringResource(id = R.string.delete_trip_dialog)) },
         confirmButton = {
             Button(onClick = onConfirm) {
-                Text("Yes")
+                Text(stringResource(id = R.string.affirmative))
             }
         },
         dismissButton = {
             Button(onClick = onDismiss) {
-                Text("No")
+                Text(stringResource(id = R.string.negative))
             }
-        }
+        },
     )
 }
 
@@ -86,27 +88,29 @@ internal fun OptimiseTripDialog(
 ) {
     AlertDialog(
         onDismissRequest = { },
-        text = { Text(
-            text = "Our smart order algorithm can create the best itinerary tailored just for you!\nDo you want to use it?",
-            textAlign = TextAlign.Center
-        ) },
+        text = {
+            Text(
+                text = stringResource(id = R.string.optimize_dialog),
+                textAlign = TextAlign.Center,
+            )
+        },
         icon = {
             Icon(
                 Icons.Outlined.Lightbulb,
-                contentDescription = "Smart order"
+                contentDescription = stringResource(id = R.string.lightbulb),
             )
         },
         confirmButton = {
             Button(onClick = onConfirm) {
-                Text("Yes")
+                Text(stringResource(id = R.string.affirmative))
             }
         },
         dismissButton = {
             Button(onClick = onDismiss) {
-                Text("No")
+                Text(stringResource(id = R.string.negative))
             }
         },
-        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
     )
 }
 
@@ -126,21 +130,22 @@ internal fun TripsSheet(trips: List<Trip>, onTripClick: (Trip) -> Unit) {
 
 @Composable
 fun TripDateButtonComponent(date: LocalDate?, onShowDatePicker: () -> Unit) {
-    ComponentWithLabel(label = "Trip date") {
+    ComponentWithLabel(label = stringResource(id = R.string.trip_date_label)) {
         OutlinedTextFieldLikeButton(
-            text = date?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) ?: "Select Date",
-            onClick = { onShowDatePicker() }
+            text = date?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                ?: stringResource(id = R.string.select_date),
+            onClick = { onShowDatePicker() },
         )
     }
 }
 
 @Composable
 fun TripNameTextFieldComponent(name: String, onNameChange: (String) -> Unit, focusManager: FocusManager) {
-    ComponentWithLabel("Trip name", padding = PaddingValues(0.dp)) {
+    ComponentWithLabel(stringResource(id = R.string.trip_name_label), padding = PaddingValues(0.dp)) {
         OutlinedTextField(
             value = name,
             onValueChange = { onNameChange(it) },
-            placeholder = { Text("Enter name") },
+            placeholder = { Text(stringResource(id = R.string.enter_name)) },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
             shape = MaterialTheme.shapes.medium,
@@ -166,7 +171,9 @@ internal fun TripCard(
         onClick = onClick,
     ) {
         Row(
-            modifier = Modifier.fillMaxSize().padding(8.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {

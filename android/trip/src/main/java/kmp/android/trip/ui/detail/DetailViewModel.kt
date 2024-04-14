@@ -10,6 +10,10 @@ import kmp.shared.domain.usecase.trip.OptimiseTripUseCase
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 
+/**
+ * This class represents the ViewModel for the Detail view.
+ * It provides functions to get a trip, optimise a trip, and delete a trip.
+ */
 class DetailViewModel(
     private val getTripByName: GetTripUseCase,
     private val deleteTripUseCase: DeleteTripUseCase,
@@ -24,7 +28,7 @@ class DetailViewModel(
             getTripByName(tripId).map {
                 when (it) {
                     is Result.Success -> { update { copy(trip = it.data, loading = false, optimisingLoading = false) }}
-                    is Result.Error -> { update { copy(error = it.error.message?: "Trip wasn't found", loading = false, optimisingLoading = false) }}
+                    is Result.Error -> { update { copy(error = it.error.message?: "", loading = false, optimisingLoading = false) }}
                 }
             }.collect()
 
@@ -38,7 +42,7 @@ class DetailViewModel(
                 val result = optimiseTripUseCase(it)
 
                 if(result is Result.Error){
-                    update { copy(error = result.error.message?: "Error optimising trip") }
+                    update { copy(error = result.error.message?: "") }
                 }
             }
             update { copy(optimisingLoading = false) }
@@ -51,7 +55,7 @@ class DetailViewModel(
                 val result = deleteTripUseCase(it)
 
                 if(result is Result.Error){
-                    update { copy(error = result.error.message?: "Error deleting trip") }
+                    update { copy(error = result.error.message?: "") }
                 }
             }
         }

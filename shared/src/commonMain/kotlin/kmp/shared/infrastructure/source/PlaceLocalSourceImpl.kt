@@ -2,6 +2,7 @@ package kmp.shared.infrastructure.source
 
 import kmp.shared.base.ErrorResult
 import kmp.shared.base.Result
+import kmp.shared.base.error.domain.TripError
 import kmp.shared.data.source.PlaceLocalSource
 import kmp.shared.infrastructure.local.DistanceEntity
 import kmp.shared.infrastructure.local.PlaceEntity
@@ -20,7 +21,7 @@ internal class PlaceLocalSourceImpl(
                 queries.insertOrReplace(it)
             }
             catch (e: Exception) {
-                return Result.Error(ErrorResult(message = e.message, throwable = e))
+                return Result.Error(TripError.SavingPlaceError)
             }
         }
         return Result.Success(Unit)
@@ -30,7 +31,7 @@ internal class PlaceLocalSourceImpl(
         try {
             queries.deleteById(placeId, tripId)
         } catch (e: Exception) {
-            return Result.Error(ErrorResult(message = e.message, throwable = e))
+            return Result.Error(TripError.DeletingPlaceError)
         }
         return Result.Success(Unit)
     }
@@ -39,7 +40,7 @@ internal class PlaceLocalSourceImpl(
         try {
             queries.deleteByTripId(tripId)
         } catch (e: Exception) {
-            return Result.Error(ErrorResult(message = e.message, throwable = e))
+            return Result.Error(TripError.DeletingPlaceError)
         }
         return Result.Success(Unit)
     }
