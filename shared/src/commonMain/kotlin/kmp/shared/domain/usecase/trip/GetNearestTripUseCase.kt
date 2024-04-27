@@ -52,17 +52,18 @@ internal class GetNearestTripUseCaseImpl(
                 }.let { trips1 ->
                     combine(trips1.map { trip ->
                         getPhotosByTripUseCase(trip.id).map { photos ->
-                            trip.photos = photos
-                            trip
+                            trip.copy(photos = photos)
                         }
                     }) { it.toList() }
                 }.map { trips2 ->
-                    trips2.onEach { trip ->
+                    trips2.map { trip ->
                         val closestPlace = trip.itinerary.minByOrNull { place ->
                             distanceBetween(location, place.location)
                         }
                         if (closestPlace != null && distanceBetween(location, closestPlace.location) < 0.2) {
-                            trip.activePlace = closestPlace.id
+                            trip.copy(activePlace = closestPlace.id)
+                        } else {
+                            trip
                         }
                     }
                 }
