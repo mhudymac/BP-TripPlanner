@@ -4,6 +4,7 @@ import kmp.shared.base.ErrorResult
 import kmp.shared.base.Result
 import kmp.shared.base.error.domain.TripError
 import kmp.shared.base.usecase.UseCaseResult
+import kmp.shared.domain.model.Distance
 import kmp.shared.domain.model.Trip
 import kmp.shared.domain.repository.DistanceRepository
 import kmp.shared.system.Log
@@ -50,7 +51,7 @@ internal class OptimiseTripUseCaseImpl(
      * @param places The places in the trip.
      * @return The order of places in the trip after applying the nearest neighbor algorithm.
      */
-    private fun nearestNeighbor(distances: Map<Pair<String, String>, Trip.Distance>, places: List<String>): List<String> {
+    private fun nearestNeighbor(distances: Map<Pair<String, String>, Distance>, places: List<String>): List<String> {
         val remainingPlaces = places.toMutableList()
         val path = mutableListOf<String>()
 
@@ -75,7 +76,7 @@ internal class OptimiseTripUseCaseImpl(
      * @param places The places in the trip.
      * @return The order of places in the trip after applying the 3-opt algorithm.
      */
-    private fun threeOpt(distances: Map<Pair<String, String>, Trip.Distance>, places: List<String>): List<String> {
+    private fun threeOpt(distances: Map<Pair<String, String>, Distance>, places: List<String>): List<String> {
         val path = places.toMutableList()
         var improved = true
 
@@ -114,7 +115,7 @@ internal class OptimiseTripUseCaseImpl(
      * @param k The index of the third place to swap.
      * @return The change in distance when swapping the three places.
      */
-    private fun changeInDistance(distances: Map<Pair<String, String>, Trip.Distance>, path: List<String>, i: Int, j: Int, k: Int): Long {
+    private fun changeInDistance(distances: Map<Pair<String, String>, Distance>, path: List<String>, i: Int, j: Int, k: Int): Long {
         val d0 = (distances[Pair(path[i], path[i + 1])]?.distance ?: Long.MAX_VALUE) +
             (distances[Pair(path[j], path[j + 1])]?.distance ?: Long.MAX_VALUE) +
             (distances[Pair(path[k], path[(k + 1) % path.size])]?.distance ?: Long.MAX_VALUE)

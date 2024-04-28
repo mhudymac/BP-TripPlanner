@@ -12,10 +12,5 @@ data class Trip(
     val activePlace: String = "",
     val photos: List<Photo> = emptyList(),
     val distances: Map<Pair<String, String>, Distance> = emptyMap(),
-){
-    data class Distance(
-        val distance: Long,
-        val duration: Long
-    )
-}
+)
 

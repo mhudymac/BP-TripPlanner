@@ -10,6 +10,7 @@ import kmp.shared.infrastructure.model.PlaceDto
 import kmp.shared.base.Result
 import kmp.shared.base.error.domain.TripError
 import kmp.shared.data.source.PlaceLocalSource
+import kmp.shared.domain.model.Distance
 import kmp.shared.domain.model.Location
 import kmp.shared.domain.model.Trip
 import kmp.shared.extension.asEntity
@@ -49,17 +50,17 @@ internal class PlaceRepositoryImpl(
         }
     }
 
-    override suspend fun getDistanceMatrix(places: List<String>): Result<List<Triple<String, String, Trip.Distance>>> {
+    override suspend fun getDistanceMatrix(places: List<String>): Result<List<Triple<String, String, Distance>>> {
         return updateDistanceMatrix(places, places)
     }
 
     override suspend fun updateDistanceMatrix(
         originPlaces: List<String>,
         destinationPlaces: List<String>,
-    ): Result<List<Triple<String, String, Trip.Distance>>> {
+    ): Result<List<Triple<String, String, Distance>>> {
         val originsStep = minOf(originPlaces.size, 25)
         val destinationsStep = minOf(100/originsStep, destinationPlaces.size)
-        val results = mutableListOf<Triple<String, String, Trip.Distance>>()
+        val results = mutableListOf<Triple<String, String, Distance>>()
 
         for (i in originPlaces.indices step originsStep) {
             val origins = originPlaces.subList(i, minOf(i + originsStep, originPlaces.size))
@@ -68,7 +69,7 @@ internal class PlaceRepositoryImpl(
                 val result = remoteSource.getDistanceMatrix(origins = origins, destinations = destinations).map {
                     it.rows.mapIndexed { rowIndex, row ->
                         row.elements.mapIndexed { columnIndex, column ->
-                            Triple(origins[rowIndex], destinations[columnIndex], Trip.Distance(
+                            Triple(origins[rowIndex], destinations[columnIndex], Distance(
                                 distance = column.distance.value,
                                 duration = column.duration.value
                             ))
@@ -104,5 +105,4 @@ internal class PlaceRepositoryImpl(
     override suspend fun getPlacesByTripID(tripID: Long): List<Place> {
         return localSource.getPlacesByTripID(tripID).map { it.asDomain }
     }
-
 }
