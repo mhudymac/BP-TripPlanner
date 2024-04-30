@@ -14,7 +14,7 @@ internal class UpdatePhotoUrlUseCaseImpl(
 ) : UpdatePhotoUrlUseCase {
 
     override suspend fun invoke(params: Place): Result<Place> =
-        params.photoName?.let {
+        params.photoId?.let {
             repository.getPhoto(photoName = it).map { url ->
                 params.copy(photoUri = url)
             }

@@ -26,20 +26,21 @@ internal class OptimiseTripUseCaseImpl(
      * @return A Result object containing either Unit in case of success or an error.
      */
     override suspend fun invoke(params: Trip): Result<Unit> {
-        when (val distances = distancesRepository.getDistancesByTripId(params.id)) {
+        return when (val distances = distancesRepository.getDistancesByTripId(params.id)) {
             is Result.Success -> {
                 try {
                     val initialOrder = nearestNeighbor(distances.data, params.order)
 
                     val optimizedOrder = if(initialOrder.size > 4) threeOpt(distances.data, initialOrder) else initialOrder
 
-                    return updateTripUseCase(params.copy(order = optimizedOrder))
+                    updateTripUseCase(params.copy(order = optimizedOrder))
 
                 } catch (e: Exception) {
-                    return Result.Error(TripError.OptimisingTripError)
+                    Result.Error(TripError.OptimisingTripError)
                 }
             }
-            is Result.Error -> return Result.Error(distances.error)
+
+            is Result.Error -> Result.Error(distances.error)
         }
     }
 

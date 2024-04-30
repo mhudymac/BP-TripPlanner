@@ -6,8 +6,16 @@ import kotlinx.coroutines.flow.Flow
 internal actual class LocationController {
     actual val locationFlow: Flow<Location>
         get() = TODO("Not yet implemented")
-    actual var lastLocation: Location?
+    private var lastLocation: Location? = null
         get() = TODO("Not yet implemented")
-        set(value) {}
+
+    /**
+     * This function is used to get the current location.
+     *
+     * @return A nullable Location object representing the current location.
+     */
+    actual suspend fun getCurrentLocation(): Location? {
+        TODO("Not yet implemented")
+    }
 
 }

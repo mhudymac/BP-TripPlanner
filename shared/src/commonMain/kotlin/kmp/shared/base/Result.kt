@@ -7,7 +7,6 @@ package kmp.shared.base
  * @param T The type of the data that the result will hold in case of success.
  */
 sealed class Result<out T : Any> {
-
     data class Success<out T : Any>(val data: T) : Result<T>()
 
     data class Error<out T : Any>(val error: ErrorResult, val data: T? = null) : Result<T>()

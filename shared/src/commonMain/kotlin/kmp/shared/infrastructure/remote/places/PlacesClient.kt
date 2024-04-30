@@ -62,8 +62,6 @@ internal object PlacesClient {
             }
             contentType(ContentType.Application.Json)
         }
-
-
     }
 }
 

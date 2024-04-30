@@ -13,7 +13,7 @@ internal val PlaceDto.asDomain
         formattedAddress = formattedAddress,
         location = location.let { Location(it.latitude, it.longitude) },
         googleMapsUri = googleMapsUri,
-        photoName = photos?.firstOrNull()?.name
+        photoId = photos?.firstOrNull()?.name
     )
 
 internal fun Place.asEntity(tripId: Long): PlaceEntity {
@@ -24,7 +24,7 @@ internal fun Place.asEntity(tripId: Long): PlaceEntity {
         lat = location.latitude,
         lng = location.longitude,
         googleMapsUri = googleMapsUri,
-        photo = photoName,
+        photo = photoId,
         photoUri = photoUri,
         trip_id = tripId
     )
@@ -38,7 +38,7 @@ internal val PlaceEntity.asDomain
         formattedAddress = formattedAddress,
         location = Location(lat, lng),
         googleMapsUri = googleMapsUri,
-        photoName = photo,
+        photoId = photo,
         photoUri = photoUri
     )
 
@@ -53,7 +53,7 @@ internal val TripWithPlaces.asPlace
                 formattedAddress = formattedAddress,
                 location = Location(lat, lng),
                 googleMapsUri = googleMapsUri,
-                photoName = photo,
+                photoId = photo,
                 photoUri = photoUri
             )
         }

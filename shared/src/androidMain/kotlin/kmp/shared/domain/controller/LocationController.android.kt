@@ -64,26 +64,26 @@ internal actual class LocationController(
     }.filterNotNull()
 
     @SuppressLint("MissingPermission")
-    actual suspend fun getCurrentLocation(): Location? {
-        if (permissionGranted) {
-            return suspendCoroutine { continuation ->
-                val cancellationSource = CancellationTokenSource()
-                val token = cancellationSource.token
+        actual suspend fun getCurrentLocation(): Location? {
+            if (permissionGranted) {
+                return suspendCoroutine { continuation ->
+                    val cancellationSource = CancellationTokenSource()
+                    val token = cancellationSource.token
 
-                val request = CurrentLocationRequest.Builder()
-                    .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-                    .build()
+                    val request = CurrentLocationRequest.Builder()
+                        .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+                        .build()
 
-                locationProvider.getCurrentLocation(request, token)
-                    .addOnSuccessListener { location ->
-                        cancellationSource.cancel()
-                        location?.let { continuation.resume(Location(it.latitude, it.longitude)) }
-                    }.addOnCanceledListener {
-                        continuation.resume(null)
-                    }
-            }
-        } else return null
-    }
+                    locationProvider.getCurrentLocation(request, token)
+                        .addOnSuccessListener { location ->
+                            cancellationSource.cancel()
+                            location?.let { continuation.resume(Location(it.latitude, it.longitude)) }
+                        }.addOnCanceledListener {
+                            continuation.resume(null)
+                        }
+                }
+            } else return null
+        }
 
     @SuppressLint("MissingPermission")
     private fun startListening() {

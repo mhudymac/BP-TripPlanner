@@ -6,6 +6,6 @@ data class Place (
     val formattedAddress: String,
     val location: Location,
     val googleMapsUri: String,
-    val photoName: String?,
+    val photoId: String?,
     val photoUri: String? = null,
 )

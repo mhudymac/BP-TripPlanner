@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlin.math.PI
@@ -21,6 +20,8 @@ import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
+
+const val ACTIVE_DISTANCE = 0.2
 
 interface GetNearestTripUseCase: UseCaseFlowNoParams<List<Trip>>
 internal class GetNearestTripUseCaseImpl(
@@ -60,7 +61,7 @@ internal class GetNearestTripUseCaseImpl(
                         val closestPlace = trip.itinerary.minByOrNull { place ->
                             distanceBetween(location, place.location)
                         }
-                        if (closestPlace != null && distanceBetween(location, closestPlace.location) < 0.2) {
+                        if (closestPlace != null && distanceBetween(location, closestPlace.location) < ACTIVE_DISTANCE) {
                             trip.copy(activePlace = closestPlace.id)
                         } else {
                             trip

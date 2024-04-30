@@ -14,6 +14,9 @@ import kmp.shared.infrastructure.model.PlaceDto
 import kmp.shared.infrastructure.model.TextSearchRequestBody
 import kmp.shared.infrastructure.model.searchFieldMask
 
+const val MAX_RESULT_COUNT = 16
+const val RADIUS = 50
+
 /**
  * This object contains the paths for the Google Places API endpoints.
  */
@@ -42,7 +45,7 @@ internal class PlaceService(private val client: HttpClient) {
      * @param radius The radius to search within.
      * @return A Result object containing a TextSearchResponse in case of success or an error.
      */
-    suspend fun searchPlaces( query: String, maxResultCount: Int = 16, location: Location? = null, radius: Int = 50 ): Result<TextSearchResponse> {
+    suspend fun searchPlaces( query: String, maxResultCount: Int = MAX_RESULT_COUNT, location: Location? = null, radius: Int = RADIUS ): Result<TextSearchResponse> {
         return runCatchingCommonNetworkExceptions {
             client.post(PlacePaths.textSearch) {
                 headers.append("X-Goog-FieldMask", searchFieldMask())

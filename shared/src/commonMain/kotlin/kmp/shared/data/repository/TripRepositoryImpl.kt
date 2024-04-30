@@ -17,15 +17,8 @@ import kotlinx.coroutines.flow.map
 internal class TripRepositoryImpl(
     private val source: TripLocalSource
 ) : TripRepository {
-
-    override suspend fun getUncompletedTrips(): Flow<List<Trip>> {
-        return source.getUncompletedTrips().map { it.map(TripEntity::asDomain) }
-    }
-
-    override suspend fun getCompletedTrips(): Flow<List<Trip>> {
-        return source.getCompletedTrips().map { it.map(TripEntity::asDomain) }
-    }
-
+    override suspend fun getUncompletedTrips(): Flow<List<Trip>> =  source.getUncompletedTrips().map { it.map(TripEntity::asDomain) }
+    override suspend fun getCompletedTrips(): Flow<List<Trip>> = source.getCompletedTrips().map { it.map(TripEntity::asDomain) }
     override suspend fun getTripById(id: Long): Flow<Trip?> {
         return source.getTripById(id).map { tripWithPlaces ->
             val trip = tripWithPlaces.firstOrNull()?.asTrip
@@ -38,24 +31,9 @@ internal class TripRepositoryImpl(
             )
         }
     }
-
-    override suspend fun deleteTripById(id: Long): Result<Unit> {
-        return source.deleteTripById(id)
-    }
-    override suspend fun deleteAllTrips(): Result<Unit> {
-        return source.deleteAllTrips()
-    }
-
-    override suspend fun insertOrReplace(trips: List<Trip>): Result<Unit> {
-        return source.updateOrInsert(trips.map(Trip::asEntity))
-    }
-
-    override suspend fun getNearestTrip(): Flow<List<Trip>> {
-        return source.getNearestTrip().map { it.map(TripEntity::asDomain) }
-    }
-
-    override suspend fun insertWithoutId(trip: Trip): Result<Long> {
-        return source.insertWithoutId(trip.asEntity)
-    }
-
+    override suspend fun deleteTripById(id: Long): Result<Unit> = source.deleteTripById(id)
+    override suspend fun deleteAllTrips(): Result<Unit> = source.deleteAllTrips()
+    override suspend fun insertOrReplace(trips: List<Trip>): Result<Unit> = source.updateOrInsert(trips.map(Trip::asEntity))
+    override suspend fun getNearestTrip(): Flow<List<Trip>> = source.getNearestTrip().map { it.map(TripEntity::asDomain) }
+    override suspend fun insertWithoutId(trip: Trip): Result<Long>  = source.insertWithoutId(trip.asEntity)
 }
