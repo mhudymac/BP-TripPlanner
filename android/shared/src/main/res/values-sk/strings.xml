@@ -55,7 +55,7 @@
 
     <string name="finish_trip_dialog">Naozaj chete dokončiť tento výlet?</string>
     <string name="delete_trip_dialog">Naozaj chete vymazať tento výlet?</string>
-    <string name="optimize_dialog">Náš inteligentný algoritmus pre vás našiel najkratšiu cestu\\nChcete ju použiť?</string>
+    <string name="optimize_dialog">Náš inteligentný algoritmus pre vás našiel najkratšiu cestu!</string>
 
     <string name="reorder_icon">Zmeniť poradie</string>
     <string name="itinerary_lable">Itinerár</string>
@@ -81,5 +81,6 @@
     <string name="lightbulb">Žiarovka</string>
     <string name="edit">Upraviť</string>
     <string name="optimize">Optimizovať</string>
+    <string name="do_you_want_to_use_it">Chcete ju použiť?</string>
 
 </resources>

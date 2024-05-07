@@ -36,5 +36,5 @@ versionCatalogUpdate {
 }
 
 tasks.create<Delete>("clean") {
-    delete(rootProject.buildDir)
+    delete(getLayout().buildDirectory)
 }

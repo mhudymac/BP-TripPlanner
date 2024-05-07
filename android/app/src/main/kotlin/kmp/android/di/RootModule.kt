@@ -2,6 +2,9 @@ package kmp.android.di
 
 import android.content.Context
 import androidx.activity.ComponentActivity
+import kmp.android.gallery.di.galleryModule
+import kmp.android.home.di.homeModule
+import kmp.android.search.di.searchModule
 import kmp.android.shared.di.androidSharedModule
 import kmp.android.trip.di.tripModule
 import kmp.shared.di.initKoin
@@ -18,6 +21,9 @@ fun ComponentActivity.initDependencyInjection() {
             contextModule,
             androidSharedModule,
             tripModule,
+            searchModule,
+            homeModule,
+            galleryModule
         )
     }
 }

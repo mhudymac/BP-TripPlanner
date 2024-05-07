@@ -19,6 +19,14 @@ import kotlinx.datetime.todayIn
 class TripLocalSourceImpl(
     private val tripQueries: TripQueries
 ) : TripLocalSource {
+
+    override fun getTripById(id: Long): Flow<List<TripWithPlaces>> {
+        return tripQueries.tripWithPlaces(id).asFlow().mapToList(Dispatchers.IO)
+    }
+    override fun getNearestTrip(): Flow<List<TripEntity>> {
+        val date = Clock.System.todayIn(TimeZone.currentSystemDefault()).toString()
+        return tripQueries.getNearestTrip(date).asFlow().mapToList(Dispatchers.IO)
+    }
     override fun getUncompletedTrips(): Flow<List<TripEntity>> {
         return tripQueries.getUncompletedTrips().asFlow().mapToList(Dispatchers.IO)
     }
@@ -48,11 +56,6 @@ class TripLocalSourceImpl(
         return Result.Success(Unit)
     }
 
-    override fun getNearestTrip(): Flow<List<TripEntity>> {
-        val date = Clock.System.todayIn(TimeZone.currentSystemDefault()).toString()
-        return tripQueries.getNearestTrip(date).asFlow().mapToList(Dispatchers.IO)
-    }
-
     override fun insertWithoutId(item: TripEntity): Result<Long> {
         try {
             tripQueries.insertWithoutId(item.name, item.date, item.place_order, item.completed)
@@ -61,10 +64,6 @@ class TripLocalSourceImpl(
         }
 
         return Result.Success(tripQueries.lastInsertedId().executeAsOne())
-    }
-
-    override fun getTripById(id: Long): Flow<List<TripWithPlaces>> {
-        return tripQueries.tripWithPlaces(id).asFlow().mapToList(Dispatchers.IO)
     }
 
     override fun deleteTripById(id: Long): Result<Unit> {

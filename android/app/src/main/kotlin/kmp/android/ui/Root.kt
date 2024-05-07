@@ -1,7 +1,5 @@
 package kmp.android.ui
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -22,14 +20,19 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import kmp.android.gallery.navigation.galleryNavGraph
+import kmp.android.gallery.ui.navigateToGalleryScreen
+import kmp.android.home.navigation.HomeDestination
+import kmp.android.home.navigation.homeNavGraph
+import kmp.android.home.ui.navigateToHomeScreen
 import kmp.android.navigation.NavBarFeature
 import kmp.android.trip.navigation.TripGraph
 import kmp.android.trip.navigation.tripNavGraph
+import kmp.android.trip.screens.edit.navigateToCreateScreen
 
 @Composable
 fun Root(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-
     Scaffold(
         modifier = modifier,
         bottomBar = { BottomBar(navController) },
@@ -39,12 +42,18 @@ fun Root(modifier: Modifier = Modifier) {
                 .padding(padding)
                 .fillMaxSize(),
         ) {
-                NavHost(
-                    navController,
-                    startDestination = TripGraph.rootPath
-                ) {
-                    tripNavGraph(navController)
-                }
+            NavHost(
+                navController,
+                startDestination = HomeDestination.route
+            ) {
+                tripNavGraph(
+                    navHostController = navController,
+                    navigateToGallery = { id -> navController.navigateToGalleryScreen(id) },
+                    navigateToHomeScreen = { navController.navigateToHomeScreen() }
+                )
+                galleryNavGraph( navHostController = navController )
+                homeNavGraph { navController.navigateToCreateScreen() }
+            }
         }
     }
 }
@@ -54,7 +63,7 @@ private fun BottomBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    if(currentRoute?.equals(TripGraph.Home.route) == true || currentRoute?.equals(TripGraph.List.route) == true) {
+    if(currentRoute?.equals(HomeDestination.route) == true || currentRoute?.equals(TripGraph.List.route) == true) {
         NavigationBar(
             modifier = Modifier.navigationBarsPadding(),
         ) {
@@ -62,8 +71,8 @@ private fun BottomBar(navController: NavHostController) {
                 NavigationBarItem(
                     icon = {
                         when (screen) {
-                            NavBarFeature.Home -> Icon(Icons.Filled.Home, "Home icon")
-                            NavBarFeature.TripsList -> Icon(Icons.AutoMirrored.Filled.List, "Trip list icon")
+                            NavBarFeature.Home -> Icon(Icons.Filled.Home, NavBarFeature.Home.name)
+                            NavBarFeature.TripsList -> Icon(Icons.AutoMirrored.Filled.List, NavBarFeature.TripsList.name)
                         }
                     },
                     label = { Text(stringResource(screen.titleRes)) },

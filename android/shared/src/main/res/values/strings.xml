@@ -58,7 +58,7 @@
 
     <string name="finish_trip_dialog">Do you really want to finish this trip?</string>
     <string name="delete_trip_dialog">Do you really want to delete this trip?</string>
-    <string name="optimize_dialog">Our smart order algorithm can create the best itinerary tailored just for you!\\nDo you want to use it?</string>
+    <string name="optimize_dialog">Our smart order algorithm can create the best itinerary tailored just for you!</string>
 
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
@@ -82,4 +82,5 @@
     <string name="upcoming_in">Upcoming in</string>
     <string name="days">days</string>
     <string name="clear">Clear</string>
+    <string name="do_you_want_to_use_it">Do you want to use it?</string>
 </resources>

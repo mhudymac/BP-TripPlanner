@@ -14,5 +14,6 @@ dependencies {
     implementation(libs.dateTime)
     implementation(libs.reorderable)
     implementation(libs.compose.materialIconsExtended)
+    implementation(project(":android:search"))
     ktlintRuleset(libs.ktlint.composeRules)
 }

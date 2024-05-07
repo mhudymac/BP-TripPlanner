@@ -23,7 +23,6 @@ import java.io.InputStream
 @Composable
 fun rememberGalleryManager(onResult: (Uri) -> Unit): GalleryManager {
     val context = LocalContext.current
-
     val galleryLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
@@ -34,7 +33,6 @@ fun rememberGalleryManager(onResult: (Uri) -> Unit): GalleryManager {
                 }
             }
         )
-
     return remember {
         GalleryManager(
             onLaunch = {

@@ -20,3 +20,6 @@ rootProject.buildFileName = "build.gradle.kts"
 rootProject.name = "TripPlanner"
 include(":android:app", ":android:shared", ":shared")
 include(":android:trip")
+include(":android:gallery")
+include(":android:search")
+include(":android:home")

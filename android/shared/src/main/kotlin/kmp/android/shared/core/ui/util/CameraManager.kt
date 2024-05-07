@@ -48,7 +48,6 @@ fun rememberCameraManager(onResult: (Uri?) -> Unit): CameraManager {
 
 /**
  * This class represents a manager for a camera.
- * It provides a function to launch the camera.
  *
  * @property onLaunch The function to call to launch the camera.
  */
@@ -75,7 +74,6 @@ class ComposeFileProvider : FileProvider(
                 createNewFile()
             }
             val authority = context.applicationContext.packageName + ".provider"
-
             return getUriForFile(
                 Objects.requireNonNull(context),
                 authority,

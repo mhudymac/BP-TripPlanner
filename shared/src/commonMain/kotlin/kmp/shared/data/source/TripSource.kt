@@ -10,6 +10,20 @@ import kotlinx.coroutines.flow.Flow
  */
 internal interface TripLocalSource {
     /**
+     * This function is used to get a trip by its id from the local data source.
+     *
+     * @param id The id of the trip to get.
+     * @return A Flow of list of TripWithPlaces objects associated with the trip.
+     */
+    fun getTripById(id: Long): Flow<List<TripWithPlaces>>
+
+    /**
+     * This function is used to get the nearest trip from the local data source by date.
+     *
+     * @return A Flow of list of the nearest TripEntity objects.
+     */
+    fun getNearestTrip(): Flow<List<TripEntity>>
+    /**
      * This function is used to get uncompleted trips from the local data source.
      *
      * @return A Flow of list of uncompleted TripEntity objects.
@@ -39,27 +53,12 @@ internal interface TripLocalSource {
     fun deleteAllTrips(): Result<Unit>
 
     /**
-     * This function is used to get the nearest trip from the local data source by date.
-     *
-     * @return A Flow of list of the nearest TripEntity objects.
-     */
-    fun getNearestTrip(): Flow<List<TripEntity>>
-
-    /**
      * This function is used to insert a trip without an id in the local data source.
      *
      * @param item The trip to insert.
      * @return A Result object containing either the id of the inserted trip in case of success or an error.
      */
     fun insertWithoutId( item: TripEntity): Result<Long>
-
-    /**
-     * This function is used to get a trip by its id from the local data source.
-     *
-     * @param id The id of the trip to get.
-     * @return A Flow of list of TripWithPlaces objects associated with the trip.
-     */
-    fun getTripById(id: Long): Flow<List<TripWithPlaces>>
 
     /**
      * This function is used to delete a trip by its id from the local data source.
