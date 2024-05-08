@@ -66,6 +66,8 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 implementation(libs.bundles.sqlDelight.common)
                 implementation(libs.koin.core)
                 implementation(libs.koin.android)
+                implementation(libs.firebase.analytics)
+                implementation(libs.firebase.crashlytics)
             }
         }
     }

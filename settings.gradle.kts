@@ -5,6 +5,9 @@ pluginManagement {
         mavenCentral()
         google()
     }
+    plugins {
+        id("org.kodein.mock.mockmp") version "1.17.0" apply false
+    }
 }
 
 dependencyResolutionManagement {
@@ -23,4 +26,3 @@ include(":android:trip")
 include(":android:gallery")
 include(":android:search")
 include(":android:home")
-include(":commonUnitTest")

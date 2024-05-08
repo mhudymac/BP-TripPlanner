@@ -9,7 +9,11 @@ import kmp.shared.domain.repository.TripRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-interface GetTripUseCase: UseCaseFlowResult<Long, Trip>
+interface GetTripUseCase: UseCaseFlowResult<GetTripUseCase.Params, Trip> {
+    data class Params(
+        val tripId: Long
+    )
+}
 
 internal class GetTripUseCaseImpl(
     private val tripRepository: TripRepository,
@@ -25,8 +29,8 @@ internal class GetTripUseCaseImpl(
      * @param params The id of the trip to get.
      * @return A Flow of Result object containing either a Trip object in case of success or an error.
      */
-    override suspend fun invoke(params: Long): Flow<Result<Trip>> {
-        return tripRepository.getTripById(params).map { trip ->
+    override suspend fun invoke(params: GetTripUseCase.Params): Flow<Result<Trip>> {
+        return tripRepository.getTripById(params.tripId).map { trip ->
             if (trip != null) {
                 val distances = trip.order.windowed(2, 1, false).associate { (from, to) ->
                     when(val distance = distanceRepository.getDistance(from, to)){

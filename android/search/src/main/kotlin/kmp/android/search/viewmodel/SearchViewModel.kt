@@ -33,7 +33,7 @@ class SearchViewModel(
 
         launch {
             loading = true
-            when (val res = location?.let { searchPlacesWithBias(Pair(query, it)) }?: searchPlaces(query)) {
+            when (val res = location?.let { searchPlacesWithBias(SearchPlacesWithBiasUseCase.Params(query, it)) }?: searchPlaces(SearchPlacesUseCase.Params(query))) {
                 is Result.Success -> {
                     val photoResults = res.data.map { place ->
                         async { updatePhotoUrl(place) }

@@ -7,7 +7,9 @@ import kmp.shared.domain.repository.PlaceRepository
 import kmp.shared.domain.repository.TripRepository
 import kmp.shared.domain.usecase.place.SaveDistancesUseCase
 
-interface SaveTripWithoutIdUseCase : UseCaseResult<Pair<Trip,Boolean>, Unit>
+interface SaveTripWithoutIdUseCase : UseCaseResult<SaveTripWithoutIdUseCase.Params, Unit> {
+    data class Params(val trip: Trip, val optimise: Boolean)
+}
 
 internal class SaveTripWithoutIdUseCaseImpl internal constructor(
     private val tripRepository: TripRepository,
@@ -15,7 +17,7 @@ internal class SaveTripWithoutIdUseCaseImpl internal constructor(
     private val saveDistancesUseCase: SaveDistancesUseCase,
     private val optimiseTripUseCase: OptimiseTripUseCase
 ) : SaveTripWithoutIdUseCase {
-    override suspend fun invoke(params: Pair<Trip,Boolean>): Result<Unit> {
+    override suspend fun invoke(params: SaveTripWithoutIdUseCase.Params): Result<Unit> {
 
         /**
          * This function first inserts a trip without an id using the TripRepository.
@@ -26,16 +28,16 @@ internal class SaveTripWithoutIdUseCaseImpl internal constructor(
          * @param params A pair of a Trip object and a Boolean value. The Trip object is the trip to save. The Boolean value indicates whether to optimise the trip.
          * @return A Result object containing either Unit in case of success or an error.
          */
-        return when(val tripId = tripRepository.insertWithoutId( params.first )){
+        return when(val tripId = tripRepository.insertWithoutId( params.trip )){
             is Result.Success -> {
-                params.first.itinerary.let { placeRepository.insertOrReplace(it, tripId = tripId.data) }
+                params.trip.itinerary.let { placeRepository.insertOrReplace(it, tripId = tripId.data) }
 
-                val distances = saveDistancesUseCase(params.first.copy(id = tripId.data))
+                val distances = saveDistancesUseCase(params.trip.copy(id = tripId.data))
                 if(distances is Result.Error)
                     return Result.Error(distances.error)
 
-                if(params.second){
-                    optimiseTripUseCase(params.first.copy(id = tripId.data))
+                if(params.optimise){
+                    optimiseTripUseCase(params.trip.copy(id = tripId.data))
                 } else {
                     Result.Success(Unit)
                 }

@@ -42,7 +42,7 @@ class EditViewModel(
         if(tripId == -1L) return
         launch {
             update { copy(screenLoading = true) }
-            when(val trip = getTripById(tripId).first()){
+            when(val trip = getTripById(GetTripUseCase.Params(tripId)).first()){
                 is Result.Success -> {
                     if (trip.data.id == 0L) {
                         update {
@@ -123,12 +123,12 @@ class EditViewModel(
                 }
 
                 if (id == -1L) {
-                    when(val result = saveTripWithoutIdUseCase(Pair(trip, optimise))){
+                    when(val result = saveTripWithoutIdUseCase(SaveTripWithoutIdUseCase.Params(trip, optimise))){
                         is Result.Success -> update { copy(saveSuccess = true) }
                         is Result.Error -> _errorFlow.emit(result.error)
                     }
                 } else {
-                    when (val result = saveTripUseCase(Pair(trip, wasItineraryChanged))) {
+                    when (val result = saveTripUseCase(SaveTripUseCase.Params(trip, wasItineraryChanged))) {
                         is Result.Success -> update { copy(saveSuccess = true) }
                         is Result.Error -> _errorFlow.emit(result.error)
                     }

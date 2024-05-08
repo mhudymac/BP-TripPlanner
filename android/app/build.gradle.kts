@@ -1,5 +1,9 @@
 plugins {
     alias(libs.plugins.devstack.android.application.compose)
+    id("com.android.application")
+    alias(libs.plugins.googleServices)
+    alias(libs.plugins.crashlytics)
+    alias(libs.plugins.ksp)
 }
 
 android {

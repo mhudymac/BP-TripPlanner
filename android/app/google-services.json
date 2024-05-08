@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "982172573934",
+    "project_id": "canvas-rampart-417009",
+    "storage_bucket": "canvas-rampart-417009.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:982172573934:android:3cfd6d2e28d348a3ee13ff",
+        "android_client_info": {
+          "package_name": "cz.cvut.fit.hudymmar.kmp.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-Bh7W83zOxHCy67VaLzE_SL9mJmUZG7Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:982172573934:android:912fe7a09e4df6c7ee13ff",
+        "android_client_info": {
+          "package_name": "cz.cvut.fit.hudymmar.kmp.android.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-Bh7W83zOxHCy67VaLzE_SL9mJmUZG7Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

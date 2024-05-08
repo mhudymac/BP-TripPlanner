@@ -29,7 +29,7 @@ class DetailViewModel(
     fun getTrip(tripId: Long) {
         launch {
             update { copy(loading = true) }
-            getTripByName(tripId).map {
+            getTripByName(GetTripUseCase.Params(tripId)).map {
                 when (it) {
                     is Result.Success -> { update { copy(trip = it.data, loading = false, optimisingLoading = false) }}
                     is Result.Error -> { update { copy( loading = false, optimisingLoading = false) }; _errorFlow.emit(it.error) }

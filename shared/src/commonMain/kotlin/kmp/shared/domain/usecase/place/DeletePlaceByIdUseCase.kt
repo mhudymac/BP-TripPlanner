@@ -4,11 +4,16 @@ import kmp.shared.base.Result
 import kmp.shared.base.usecase.UseCaseResult
 import kmp.shared.domain.repository.PlaceRepository
 
-interface DeletePlaceByIdUseCase: UseCaseResult<Pair<String, Long>, Unit>
+interface DeletePlaceByIdUseCase: UseCaseResult<DeletePlaceByIdUseCase.Params, Unit> {
+    data class Params(
+        val placeId: String,
+        val tripId: Long
+    )
+}
 
 internal class DeletePlaceByIdUseCaseImpl(
     private val placeRepository: PlaceRepository
 ) : DeletePlaceByIdUseCase {
-    override suspend fun invoke(params: Pair<String, Long>): Result<Unit> = placeRepository.deleteById(params.first, params.second)
+    override suspend fun invoke(params: DeletePlaceByIdUseCase.Params): Result<Unit> = placeRepository.deleteById(params.placeId, params.tripId)
 
 }

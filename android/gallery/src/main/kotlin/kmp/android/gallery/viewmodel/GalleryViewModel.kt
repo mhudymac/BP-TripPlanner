@@ -35,7 +35,7 @@ internal class GalleryViewModel(
      private fun getTrip(tripId: Long) {
           launch {
               update { copy(loading = true) }
-              getTripUseCase(tripId).collect {
+              getTripUseCase(GetTripUseCase.Params(tripId)).collect {
                     when (it) {
                          is Result.Success -> { update { copy(trip = it.data) }}
                          is Result.Error -> { _errorFlow.emit(it.error) }
@@ -55,13 +55,13 @@ internal class GalleryViewModel(
 
     fun deletePhoto(photoUri: String){
         launch {
-            removePhotoByUriUseCase(photoUri)
+            removePhotoByUriUseCase(RemovePhotoByUriUseCase.Params(photoUri))
         }
     }
 
     private fun getPhotos(tripId: Long) {
         launch {
-            getPhotosByTripUseCase(tripId).collect { photos ->
+            getPhotosByTripUseCase(GetPhotosByTripUseCase.Params(tripId)).collect { photos ->
                 update { copy(photos = photos) }
             }
         }

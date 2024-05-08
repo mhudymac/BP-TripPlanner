@@ -49,10 +49,10 @@ internal class GetNearestTripUseCaseImpl(
                 }
 
                 trips.mapNotNull { trip ->
-                    getTripUseCase(trip.id).first().getOrNull()
+                    getTripUseCase(GetTripUseCase.Params(trip.id)).first().getOrNull()
                 }.let { trips1 ->
                     combine(trips1.map { trip ->
-                        getPhotosByTripUseCase(trip.id).map { photos ->
+                        getPhotosByTripUseCase(GetPhotosByTripUseCase.Params(trip.id)).map { photos ->
                             trip.copy(photos = photos)
                         }
                     }) { it.toList() }

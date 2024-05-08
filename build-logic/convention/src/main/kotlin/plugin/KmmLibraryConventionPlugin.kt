@@ -32,6 +32,7 @@ class KmmLibraryConventionPlugin : Plugin<Project> {
                 apply(libs.plugins.serialization)
                 apply(libs.plugins.sqlDelight)
                 apply(libs.plugins.ktlint)
+                apply(libs.plugins.mockmp)
             }
 
             extensions.configure<LibraryExtension> {
@@ -72,13 +73,20 @@ class KmmLibraryConventionPlugin : Plugin<Project> {
                             implementation(libs.kermit)
                         }
                     }
-
+                    val commonTest by getting {
+                        dependencies {
+                            implementation(libs.kotlin.test)
+                        }
+                    }
                     val androidMain by getting {
                         dependsOn(commonMain)
                         dependencies {
                             implementation(libs.ktor.android)
                             implementation(libs.sqlDelight.androidDriver)
                             implementation(libs.googlePlayServices.location)
+                            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:33.0.0"))
+                            implementation("com.google.firebase:firebase-crashlytics")
+                            implementation("com.google.firebase:firebase-analytics")
                         }
                     }
 

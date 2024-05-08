@@ -1,14 +1,13 @@
 plugins {
     alias(libs.plugins.devstack.kmm.library)
+    alias(libs.plugins.mockmp)
 }
 
 android {
     namespace = "kmp.shared"
 }
-dependencies {
-    testImplementation(libs.junit)
-    testImplementation(project(":shared"))
-}
+
+mockmp.installWorkaround()
 
 sqldelight {
     databases {

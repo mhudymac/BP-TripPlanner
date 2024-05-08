@@ -8,10 +8,12 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.serialization) apply false
     alias(libs.plugins.sqlDelight) apply false
-    alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.ktlint)
     alias(libs.plugins.versions)
     alias(libs.plugins.versionCatalogUpdate)
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.crashlytics) apply false
 }
 
 fun String.isNonStable(): Boolean {

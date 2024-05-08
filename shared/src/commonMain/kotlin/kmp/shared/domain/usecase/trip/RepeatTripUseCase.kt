@@ -30,7 +30,7 @@ internal class RepeatTripUseCaseImpl(
      * @return A Result object containing either a tripId in case of success or an error.
      */
     override suspend fun invoke(params: Trip): Result<Long> {
-        return when (val trip = getTripUseCase(params.id).first()) {
+        return when (val trip = getTripUseCase(GetTripUseCase.Params(params.id)).first()) {
             is Result.Success -> {
                 when(
                     tripRepository.insertOrReplace(

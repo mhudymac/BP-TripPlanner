@@ -3,6 +3,8 @@ package kmp.android
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
+import com.google.firebase.Firebase
+import com.google.firebase.initialize
 import kmp.android.di.initDependencyInjection
 import kmp.android.shared.core.system.BaseActivity
 import kmp.android.shared.style.AppTheme
@@ -20,6 +22,8 @@ class MainActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
+        Firebase.initialize(this)
+
         setContent {
             AppTheme {
                 Root()
