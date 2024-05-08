@@ -38,6 +38,7 @@ class HomeViewModel(
                     loading = false
                 )}
             }
+            loading = false
         }
     }
 

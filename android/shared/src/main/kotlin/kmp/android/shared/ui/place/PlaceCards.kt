@@ -43,12 +43,14 @@ import kmp.shared.domain.model.Place
 @Composable
 fun ActivePlaceCard(
     place: Place,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     onCameraClick: () -> Unit = {},
     images: List<Uri> = emptyList()
 ){
     PlaceCard(
         place = place,
+        modifier = modifier,
         onClick = onClick,
         height = 200,
         colors = CardDefaults.elevatedCardColors().copy(
@@ -75,6 +77,7 @@ fun ActivePlaceCard(
 @Composable
 fun PlaceCard(
     place: Place,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     onDeleteClick: (() -> Unit)? = null,
     colors: CardColors = CardDefaults.elevatedCardColors(),
@@ -84,7 +87,7 @@ fun PlaceCard(
 ) {
     Box {
         ElevatedCard(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .height(height.dp)
                 .padding(vertical = 8.dp),
@@ -186,8 +189,8 @@ fun AddPlaceCard(
 }
 
 @Composable
-internal fun PhotoRow(images: List<Uri>){
-    LazyRow {
+internal fun PhotoRow(images: List<Uri>, modifier: Modifier = Modifier){
+    LazyRow(modifier = modifier) {
         items(images) { imageUri ->
             SubcomposeAsyncImage(
                 model = imageUri,

@@ -45,7 +45,8 @@ import sh.calvin.reorderable.rememberReorderableLazyColumnState
 fun PlaceReorderingList(
     itinerary: List<Place>,
     updateTripOrder: (List<Place>) -> Unit,
-    padding: PaddingValues
+    modifier: Modifier = Modifier,
+    padding: PaddingValues = PaddingValues(0.dp),
 ) {
     val view = LocalView.current
     var places by remember { mutableStateOf(itinerary) }
@@ -60,7 +61,7 @@ fun PlaceReorderingList(
         }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(padding)
             .padding(horizontal = 8.dp)
@@ -109,11 +110,12 @@ fun InactivePlaceList(
     trip: Trip,
     onPlaceClick: (Place) -> Unit,
     scrollState: LazyListState,
-){
+    modifier: Modifier = Modifier,
+    ){
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         state = scrollState,
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(trip.itinerary.windowed(size = 2, step = 1, partialWindows = true)) { places ->
@@ -142,11 +144,12 @@ fun ActivePlaceList(
     onPlaceClick: (Place) -> Unit,
     onPlaceCameraClick: () -> Unit,
     scrollState: LazyListState,
+    modifier: Modifier = Modifier,
 ){
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         state = scrollState,
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(trip.itinerary.windowed(size = 2, step = 1, partialWindows = true)) { places ->
@@ -182,10 +185,12 @@ fun PlacesWithSearchList(
     places: List<Place>,
     onPlaceClick: (Place) -> Unit,
     onSearchButtonClick: (Place) -> Unit,
+    modifier: Modifier = Modifier,
 ){
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(horizontal = 8.dp),
+        modifier = modifier
     ) {
         items(places) { place ->
             PlaceCard(

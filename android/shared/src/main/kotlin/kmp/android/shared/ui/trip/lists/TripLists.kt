@@ -32,9 +32,10 @@ import kmp.shared.domain.model.Trip
 fun TripOnThisDayList(
     trips: List<Trip>,
     onTripClick: (Trip) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier.padding(8.dp),
+        modifier = modifier.padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Card(
@@ -74,13 +75,14 @@ fun TripListWithButtons(
     onTripButtonClick: (Trip) -> Unit,
     loading: Boolean,
     scrollState: LazyListState,
+    modifier: Modifier = Modifier,
     buttonContent: @Composable () -> Unit = {}
 ) {
     if(loading){
         FullScreenLoading()
     } else if (trips.isEmpty()) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -90,7 +92,7 @@ fun TripListWithButtons(
         }
     } else {
         LazyColumn(
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = modifier.padding(horizontal = 8.dp),
             state = scrollState,
         ) {
             items(trips) { trip ->

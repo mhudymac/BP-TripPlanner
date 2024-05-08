@@ -39,10 +39,12 @@ import kmp.android.search.viewmodel.SearchViewModel.ViewState as State
 fun BottomBarSearch(
     onDismissRequest: () -> Unit,
     onPlaceSelected: (Place) -> Unit,
+    modifier: Modifier = Modifier,
     location: Location? = null
 ) {
     ModalBottomSheet(
-        onDismissRequest = onDismissRequest
+        onDismissRequest = onDismissRequest,
+        modifier = modifier
     ) {
         SearchScreen(
             onPlaceSelected = onPlaceSelected,
@@ -99,7 +101,7 @@ internal fun SearchScreen(
             },
         )
         if (loading) {
-            FullScreenLoading(stringResource(id = R.string.place_search_loading))
+            FullScreenLoading(text = stringResource(id = R.string.place_search_loading))
         } else {
             PlacesWithSearchList(
                 places = places,

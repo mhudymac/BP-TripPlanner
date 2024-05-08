@@ -22,10 +22,12 @@ import kmp.android.shared.R
 @Composable
 internal fun DistanceCard(
     distanceInMinutes: Long,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
     ) {
         Dot()
         Card(
@@ -44,9 +46,9 @@ internal fun DistanceCard(
 }
 
 @Composable
-internal fun Dot() {
+internal fun Dot(modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(12.dp)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.primaryContainer),

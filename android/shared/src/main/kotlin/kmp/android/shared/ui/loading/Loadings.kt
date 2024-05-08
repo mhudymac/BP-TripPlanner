@@ -14,9 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun FullScreenLoading( text: String = "" ) {
+fun FullScreenLoading( modifier: Modifier = Modifier, text: String = "" ) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -28,11 +28,11 @@ fun FullScreenLoading( text: String = "" ) {
 }
 
 @Composable
-fun OverlayLoading( text: String = "" ) {
+fun OverlayLoading( modifier: Modifier = Modifier, text: String = "" ) {
     Card(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         colors = CardDefaults.cardColors().copy( containerColor = Color.Black.copy(alpha = 0.5f)),
     ) {
-        FullScreenLoading(text)
+        FullScreenLoading(text = text)
     }
 }

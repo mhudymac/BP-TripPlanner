@@ -137,7 +137,7 @@ internal fun HomeScreenRoute(
     }
 
     if(loading){
-        FullScreenLoading(stringResource(id = R.string.trip_loading))
+        FullScreenLoading(text = stringResource(id = R.string.trip_loading))
     } else {
         if(trip != null) {
             ModalNavigationDrawer(
@@ -227,10 +227,11 @@ internal fun HomeScreenRoute(
 @Composable
 fun DrawerIconBadge(
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     tripCount: Int,
     icon: @Composable () -> Unit,
 ) {
-    Box(modifier = Modifier.padding(12.dp)) {
+    Box(modifier = modifier.padding(12.dp)) {
         IconButton(onClick =  onClick ) {
             icon()
         }

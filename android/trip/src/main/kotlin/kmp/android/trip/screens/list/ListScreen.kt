@@ -144,9 +144,10 @@ internal fun TripListScreenRoute(
 }
 
 @Composable
-fun TabText(text: String, selected: Boolean) {
+fun TabText(text: String, selected: Boolean, modifier: Modifier = Modifier) {
     Text(
         text = text,
+        modifier = modifier,
         style = if (selected) MaterialTheme.typography.titleLarge else MaterialTheme.typography.bodyMedium,
         fontWeight = if (selected) FontWeight.Bold else FontWeight.ExtraLight
     )

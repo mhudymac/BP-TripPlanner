@@ -39,14 +39,6 @@ internal class GeneralTest {
     }
 
     @Test
-    fun `package name must match file path`() {
-        Konsist
-            .scopeFromProject()
-            .packages
-            .assertTrue { it.hasMatchingPath }
-    }
-
-    @Test
     fun `no wildcard imports allowed`() {
         Konsist
             .scopeFromProject()

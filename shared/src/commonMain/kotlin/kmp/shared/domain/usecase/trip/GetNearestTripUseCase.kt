@@ -93,9 +93,9 @@ internal class GetNearestTripUseCaseImpl(
         return EARTH_RADIUS * c
     }
 
+    private fun Double.toRadians(): Double = this * (PI / 180)
+
     companion object {
         const val EARTH_RADIUS = 6371.0
     }
-
-    private fun Double.toRadians(): Double = this * (PI / 180)
 }

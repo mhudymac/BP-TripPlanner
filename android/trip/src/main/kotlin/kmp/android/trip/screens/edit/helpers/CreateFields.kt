@@ -22,8 +22,8 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun TripDateButtonComponent(date: LocalDate?, onShowDatePicker: () -> Unit) {
-    ComponentWithLabel(label = stringResource(id = R.string.trip_date_label)) {
+fun TripDateButtonComponent(date: LocalDate?, onShowDatePicker: () -> Unit, modifier: Modifier = Modifier ) {
+    ComponentWithLabel(label = stringResource(id = R.string.trip_date_label), modifier = modifier) {
         OutlinedTextFieldLikeButton(
             text = date?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
                 ?: stringResource(id = R.string.select_date),
@@ -33,8 +33,8 @@ fun TripDateButtonComponent(date: LocalDate?, onShowDatePicker: () -> Unit) {
 }
 
 @Composable
-fun TripNameTextFieldComponent(name: String, onNameChange: (String) -> Unit, focusManager: FocusManager) {
-    ComponentWithLabel(stringResource(id = R.string.trip_name_label), padding = PaddingValues(0.dp)) {
+fun TripNameTextFieldComponent(name: String, onNameChange: (String) -> Unit, focusManager: FocusManager, modifier: Modifier = Modifier) {
+    ComponentWithLabel(stringResource(id = R.string.trip_name_label), modifier = modifier, padding = PaddingValues(0.dp)) {
         OutlinedTextField(
             value = name,
             onValueChange = { onNameChange(it) },

@@ -22,10 +22,11 @@ import java.time.format.DateTimeFormatter
 internal fun TripCard(
     trip: Trip,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     button: @Composable () -> Unit = {}
 ) {
     ElevatedCard(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         shape = MaterialTheme.shapes.large,

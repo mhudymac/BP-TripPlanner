@@ -8,6 +8,7 @@ import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import kmp.android.shared.R
 import java.time.Instant
@@ -19,7 +20,8 @@ import java.time.ZoneId
 @Composable
 internal fun SelectDateComponent(
     onDateSelected: (LocalDate) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
         override fun isSelectableDate(utcTimeMillis: Long): Boolean {
@@ -47,6 +49,7 @@ internal fun SelectDateComponent(
                 Text(text = stringResource(id = R.string.ok))
             }
         },
+        modifier = modifier,
         dismissButton = {
             Button(
                 onClick = {

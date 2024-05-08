@@ -10,9 +10,9 @@ import kmp.android.shared.ui.trip.lists.TripOnThisDayList
 import kmp.shared.domain.model.Trip
 
 @Composable
-fun TripsSheet(trips: List<Trip>, onTripClick: (Trip) -> Unit) {
+fun TripsSheet(trips: List<Trip>, onTripClick: (Trip) -> Unit, modifier: Modifier = Modifier ) {
     ModalDrawerSheet(
-        modifier = Modifier.width(200.dp),
+        modifier = modifier.width(200.dp),
         drawerContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
     ) {
         TripOnThisDayList(

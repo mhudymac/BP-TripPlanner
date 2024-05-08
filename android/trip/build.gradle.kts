@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "kmp.android.home"
+    namespace = "kmp.android.trip"
 }
 
 dependencies {

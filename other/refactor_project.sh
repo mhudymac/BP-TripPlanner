@@ -4,7 +4,7 @@
 #TODO change
 APPLICATION_ID=$1
 
-DEFAULT_APPLICATION_ID="cz.matee.devstack" # default application id
+DEFAULT_APPLICATION_ID="cz.cvut.fit.hudymmar" # default application id
 DEFAULT_APPLICATION_PATH=`echo $DEFAULT_APPLICATION_ID | tr -s "." "/"`
 DEFAULT_APPLICATION_START_PATH=`echo $DEFAULT_APPLICATION_ID | cut -d"." -f1`
 

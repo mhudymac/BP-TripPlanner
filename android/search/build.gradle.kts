@@ -11,5 +11,6 @@ dependencies {
     implementation(project(":android:shared"))
 
     implementation(libs.coil)
+    implementation(libs.junit)
     ktlintRuleset(libs.ktlint.composeRules)
 }

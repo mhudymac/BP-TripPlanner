@@ -5,6 +5,10 @@ plugins {
 android {
     namespace = "kmp.shared"
 }
+dependencies {
+    testImplementation(libs.junit)
+    testImplementation(project(":shared"))
+}
 
 sqldelight {
     databases {

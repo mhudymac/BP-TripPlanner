@@ -1,7 +1,7 @@
 package constants
 
 object Application {
-    const val id = "cz.cvut.fit.kmp.android"
+    const val id = "cz.cvut.fit.hudymmar.kmp.android"
     const val appName = "TripPlanner"
 
     object Version {

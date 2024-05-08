@@ -133,7 +133,7 @@ internal fun DetailRoute(
         },
     ) {
         if(loading){
-            FullScreenLoading(stringResource(id = R.string.trip_loading))
+            FullScreenLoading(text = stringResource(id = R.string.trip_loading))
         } else {
             trip?.let { trip ->
                 DetailScreen(
@@ -149,7 +149,7 @@ internal fun DetailRoute(
         }
     }
     if(optimisingLoading){
-        OverlayLoading(stringResource(id = R.string.trip_optimizing))
+        OverlayLoading(text = stringResource(id = R.string.trip_optimizing))
     }
 }
 

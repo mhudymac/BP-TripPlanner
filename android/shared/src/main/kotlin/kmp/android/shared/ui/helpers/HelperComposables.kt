@@ -22,12 +22,13 @@ import kmp.android.shared.ui.place.EmptyPlaceCard
 @Composable
 fun OutlinedTextFieldLikeButton(
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     OutlinedButton(
         onClick = onClick,
         shape = MaterialTheme.shapes.medium,
-        modifier = Modifier
+        modifier = modifier
             .height(52.dp)
             .width(LocalConfiguration.current.screenWidthDp.dp),
         contentPadding = PaddingValues(16.dp),
@@ -49,11 +50,12 @@ fun OutlinedTextFieldLikeButton(
 @Composable
 fun ComponentWithLabel(
     label: String,
+    modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(top = 16.dp),
     content: @Composable () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start,
     ) {
@@ -67,10 +69,11 @@ fun TwoCardButtons(
     onClickLeft: () -> Unit,
     onClickRight: () -> Unit,
     contentLeft: @Composable () -> Unit,
-    contentRight: @Composable () -> Unit
+    contentRight: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
 ){
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
