@@ -70,9 +70,10 @@ class GalleryPermissionRequest(
     granted: State<Boolean>,
 ) : PermissionRequest(launcher, granted) {
     override fun requestPermission() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            launcher.launch(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+////            launcher.launch(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+////        } else
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             launcher.launch(Manifest.permission.READ_MEDIA_IMAGES)
         } else {
             launcher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
