@@ -1,5 +1,6 @@
 package kmp.android.trip.screens.edit
 
+import com.google.firebase.analytics.FirebaseAnalytics
 import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
 import kmp.shared.base.Result
@@ -30,7 +31,8 @@ class EditViewModel(
     private val getPlaceByLocationUseCase: GetPlaceByLocationUseCase,
     private val saveTripWithoutIdUseCase: SaveTripWithoutIdUseCase,
     private val saveTripUseCase: SaveTripUseCase,
-    private val deleteTripUseCase: DeleteTripUseCase
+    private val deleteTripUseCase: DeleteTripUseCase,
+    private val analytics: FirebaseAnalytics
 ) : BaseStateViewModel<EditViewModel.ViewState>(ViewState()) {
 
     private val _errorFlow = MutableSharedFlow<ErrorResult>(replay = 1)
@@ -124,11 +126,14 @@ class EditViewModel(
 
                 if (id == -1L) {
                     when(val result = saveTripWithoutIdUseCase(SaveTripWithoutIdUseCase.Params(trip, optimise))){
-                        is Result.Success -> update { copy(saveSuccess = true) }
+                        is Result.Success -> {
+                            analytics.logEvent("trip_created", null)
+                            update { copy(saveSuccess = true) }
+                        }
                         is Result.Error -> _errorFlow.emit(result.error)
                     }
                 } else {
-                    when (val result = saveTripUseCase(SaveTripUseCase.Params(trip, wasItineraryChanged))) {
+                    when (val result = saveTripUseCase(SaveTripUseCase.Params(trip, !wasItineraryChanged))) {
                         is Result.Success -> update { copy(saveSuccess = true) }
                         is Result.Error -> _errorFlow.emit(result.error)
                     }

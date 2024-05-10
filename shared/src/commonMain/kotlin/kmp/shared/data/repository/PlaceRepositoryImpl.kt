@@ -43,10 +43,14 @@ internal class PlaceRepositoryImpl(
     }
 
     override suspend fun getPlaceByLocation(location: Location): Result<Place> {
-        val id = remoteSource.getPlaceByLocation(location).map { it.results.first().place_id }
-        return when(id) {
-            is Result.Success -> getPlace(id.data)
-            is Result.Error -> Result.Error(id.error)
+        return when(val response = remoteSource.getPlaceByLocation(location)){
+            is Result.Error -> Result.Error(response.error)
+            is Result.Success -> {
+                if (response.data.results.isEmpty())
+                    Result.Error(TripError.GettingPlaceError)
+                else
+                     getPlace(response.data.results.first().place_id)
+            }
         }
     }
 
@@ -59,6 +63,7 @@ internal class PlaceRepositoryImpl(
         destinationPlaces: List<String>,
     ): Result<List<Triple<String, String, Distance>>> {
         val originsStep = minOf(originPlaces.size, 25)
+        if (originsStep == 0) return Result.Error(TripError.GettingDistancesError)
         val destinationsStep = minOf(100/originsStep, destinationPlaces.size)
         val results = mutableListOf<Triple<String, String, Distance>>()
 

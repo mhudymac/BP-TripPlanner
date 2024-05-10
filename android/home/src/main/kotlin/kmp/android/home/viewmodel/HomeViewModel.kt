@@ -69,10 +69,6 @@ class HomeViewModel(
     }
 
     fun addUserPhoto(photoUri: String) {
-        val trip = lastState().trip
-        if(trip != null) {
-           sleep(100)
-        }
         launch {
             val trip = lastState().trip
             if(trip != null) {
