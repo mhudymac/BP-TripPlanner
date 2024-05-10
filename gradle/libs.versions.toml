@@ -126,9 +126,13 @@ material = { group = "com.google.android.material", name = "material", version.r
 navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common-ktx", version.ref = "navigationCommonKtx" }
 # Kotlin test
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+mockito = { module = "org.mockito.kotlin:mockito-kotlin", version = "3.2.0" }
+coroutine-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 # Fireebase
 firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalytics" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCraslytics" }
+# Mockito
+
 
 [bundles]
 settings = [

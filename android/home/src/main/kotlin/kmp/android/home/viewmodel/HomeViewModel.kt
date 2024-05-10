@@ -12,6 +12,7 @@ import kmp.shared.base.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.datetime.toKotlinLocalDate
+import java.lang.Thread.sleep
 import java.time.LocalDate
 
 /**
@@ -68,6 +69,10 @@ class HomeViewModel(
     }
 
     fun addUserPhoto(photoUri: String) {
+        val trip = lastState().trip
+        if(trip != null) {
+           sleep(100)
+        }
         launch {
             val trip = lastState().trip
             if(trip != null) {

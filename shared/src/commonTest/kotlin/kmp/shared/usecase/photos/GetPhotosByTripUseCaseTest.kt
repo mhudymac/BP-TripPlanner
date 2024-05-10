@@ -1,8 +1,10 @@
-package kmp.shared.domain.usecase.photos
+package kmp.shared.usecase.photos
 
 import kmp.shared.base.Result
 import kmp.shared.domain.model.Photo
 import kmp.shared.domain.repository.PhotoRepository
+import kmp.shared.domain.usecase.photos.GetPhotosByTripUseCase
+import kmp.shared.domain.usecase.photos.GetPhotosByTripUseCaseImpl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking

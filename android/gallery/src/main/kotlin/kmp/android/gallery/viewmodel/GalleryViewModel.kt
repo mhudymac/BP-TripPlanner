@@ -11,8 +11,12 @@ import kmp.shared.domain.usecase.photos.RemovePhotoByUriUseCase
 import kmp.shared.domain.usecase.photos.SavePhotoUseCase
 import kmp.shared.domain.usecase.trip.DeleteTripUseCase
 import kmp.shared.domain.usecase.trip.GetTripUseCase
+import kmp.shared.system.Log
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlin.coroutines.CoroutineContext
 
 /**
  * This class represents the ViewModel for the Gallery view.
@@ -24,8 +28,9 @@ internal class GalleryViewModel(
     private val deleteTripUseCase: DeleteTripUseCase,
     private val getPhotosByTripUseCase: GetPhotosByTripUseCase,
     private val savePhotoUseCase: SavePhotoUseCase,
-    private val removePhotoByUriUseCase: RemovePhotoByUriUseCase
-) : BaseStateViewModel<GalleryViewModel.ViewState>(ViewState()) {
+    private val removePhotoByUriUseCase: RemovePhotoByUriUseCase,
+    coroutineDispatcher: CoroutineDispatcher= Dispatchers.IO
+) : BaseStateViewModel<GalleryViewModel.ViewState>(ViewState(), coroutineDispatcher) {
 
     var currentPlaceId: String = ""
 
@@ -33,7 +38,7 @@ internal class GalleryViewModel(
     val errorFlow: Flow<ErrorResult> get() = _errorFlow
 
      private fun getTrip(tripId: Long) {
-          launch {
+          launch{
               update { copy(loading = true) }
               getTripUseCase(GetTripUseCase.Params(tripId)).collect {
                     when (it) {
@@ -48,14 +53,16 @@ internal class GalleryViewModel(
     fun delete(){
         launch {
             lastState().trip?.let {
-                deleteTripUseCase(it)
+                val result = deleteTripUseCase(it)
+                if(result is Result.Error) _errorFlow.emit(result.error)
             }
         }
     }
 
     fun deletePhoto(photoUri: String){
         launch {
-            removePhotoByUriUseCase(RemovePhotoByUriUseCase.Params(photoUri))
+            val result = removePhotoByUriUseCase(RemovePhotoByUriUseCase.Params(photoUri))
+            if(result is Result.Error) _errorFlow.emit(result.error)
         }
     }
 
@@ -79,7 +86,8 @@ internal class GalleryViewModel(
             val newPhoto = Photo(placeId = currentPlaceId, tripId = tripId, photoUri = photo)
 
             launch {
-                savePhotoUseCase( newPhoto )
+                val result = savePhotoUseCase( newPhoto )
+                if(result is Result.Error) _errorFlow.emit(result.error)
             }
         }
 

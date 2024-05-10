@@ -11,5 +11,12 @@ dependencies {
     implementation(project(":android:shared"))
 
     implementation(libs.coil)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.mockito)
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.coroutine.test)
+    testImplementation(libs.dateTime)
+
     ktlintRuleset(libs.ktlint.composeRules)
 }

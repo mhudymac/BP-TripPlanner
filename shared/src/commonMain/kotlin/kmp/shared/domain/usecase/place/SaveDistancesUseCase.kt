@@ -26,7 +26,8 @@ internal class SaveDistancesUseCaseImpl(
             is Result.Success -> {
                 distances.data.forEach {
                     val (origin, destination, distance) = it
-                    distancesRepository.saveDistance(origin, destination, distance, params.id)
+                    val result = distancesRepository.saveDistance(origin, destination, distance, params.id)
+                    if(result is Result.Error) return result
                 }
             }
             is Result.Error -> return Result.Error(distances.error)
