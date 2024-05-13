@@ -23,19 +23,25 @@ class DeletePlaceByIdUseCaseTest {
 
     @Test
     fun `should return success if repository returns success`() = runBlocking {
+        // Setup
         mocker.everySuspending { mockRepository.deleteById(params.placeId, params.tripId) } returns Result.Success(Unit)
 
+        // Execute
         val result = deletePlaceByIdUseCase(params)
 
+        // Verify
         assertEquals(Result.Success(Unit), result)
     }
 
     @Test
     fun `should return error if repository returns error`() = runBlocking {
+        // Setup
         mocker.everySuspending { mockRepository.deleteById(params.placeId, params.tripId) } returns Result.Error(TripError.DeletingPlaceError)
 
+        // Execute
         val result = deletePlaceByIdUseCase(params)
 
+        // Verify
         assertEquals(Result.Error(TripError.DeletingPlaceError), result)
     }
 }

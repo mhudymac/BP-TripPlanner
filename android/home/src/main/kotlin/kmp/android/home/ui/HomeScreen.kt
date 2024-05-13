@@ -156,7 +156,7 @@ internal fun HomeScreenRoute(
                     topBar = {
                         CenterAlignedTopAppBar(
                             title = {
-                                Text(trip!!.name)
+                                Text(trip!!.name, maxLines = 1, style = MaterialTheme.typography.titleMedium)
                             },
                             navigationIcon = {
                                 DrawerIconBadge(

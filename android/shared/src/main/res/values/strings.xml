@@ -19,7 +19,7 @@
     <string name="error_deleting_place">Error deleting place</string>
     <string name="error_getting_distance">Error getting distance</string>
     <string name="error_getting_photo">Error getting photo</string>
-    <string name="error_getting_loaction">Error getting location</string>
+    <string name="error_getting_location">Error getting location</string>
     <string name="error_repeating_trip">Error repeating trip</string>
     <string name="error_saving_distance">Error saving distance</string>
     <string name="error_saving_photo">Error saving photo</string>

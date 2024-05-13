@@ -31,7 +31,7 @@ internal class OptimiseTripUseCaseImpl(
                 try {
                     val initialOrder = nearestNeighbor(distances.data, params.order)
 
-                    val optimizedOrder = if(initialOrder.size > 4) threeOpt(distances.data, initialOrder) else initialOrder
+                    val optimizedOrder =  twoOpt(distances.data, initialOrder)
 
                     updateTripUseCase(params.copy(order = optimizedOrder))
 
@@ -60,7 +60,7 @@ internal class OptimiseTripUseCaseImpl(
         path.add(currentPlace)
 
         while (remainingPlaces.isNotEmpty()) {
-            val nextPlace = remainingPlaces.minBy { place -> Log.d(currentPlace, place); distances[Pair(currentPlace, place)]?.distance ?: Long.MAX_VALUE}
+            val nextPlace = remainingPlaces.minBy { place -> distances[Pair(currentPlace, place)]?.distance ?: Long.MAX_VALUE}
             remainingPlaces.remove(nextPlace)
             path.add(nextPlace)
             currentPlace = nextPlace
@@ -70,67 +70,50 @@ internal class OptimiseTripUseCaseImpl(
     }
 
     /**
-     * This function is used to optimise the order of places in the trip using the 3-opt algorithm.
-     * It iteratively improves the order of places by swapping three places at a time until no more improvements can be made.
+     * This function is an implementation of the 2-opt algorithm.
+     * It iteratively improves the order of places in the trip by swapping two places if it results in a shorter total distance.
      *
      * @param distances The distances between places in the trip.
-     * @param places The places in the trip.
-     * @return The order of places in the trip after applying the 3-opt algorithm.
+     * @param initialOrder The initial order of places in the trip.
+     * @return The order of places in the trip after applying the 2-opt algorithm.
      */
-    private fun threeOpt(distances: Map<Pair<String, String>, Distance>, places: List<String>): List<String> {
-        val path = places.toMutableList()
-        var improved = true
+    private fun twoOpt(distances: Map<Pair<String, String>, Distance>, initialOrder: List<String>): List<String> {
+        var bestOrder = initialOrder
+        var improvement = true
 
-        while (improved) {
-            improved = false
-            for (i in 0 until path.size - 2) {
-                for (j in i + 1 until path.size - 1) {
-                    for (k in j + 1 until path.size) {
-                        val delta = changeInDistance(distances, path, i, j, k)
-                        if (delta < 0) {
-                            path.apply {
-                                val tmp = this.subList(i + 1, j + 1).reversed() +
-                                    this.subList(j + 1, k + 1).reversed() +
-                                    this.subList(k + 1, this.size)
-                                for (l in i + 1 until this.size) {
-                                    this[l] = tmp[l - i - 1]
-                                }
-                            }
-                            improved = true
-                        }
+        while (improvement) {
+            improvement = false
+            for (i in 0 until bestOrder.size - 1) {
+                for (j in i + 1 until bestOrder.size) {
+                    val newOrder = bestOrder.toMutableList()
+                    newOrder.subList(i + 1, j + 1).reverse()
+                    val currentDistance = calculateTotalDistance(distances, bestOrder)
+                    val newDistance = calculateTotalDistance(distances, newOrder)
+                    if (newDistance < currentDistance) {
+                        bestOrder = newOrder
+                        improvement = true
                     }
                 }
             }
         }
 
-        return path
+        return bestOrder
     }
 
     /**
-     * This function is used to calculate the change in distance when swapping three places in the trip.
+     * This function calculates the total distance of a trip given an order of places.
      *
      * @param distances The distances between places in the trip.
-     * @param path The current order of places in the trip.
-     * @param i The index of the first place to swap.
-     * @param j The index of the second place to swap.
-     * @param k The index of the third place to swap.
-     * @return The change in distance when swapping the three places.
+     * @param order The order of places in the trip.
+     * @return The total distance of the trip.
      */
-    private fun changeInDistance(distances: Map<Pair<String, String>, Distance>, path: List<String>, i: Int, j: Int, k: Int): Long {
-        val d0 = (distances[Pair(path[i], path[i + 1])]?.distance ?: Long.MAX_VALUE) +
-            (distances[Pair(path[j], path[j + 1])]?.distance ?: Long.MAX_VALUE) +
-            (distances[Pair(path[k], path[(k + 1) % path.size])]?.distance ?: Long.MAX_VALUE)
-        val d1 = (distances[Pair(path[i], path[j])]?.distance ?: Long.MAX_VALUE) +
-            (distances[Pair(path[i + 1], path[k])]?.distance ?: Long.MAX_VALUE) +
-            (distances[Pair(path[j + 1], path[(k + 1) % path.size])]?.distance ?: Long.MAX_VALUE)
-        val d2 = (distances[Pair(path[i], path[k])]?.distance ?: Long.MAX_VALUE) +
-            (distances[Pair(path[i + 1], path[j + 1])]?.distance ?: Long.MAX_VALUE) +
-            (distances[Pair(path[j], path[(k + 1) % path.size])]?.distance ?: Long.MAX_VALUE)
-        val d3 = (distances[Pair(path[i], path[j + 1])]?.distance ?: Long.MAX_VALUE) +
-            (distances[Pair(path[k], path[i + 1])]?.distance ?: Long.MAX_VALUE) +
-            (distances[Pair(path[j], path[(k + 1) % path.size])]?.distance ?: Long.MAX_VALUE)
-
-        return minOf(d1, d2, d3) - d0
+    private fun calculateTotalDistance(distances: Map<Pair<String, String>, Distance>, order: List<String>): Long {
+        var totalDistance = 0L
+        for (i in 0 until order.size - 1) {
+            val from = order[i]
+            val to = order[i + 1]
+            totalDistance += distances[Pair(from, to)]?.distance ?: Long.MAX_VALUE
+        }
+        return totalDistance
     }
-
 }

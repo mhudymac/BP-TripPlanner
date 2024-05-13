@@ -45,7 +45,7 @@ class GetNearestTripUseCaseTest {
     @Test
     fun `invoke returns empty list when there are no trips`() = runBlocking {
         // Setup
-        val location = Location(0.0, 0.0)
+        val location = Result.Success(Location(0.0, 0.0))
         mocker.everySuspending { mockGetLocationFlowUseCase() } returns flowOf(location)
         mocker.everySuspending { mockTripRepository.getNearestTrip() } returns flowOf(emptyList())
 
@@ -64,7 +64,7 @@ class GetNearestTripUseCaseTest {
     @Test
     fun `invoke returns trips with no photos when there are trips but no photos`() = runBlocking {
         // Setup
-        val location = Location(0.0, 0.0)
+        val location = Result.Success(Location(0.0, 0.0))
         val trip = Trip(id = 1L, name = "Test Trip", itinerary = listOf(), date = LocalDate(year = 2024, month = Month.JANUARY, dayOfMonth = 5))
         mocker.everySuspending { mockGetLocationFlowUseCase() } returns flowOf(location)
         mocker.everySuspending { mockTripRepository.getNearestTrip() } returns flowOf(listOf(trip))
@@ -88,7 +88,7 @@ class GetNearestTripUseCaseTest {
     @Test
     fun `invoke returns trips with photos when there are trips and photos`() = runBlocking {
         // Setup
-        val location = Location(0.0, 0.0)
+        val location = Result.Success(Location(0.0, 0.0))
         val trip = Trip(id = 1L, name = "Test Trip", itinerary = listOf(), date = LocalDate(year = 2024, month = Month.JANUARY, dayOfMonth = 5))
         val photo = Photo(placeId = "place", tripId = trip.id, photoUri = "http://example.com/photo.jpg")
         mocker.everySuspending { mockGetLocationFlowUseCase() } returns flowOf(location)
@@ -113,7 +113,7 @@ class GetNearestTripUseCaseTest {
     @Test
     fun `invoke returns multiple trips when there are multiple trips`() = runBlocking {
         // Setup
-        val location = Location(0.0, 0.0)
+        val location = Result.Success(Location(0.0, 0.0))
         val trip1 = Trip(id = 1L, name = "Test Trip 1", itinerary = listOf(), date = LocalDate(year = 2024, month = Month.JANUARY, dayOfMonth = 5))
         val trip2 = Trip(id = 2L, name = "Test Trip 2", itinerary = listOf(), date = LocalDate(year = 2024, month = Month.JANUARY, dayOfMonth = 5))
         mocker.everySuspending { mockGetLocationFlowUseCase() } returns flowOf(location)
@@ -142,7 +142,7 @@ class GetNearestTripUseCaseTest {
     @Test
     fun `invokes returns trip with an active place if it's location matches`() = runBlocking {
         // Setup
-        val location = Location(0.0, 0.0)
+        val location = Result.Success(Location(0.0, 0.0))
         val place = Place(id = "place", name = "Place", formattedAddress = "", location = Location(0.0, 0.0), googleMapsUri = "", photoId = "")
         val trip = Trip(id = 1L, name = "Test Trip", itinerary = listOf(place), date = LocalDate(year = 2024, month = Month.JANUARY, dayOfMonth = 5))
         val photo = Photo(placeId = "place", tripId = trip.id, photoUri = "http://example.com/photo.jpg")

@@ -37,7 +37,7 @@ internal class ErrorMessageProviderImpl(private val context: Context) : ErrorMes
                 TripError.DeletingPlaceError -> context.getString(R.string.error_deleting_place)
                 TripError.GettingDistancesError -> context.getString(R.string.error_getting_distance)
                 TripError.GettingPhotoError -> context.getString(R.string.error_getting_photo)
-                TripError.NoLocationError -> context.getString(R.string.error_getting_loaction)
+                TripError.NoLocationError -> context.getString(R.string.error_getting_location)
                 TripError.RepeatingTripError -> context.getString(R.string.error_repeating_trip)
                 TripError.SavingDistanceError -> context.getString(R.string.error_saving_distance)
                 TripError.SavingPhotoError -> context.getString(R.string.error_saving_photo)
@@ -47,6 +47,7 @@ internal class ErrorMessageProviderImpl(private val context: Context) : ErrorMes
                 TripError.TripDateNecessaryError -> context.getString(R.string.error_missing_date)
                 TripError.TripItineraryNecessaryError -> context.getString(R.string.error_itinerary_missing)
                 TripError.TripNameNecessaryError -> context.getString(R.string.error_missing_name)
+                TripError.GettingLocationError -> context.getString(R.string.error_getting_location)
             }
     private val CommonError.errorMessage: String
         get() =

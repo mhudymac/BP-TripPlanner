@@ -9,11 +9,11 @@ android {
 dependencies {
     implementation(project(":shared"))
     implementation(project(":android:shared"))
+    implementation(project(":android:search"))
 
     implementation(libs.coil)
     implementation(libs.dateTime)
     implementation(libs.reorderable)
     implementation(libs.compose.materialIconsExtended)
-    implementation(project(":android:search"))
     ktlintRuleset(libs.ktlint.composeRules)
 }

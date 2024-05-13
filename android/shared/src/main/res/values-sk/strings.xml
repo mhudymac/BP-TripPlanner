@@ -17,7 +17,7 @@
     <string name="error_deleting_place">Chyba pri vymazávání miesta</string>
     <string name="error_getting_distance">Chyba pri získavaní vzdialenosti</string>
     <string name="error_getting_photo">Chyba pri získavaní fotografie</string>
-    <string name="error_getting_loaction">Chyba pri získavaní lokácie</string>
+    <string name="error_getting_location">Chyba pri získavaní lokácie</string>
     <string name="error_repeating_trip">Chyba pri opakovaní výletu</string>
     <string name="error_saving_distance">Chyba pri ukladaní vzdialenosti</string>
     <string name="error_saving_photo">Chyba pri ukladaní fotky</string>

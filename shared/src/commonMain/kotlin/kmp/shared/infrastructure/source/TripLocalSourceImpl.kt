@@ -9,6 +9,7 @@ import kmp.shared.data.source.TripLocalSource
 import kmp.shared.infrastructure.local.TripEntity
 import kmp.shared.infrastructure.local.TripQueries
 import kmp.shared.infrastructure.local.TripWithPlaces
+import kmp.shared.system.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow

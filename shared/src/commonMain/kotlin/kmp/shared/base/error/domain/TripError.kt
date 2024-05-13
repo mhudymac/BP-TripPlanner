@@ -9,6 +9,8 @@ import kmp.shared.base.ErrorResult
 sealed class TripError(throwable: Throwable? = null) : ErrorResult(throwable = throwable) {
     data object GettingTripError : TripError()
 
+    data object GettingLocationError : TripError()
+
     data object GettingPlaceError : TripError()
 
     data object SavingTripError : TripError()

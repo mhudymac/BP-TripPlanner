@@ -31,21 +31,27 @@ class GetPhotosByTripUseCaseTest {
 
     @Test
     fun shouldReturnPhotosWhenTripHasPhotos() = runBlocking {
+        // Setup
         val tripId = 1L
 
+        // Execute
         val result = mutableListOf<Photo>()
         getPhotosByTripUseCase(GetPhotosByTripUseCase.Params(tripId)).collect { result.addAll(it) }
 
+        // Verify
         assertEquals(photos(tripId), result)
     }
 
     @Test
     fun shouldReturnEmptyListWhenTripHasNoPhotos() = runBlocking {
+        // Setup
         val tripId = 0L
 
+        // Execute
         val result = mutableListOf<Photo>()
         getPhotosByTripUseCase(GetPhotosByTripUseCase.Params(tripId)).collect { result.addAll(it) }
 
+        // Verify
         assertEquals(emptyList(), result)
     }
 }

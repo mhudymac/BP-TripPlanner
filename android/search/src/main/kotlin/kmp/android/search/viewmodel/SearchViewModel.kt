@@ -1,5 +1,6 @@
 package kmp.android.search.viewmodel
 
+import android.util.Log
 import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
 import kmp.shared.base.ErrorResult
@@ -35,18 +36,16 @@ class SearchViewModel(
             loading = true
             when (val res = location?.let { searchPlacesWithBias(SearchPlacesWithBiasUseCase.Params(query, it)) }?: searchPlaces(SearchPlacesUseCase.Params(query))) {
                 is Result.Success -> {
-                    val photoResults = res.data.map { place ->
-                        async { updatePhotoUrl(place) }
+                    val places = res.data.map { place ->
+                        async {
+                            when(val placeWithPhoto = updatePhotoUrl(place)){
+                                is Result.Success -> placeWithPhoto.data
+                                is Result.Error -> place
+                            }
+                        }
                     }.awaitAll()
 
-                    update {
-                        copy(places = photoResults.mapNotNull {
-                            when (it) {
-                                is Result.Success -> it.data
-                                is Result.Error -> it.data
-                            }
-                        })
-                    }
+                    update { copy(places = places) }
                 }
                 is Result.Error -> _errorFlow.emit(res.error)
             }

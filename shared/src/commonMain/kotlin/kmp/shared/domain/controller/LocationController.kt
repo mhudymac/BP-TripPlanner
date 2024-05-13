@@ -2,6 +2,7 @@ package kmp.shared.domain.controller
 
 import kmp.shared.domain.model.Location
 import kotlinx.coroutines.flow.Flow
+import kmp.shared.base.Result
 
 /**
  * This expect class represents a controller for location-related operations.
@@ -12,7 +13,7 @@ internal expect class LocationController {
      * This property represents a flow of location updates.
      * It is a Flow of Location objects.
      */
-    val locationFlow: Flow<Location>
+    val locationFlow: Flow<Location?>
 
     /**
      * This function is used to get the current location.

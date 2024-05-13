@@ -1,5 +1,6 @@
 package kmp.android.shared.style
 
+import android.app.Activity
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -13,8 +14,12 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
 // https://coolors.co/f5ab00-b8a422-9aa133-7b9d44-d95700-e0e0e0-f0f0f0
 val LightColors = lightColorScheme(
@@ -58,9 +63,11 @@ val DarkColors = darkColorScheme(
 
 )
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
-fun AppTheme(darkTheme: Boolean = isSystemInDarkTheme(),
-             content: @Composable () -> Unit
+fun AppTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -72,6 +79,7 @@ fun AppTheme(darkTheme: Boolean = isSystemInDarkTheme(),
         darkTheme -> DarkColors
         else -> LightColors
     }
+
 
     MaterialTheme(
         colorScheme = colors,

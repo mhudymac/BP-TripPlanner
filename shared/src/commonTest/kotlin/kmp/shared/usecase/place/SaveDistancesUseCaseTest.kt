@@ -32,13 +32,15 @@ class SaveDistancesUseCaseTest {
 
     @Test
     fun `invoke returns Success when distances are successfully retrieved and saved`() = runBlocking {
+        // Setup
         mocker.everySuspending { mockPlaceRepository.getDistanceMatrix(trip.order) } returns Result.Success(results)
         mocker.everySuspending { mockDistanceRepository.saveDistance("origin", "destination", distance, trip.id) } returns Result.Success(Unit)
         mocker.everySuspending { mockDistanceRepository.saveDistance("origin2", "destination2", distance, trip.id) } returns Result.Success(Unit)
 
+        // Execute
+        val result = saveDistancesUseCase(trip)
 
-        val result = saveDistancesUseCase.invoke(trip)
-
+        // Verify
         mocker.verifyWithSuspend {
             mockPlaceRepository.getDistanceMatrix(trip.order)
             results.forEach { (origin, destination, distance) ->
@@ -51,12 +53,15 @@ class SaveDistancesUseCaseTest {
 
     @Test
     fun `invoke return saving distance error when it occurs`() = runBlocking {
+        // Setup
         mocker.everySuspending { mockPlaceRepository.getDistanceMatrix(trip.order) } returns Result.Success(results)
         mocker.everySuspending { mockDistanceRepository.saveDistance("origin", "destination", distance, trip.id) } returns Result.Success(Unit)
         mocker.everySuspending { mockDistanceRepository.saveDistance("origin2", "destination2", distance, trip.id) } returns Result.Error(TripError.SavingDistanceError)
 
+        // Execute
         val result = saveDistancesUseCase.invoke(trip)
 
+        // Verify
         mocker.verifyWithSuspend {
             mockPlaceRepository.getDistanceMatrix(trip.order)
             results.forEach { (origin, destination, distance) ->
@@ -69,10 +74,13 @@ class SaveDistancesUseCaseTest {
 
     @Test
     fun `invoke returns getting distances error when distances retrieval fails`() = runBlocking {
+        // Setup
         mocker.everySuspending { mockPlaceRepository.getDistanceMatrix(trip.order) } returns Result.Error(TripError.GettingDistancesError)
 
+        // Execute
         val result = saveDistancesUseCase.invoke(trip)
 
+        // Verify
         assertEquals(Result.Error(TripError.GettingDistancesError), result)
     }
 }

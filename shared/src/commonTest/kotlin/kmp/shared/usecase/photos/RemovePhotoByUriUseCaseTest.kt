@@ -24,15 +24,19 @@ class RemovePhotoByUriUseCaseTest {
 
     @Test
     fun `should remove photo when uri is valid`() = runBlocking {
+        // Execute
         val result = removePhotoByUriUseCase(RemovePhotoByUriUseCase.Params("validUri"))
 
+        // Verify
         assertEquals(Result.Success(Unit), result)
     }
 
     @Test
     fun `should fail to remove photo when uri is invalid`() = runBlocking {
+        // Execute
         val result = removePhotoByUriUseCase(RemovePhotoByUriUseCase.Params("invalidUri"))
 
+        // Verify
         assertEquals(Result.Error(TripError.DeletingPhotoError), result)
     }
 }

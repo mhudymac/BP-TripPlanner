@@ -5,7 +5,7 @@ object Application {
     const val appName = "TripPlanner"
 
     object Version {
-        val name: String get() = "1.0.0"
+        val name: String get() = "1.0.3"
         val code: Int get() = 1
     }
 }

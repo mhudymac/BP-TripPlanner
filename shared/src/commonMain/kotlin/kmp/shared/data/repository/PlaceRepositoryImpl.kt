@@ -16,6 +16,7 @@ import kmp.shared.domain.model.Trip
 import kmp.shared.extension.asEntity
 import kmp.shared.infrastructure.local.DistanceEntity
 import kmp.shared.infrastructure.model.PhotoResponse
+import kmp.shared.system.Log
 
 
 internal class PlaceRepositoryImpl(

@@ -24,17 +24,25 @@ class SavePhotoUseCaseTest {
 
     @Test
     fun `should return success if repository returns success`() = runBlocking {
+        // Setup
         val photo = Photo("place1", 1L, "validUri")
+
+        // Execute
         val result = savePhotoUseCase(photo)
 
+        // Verify
         assertEquals(Result.Success(Unit), result)
     }
 
     @Test
     fun `should return error if repository returns error`() = runBlocking {
+        // Setup
         val photo = Photo("place2", 1L, "invalidUri")
+
+        // Execute
         val result = savePhotoUseCase(photo)
 
+        // Verify
         assertEquals(Result.Error(TripError.SavingPhotoError), result)
     }
 }

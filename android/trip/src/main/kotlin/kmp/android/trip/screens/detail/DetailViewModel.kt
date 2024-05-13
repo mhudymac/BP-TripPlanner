@@ -1,5 +1,6 @@
 package kmp.android.trip.screens.detail
 
+import com.google.firebase.analytics.FirebaseAnalytics
 import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
 import kmp.shared.base.ErrorResult
@@ -20,7 +21,8 @@ import kotlinx.coroutines.flow.map
 class DetailViewModel(
     private val getTripByName: GetTripUseCase,
     private val deleteTripUseCase: DeleteTripUseCase,
-    private val optimiseTripUseCase: OptimiseTripUseCase
+    private val optimiseTripUseCase: OptimiseTripUseCase,
+    private val analytics: FirebaseAnalytics
 ) : BaseStateViewModel<DetailViewModel.ViewState>(ViewState()) {
 
     private val _errorFlow = MutableSharedFlow<ErrorResult>(replay = 1)
@@ -46,6 +48,7 @@ class DetailViewModel(
                 val result = optimiseTripUseCase(it)
 
                 if(result is Result.Error) _errorFlow.emit(result.error)
+                else analytics.logEvent("optimised_trip", null)
             }
             update { copy(optimisingLoading = false) }
         }

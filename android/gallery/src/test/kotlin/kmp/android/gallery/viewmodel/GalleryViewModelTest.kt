@@ -1,5 +1,6 @@
 package kmp.android.gallery.viewmodel
 
+import junit.framework.TestCase.assertEquals
 import kmp.shared.base.Result
 import kmp.shared.base.error.domain.TripError
 import kmp.shared.domain.model.Photo
@@ -17,12 +18,13 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
+import kotlinx.datetime.toKotlinLocalDate
 import org.junit.Before
+import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import kotlin.test.Test
-import kotlin.test.assertEquals
+
 
 class GalleryViewModelTest {
 
@@ -52,16 +54,19 @@ class GalleryViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `get all correctly sets the trip and photos`() = runTest {
-        val trip = Trip(id = 1L, name = "Test Trip", itinerary = listOf(), date = LocalDate(year = 2024, month = Month.JANUARY, dayOfMonth = 5))
+        //Setup
+        val trip = Trip(id = 1L, name = "Test Trip", itinerary = listOf(), date = java.time.LocalDate.now().toKotlinLocalDate())
         val photo = Photo(placeId = "1", photoUri = "uri", tripId = trip.id)
 
         whenever(getTripUseCase.invoke(GetTripUseCase.Params(trip.id))).thenReturn(flowOf(Result.Success(trip)))
         whenever(getPhotosByTripUseCase.invoke(GetPhotosByTripUseCase.Params(trip.id))).thenReturn(flowOf(listOf(photo)))
 
+        // Execute
         galleryViewModel.getAll(trip.id)
 
         advanceUntilIdle()
 
+        // Verify
         verify(getTripUseCase).invoke(GetTripUseCase.Params(trip.id))
         verify(getPhotosByTripUseCase).invoke(GetPhotosByTripUseCase.Params(trip.id))
 
@@ -72,16 +77,19 @@ class GalleryViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `get all correctly sets error if get trip fails`() = runTest {
+        //Setup
         val trip = Trip(id = 1L, name = "Test Trip", itinerary = listOf(), date = LocalDate(year = 2024, month = Month.JANUARY, dayOfMonth = 5))
         val photo = Photo(placeId = "1", photoUri = "uri", tripId = trip.id)
 
         whenever(getTripUseCase.invoke(GetTripUseCase.Params(trip.id))).thenReturn(flowOf(Result.Error(TripError.GettingTripError)))
         whenever(getPhotosByTripUseCase.invoke(GetPhotosByTripUseCase.Params(trip.id))).thenReturn(flowOf(listOf(photo)))
 
+        // Execute
         galleryViewModel.getAll(trip.id)
 
         advanceUntilIdle()
 
+        // Verify
         verify(getTripUseCase).invoke(GetTripUseCase.Params(trip.id))
         verify(getPhotosByTripUseCase).invoke(GetPhotosByTripUseCase.Params(trip.id))
 
@@ -93,6 +101,7 @@ class GalleryViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `delete correctly calls delete`() = runTest {
+        //Setup
         val trip = Trip(id = 1L, name = "Test Trip", itinerary = listOf(), date = LocalDate(year = 2024, month = Month.JANUARY, dayOfMonth = 5))
         val photo = Photo(placeId = "1", photoUri = "uri", tripId = trip.id)
 
@@ -103,17 +112,20 @@ class GalleryViewModelTest {
 
         advanceUntilIdle()
 
+        // Execute
         galleryViewModel.delete()
 
 
         advanceUntilIdle()
 
+        // Verify
         verify(deleteTripUseCase).invoke(trip)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `delete correctly sets error if delete use case returns error`() = runTest {
+        //Setup
         val trip = Trip(id = 1L, name = "Test Trip", itinerary = listOf(), date = LocalDate(year = 2024, month = Month.JANUARY, dayOfMonth = 5))
         val photo = Photo(placeId = "1", photoUri = "uri", tripId = trip.id)
 
@@ -125,10 +137,12 @@ class GalleryViewModelTest {
 
         advanceUntilIdle()
 
+        // Execute
         galleryViewModel.delete()
 
         advanceUntilIdle()
 
+        // Verify
         verify(deleteTripUseCase).invoke(trip)
         assertEquals(TripError.DeletingTripError, galleryViewModel.errorFlow.first())
     }
@@ -136,6 +150,7 @@ class GalleryViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `delete photo correctly calls remove photo by uri`() = runTest {
+        //Setup
         val trip = Trip(id = 1L, name = "Test Trip", itinerary = listOf(), date = LocalDate(year = 2024, month = Month.JANUARY, dayOfMonth = 5))
         val photo = Photo(placeId = "1", photoUri = "uri", tripId = trip.id)
 
@@ -146,16 +161,19 @@ class GalleryViewModelTest {
 
         advanceUntilIdle()
 
+        // Execute
         galleryViewModel.deletePhoto(photo.photoUri)
 
         advanceUntilIdle()
 
+        // Verify
         verify(removePhotoByUriUseCase).invoke(RemovePhotoByUriUseCase.Params(photo.photoUri))
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `delete photo correctly sets error if remove photo by uri use case returns error`() = runTest {
+        //Setup
         val trip = Trip(id = 1L, name = "Test Trip", itinerary = listOf(), date = LocalDate(year = 2024, month = Month.JANUARY, dayOfMonth = 5))
         val photo = Photo(placeId = "1", photoUri = "uri", tripId = trip.id)
 
@@ -167,10 +185,12 @@ class GalleryViewModelTest {
 
         advanceUntilIdle()
 
+        // Execute
         galleryViewModel.deletePhoto(photo.photoUri)
 
         advanceUntilIdle()
 
+        // Verify
         verify(removePhotoByUriUseCase).invoke(RemovePhotoByUriUseCase.Params(photo.photoUri))
         assertEquals(TripError.DeletingPhotoError, galleryViewModel.errorFlow.first())
     }
@@ -178,6 +198,7 @@ class GalleryViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `add user photo correctly saves photo`() = runTest {
+        //Setup
         val trip = Trip(id = 1L, name = "Test Trip", itinerary = listOf(), date = LocalDate(year = 2024, month = Month.JANUARY, dayOfMonth = 5))
         val photo = Photo(placeId = "1", photoUri = "uri", tripId = trip.id)
 
@@ -188,11 +209,13 @@ class GalleryViewModelTest {
 
         advanceUntilIdle()
 
+        // Execute
         galleryViewModel.currentPlaceId = "1"
         galleryViewModel.addUserPhoto("newPhoto")
 
         advanceUntilIdle()
 
+        // Verify
         verify(savePhotoUseCase).invoke(Photo(placeId = "1", photoUri = "newPhoto", tripId = trip.id))
         assertEquals("", galleryViewModel.currentPlaceId)
     }
@@ -200,6 +223,7 @@ class GalleryViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
 fun `add user photo correctly sets error if save photo use case returns error`() = runTest {
+        //Setup
         val trip = Trip(id = 1L, name = "Test Trip", itinerary = listOf(), date = LocalDate(year = 2024, month = Month.JANUARY, dayOfMonth = 5))
         val photo = Photo(placeId = "1", photoUri = "uri", tripId = trip.id)
 
@@ -211,11 +235,13 @@ fun `add user photo correctly sets error if save photo use case returns error`()
 
         advanceUntilIdle()
 
+        // Execute
         galleryViewModel.currentPlaceId = "1"
         galleryViewModel.addUserPhoto("newPhoto")
 
         advanceUntilIdle()
 
+        // Verify
         verify(savePhotoUseCase).invoke(Photo(placeId = "1", photoUri = "newPhoto", tripId = trip.id))
         assertEquals(TripError.SavingPhotoError, galleryViewModel.errorFlow.first())
         assertEquals("", galleryViewModel.currentPlaceId)

@@ -30,19 +30,24 @@ class GetPhotosUseCaseTest {
 
     @Test
     fun shouldReturnPhotosWhenAvailable() = runBlocking {
+        // Setup
         val expectedPhotos = photos(1L, "place1")
 
+        // Execute
         val result = mutableListOf<List<Photo>>()
         getPhotosUseCase(GetPhotosUseCase.Params("place1", 1L)).collect { result.add(it) }
 
+        // Verify
         assertEquals(listOf(expectedPhotos), result)
     }
 
     @Test
     fun shouldReturnEmptyListWhenNoPhotosAvailable() = runBlocking {
+        // Execute
         val result = mutableListOf<List<Photo>>()
         getPhotosUseCase(GetPhotosUseCase.Params("place2", 2L)).collect { result.add(it) }
 
+        // Verify
         assertEquals(listOf(emptyList()), result)
     }
 

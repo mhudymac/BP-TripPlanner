@@ -5,6 +5,7 @@ import kmp.shared.base.usecase.UseCaseResult
 import kmp.shared.domain.model.Trip
 import kmp.shared.domain.repository.DistanceRepository
 import kmp.shared.domain.repository.PlaceRepository
+import kmp.shared.system.Log
 
 interface UpdateDistancesUseCase: UseCaseResult<Trip, Unit>
 
@@ -25,6 +26,7 @@ internal class UpdateDistancesUseCaseImpl(
     override suspend fun invoke(params: Trip): Result<Unit> {
         val savedPlaces =  placeRepository.getPlacesByTripID(params.id).map { it.id }
         val newPlaces = params.order.minus(savedPlaces.toSet())
+        if(newPlaces.isEmpty()) return Result.Success(Unit)
 
         when(val distances = placeRepository.updateDistanceMatrix(newPlaces, savedPlaces)){
             is Result.Success -> {
