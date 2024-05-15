@@ -11,9 +11,9 @@ internal fun <T : BuildType> CommonExtension<*, T, *, *, *>.configureBuildVarian
         debug {
             (this as ExtensionAware).extra["alwaysUpdateBuildId"] = false
         }
-        create(ProjectConstants.Variant.alpha) {
-            initWith(getByName("release"))
-        }
+//        create(ProjectConstants.Variant.alpha) {
+//            initWith(getByName("release"))
+//        }
         release {
             isMinifyEnabled = false
             isShrinkResources = false

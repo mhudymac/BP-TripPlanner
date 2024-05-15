@@ -2,7 +2,6 @@ package kmp.android.shared.core.ui.util
 
 import android.content.Context
 import android.net.Uri
-import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable

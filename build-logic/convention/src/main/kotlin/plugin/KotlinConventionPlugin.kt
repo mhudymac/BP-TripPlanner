@@ -14,7 +14,6 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-@Suppress("unused")
 class KotlinConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {

@@ -1,8 +1,6 @@
 package kmp.shared.di
 
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.google.android.gms.location.LocationServices
 import io.ktor.client.engine.android.Android
 import kmp.shared.domain.controller.LocationController
@@ -11,7 +9,6 @@ import kmp.shared.system.Config
 import kmp.shared.system.ConfigImpl
 import kmp.shared.system.Log
 import kmp.shared.system.Logger
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.dsl.module
 
 actual val platformModule = module {

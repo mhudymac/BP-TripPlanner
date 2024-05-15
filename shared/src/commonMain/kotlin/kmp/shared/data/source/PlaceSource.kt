@@ -3,7 +3,6 @@ package kmp.shared.data.source
 import kmp.shared.infrastructure.model.PlaceDto
 import kmp.shared.base.Result
 import kmp.shared.domain.model.Location
-import kmp.shared.infrastructure.local.DistanceEntity
 import kmp.shared.infrastructure.local.PlaceEntity
 import kmp.shared.infrastructure.model.DistanceMatrixDto
 import kmp.shared.infrastructure.model.GeocodingDto

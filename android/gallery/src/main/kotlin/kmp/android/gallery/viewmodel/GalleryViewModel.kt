@@ -11,12 +11,10 @@ import kmp.shared.domain.usecase.photos.RemovePhotoByUriUseCase
 import kmp.shared.domain.usecase.photos.SavePhotoUseCase
 import kmp.shared.domain.usecase.trip.DeleteTripUseCase
 import kmp.shared.domain.usecase.trip.GetTripUseCase
-import kmp.shared.system.Log
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlin.coroutines.CoroutineContext
 
 /**
  * This class represents the ViewModel for the Gallery view.

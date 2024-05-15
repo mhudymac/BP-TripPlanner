@@ -2,7 +2,6 @@ package kmp.shared.infrastructure.source
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import kmp.shared.base.ErrorResult
 import kmp.shared.base.Result
 import kmp.shared.base.error.domain.TripError
 import kmp.shared.data.source.PhotoLocalSource

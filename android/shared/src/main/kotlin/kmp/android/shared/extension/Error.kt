@@ -8,7 +8,6 @@ import kmp.shared.base.ErrorResult
 import kmp.shared.base.error.ErrorMessageProvider
 import kmp.shared.base.error.getMessage
 import kotlinx.coroutines.flow.Flow
-import org.koin.androidx.compose.get
 import org.koin.compose.koinInject
 
 @SuppressLint("ComposableNaming")

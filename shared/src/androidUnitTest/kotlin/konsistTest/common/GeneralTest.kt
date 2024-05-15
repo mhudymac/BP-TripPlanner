@@ -45,13 +45,4 @@ internal class GeneralTest {
             .imports
             .assertFalse { it.isWildcard }
     }
-
-    @Ignore("DevStack currently uses android log...")
-    @Test
-    fun `no class should use Android util logging`() {
-        Konsist
-            .scopeFromProject()
-            .files
-            .assertFalse { it.hasImport { import -> import.name == "android.util.Log" } }
-    }
 }

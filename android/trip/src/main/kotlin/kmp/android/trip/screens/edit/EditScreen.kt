@@ -239,7 +239,7 @@ internal fun CreateScreen(
                         contentLeft = {
                             Icon(
                                 imageVector = Icons.Default.Search,
-                                contentDescription = stringResource(id = R.string.search,),
+                                contentDescription = stringResource(id = R.string.search),
                             )
                             Text(text = stringResource(id = R.string.place_search))
                         },

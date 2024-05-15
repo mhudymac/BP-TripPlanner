@@ -2,7 +2,6 @@ package kmp.shared.domain.controller
 
 import kmp.shared.domain.model.Location
 import kotlinx.coroutines.flow.Flow
-import kmp.shared.base.Result
 
 /**
  * This expect class represents a controller for location-related operations.

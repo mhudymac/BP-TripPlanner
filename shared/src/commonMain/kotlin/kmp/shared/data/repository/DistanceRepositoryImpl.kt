@@ -4,7 +4,6 @@ import kmp.shared.base.Result
 import kmp.shared.base.util.extension.map
 import kmp.shared.data.source.DistanceLocalSource
 import kmp.shared.domain.model.Distance
-import kmp.shared.domain.model.Trip
 import kmp.shared.domain.repository.DistanceRepository
 import kmp.shared.infrastructure.local.DistanceEntity
 

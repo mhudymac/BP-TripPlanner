@@ -3,16 +3,15 @@ package kmp.android.home.viewmodel
 import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
 import kmp.shared.base.ErrorResult
+import kmp.shared.base.Result
 import kmp.shared.domain.model.Photo
 import kmp.shared.domain.model.Trip
 import kmp.shared.domain.usecase.photos.SavePhotoUseCase
 import kmp.shared.domain.usecase.trip.GetNearestTripUseCase
 import kmp.shared.domain.usecase.trip.UpdateOnlyTripDetailsUseCase
-import kmp.shared.base.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.datetime.toKotlinLocalDate
-import java.lang.Thread.sleep
 import java.time.LocalDate
 
 /**
@@ -84,7 +83,7 @@ class HomeViewModel(
         update { copy(trip = trip) }
     }
 
-    var loading
+    private var loading
         get() = lastState().loading
         set(value) { update { copy(loading = value) } }
 

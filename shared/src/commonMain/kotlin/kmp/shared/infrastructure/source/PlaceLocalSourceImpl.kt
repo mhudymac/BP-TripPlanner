@@ -1,10 +1,8 @@
 package kmp.shared.infrastructure.source
 
-import kmp.shared.base.ErrorResult
 import kmp.shared.base.Result
 import kmp.shared.base.error.domain.TripError
 import kmp.shared.data.source.PlaceLocalSource
-import kmp.shared.infrastructure.local.DistanceEntity
 import kmp.shared.infrastructure.local.PlaceEntity
 import kmp.shared.infrastructure.local.PlaceQueries
 

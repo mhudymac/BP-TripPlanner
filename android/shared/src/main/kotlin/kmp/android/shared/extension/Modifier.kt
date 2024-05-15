@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -19,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
 fun Modifier.pushedByIme(additionalSpace: Int = 0) = composed {
-    var bottomPosition by remember { mutableStateOf(0) }
+    var bottomPosition by remember { mutableIntStateOf(0) }
     val spaceFromBottom = LocalView.current.height - bottomPosition
     val insets = WindowInsets.ime
 

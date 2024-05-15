@@ -16,8 +16,6 @@ import kmp.shared.domain.usecase.trip.GetNearestTripUseCaseImpl
 import kmp.shared.domain.usecase.trip.GetTripUseCase
 import kmp.shared.domain.usecase.trip.MockGetTripUseCase
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month

@@ -1,7 +1,6 @@
 package kmp.shared.domain.usecase.trip
 
 import kmp.shared.base.Result
-import kmp.shared.base.error.domain.TripError
 import kmp.shared.base.usecase.UseCaseFlowNoParams
 import kmp.shared.base.util.extension.getOrNull
 import kmp.shared.domain.model.Location
@@ -9,7 +8,6 @@ import kmp.shared.domain.model.Trip
 import kmp.shared.domain.repository.TripRepository
 import kmp.shared.domain.usecase.location.GetLocationFlowUseCase
 import kmp.shared.domain.usecase.photos.GetPhotosByTripUseCase
-import kmp.shared.system.Log
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -71,12 +69,8 @@ internal class GetNearestTripUseCaseImpl(
                                 ) < ACTIVE_DISTANCE
                             ) {
                                 trip.copy(activePlace = closestPlace.id)
-                            } else {
-                                trip
-                            }
-                        } else {
-                            trip
-                        }
+                            } else { trip }
+                        } else { trip }
                     }
                 }
             }

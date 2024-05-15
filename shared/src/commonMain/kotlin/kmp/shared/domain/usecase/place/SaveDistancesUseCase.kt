@@ -5,7 +5,6 @@ import kmp.shared.base.usecase.UseCaseResult
 import kmp.shared.domain.model.Trip
 import kmp.shared.domain.repository.DistanceRepository
 import kmp.shared.domain.repository.PlaceRepository
-import kmp.shared.system.Log
 
 interface SaveDistancesUseCase: UseCaseResult<Trip, Unit>
 

@@ -1,6 +1,5 @@
 package kmp.android.search.viewmodel
 
-import android.util.Log
 import kmp.android.shared.core.system.BaseStateViewModel
 import kmp.android.shared.core.system.State
 import kmp.shared.base.ErrorResult

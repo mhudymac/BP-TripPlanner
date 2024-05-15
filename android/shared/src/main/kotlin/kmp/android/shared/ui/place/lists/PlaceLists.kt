@@ -1,6 +1,5 @@
 package kmp.android.shared.ui.place.lists
 
-import android.content.Intent
 import android.net.Uri
 import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -34,7 +33,6 @@ import kmp.android.shared.ui.distance.DistanceCard
 import kmp.android.shared.ui.helpers.ComponentWithLabel
 import kmp.android.shared.ui.place.ActivePlaceCard
 import kmp.android.shared.ui.place.PlaceCard
-
 import kmp.shared.domain.model.Place
 import kmp.shared.domain.model.Trip
 import sh.calvin.reorderable.ReorderableItem

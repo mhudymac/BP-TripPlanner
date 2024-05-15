@@ -20,7 +20,6 @@ import org.gradle.kotlin.dsl.getting
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-@Suppress("unused")
 class KmmLibraryConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {

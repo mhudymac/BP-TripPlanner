@@ -2,7 +2,6 @@ package kmp.shared.domain.repository
 
 import kmp.shared.base.Result
 import kmp.shared.domain.model.Distance
-import kmp.shared.domain.model.Trip
 
 /**
  * This interface represents a repository for distances.

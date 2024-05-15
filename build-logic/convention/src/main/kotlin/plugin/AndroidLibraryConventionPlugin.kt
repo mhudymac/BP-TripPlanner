@@ -43,11 +43,6 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 implementation(libs.firebase.crashlytics)
             }
 
-//            apply<LoggingConvention>()
-//            apply<NetworkConvention>()
-            //apply<FirebaseConvention>()
-//            apply<AndroidBaseConvention>()
-//            apply<NetworkConvention>()
         }
     }
 }

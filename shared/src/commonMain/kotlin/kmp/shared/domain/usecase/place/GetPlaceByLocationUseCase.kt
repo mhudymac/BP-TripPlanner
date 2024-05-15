@@ -1,9 +1,7 @@
 package kmp.shared.domain.usecase.place
 
 import kmp.shared.base.Result
-import kmp.shared.base.usecase.UseCaseResult
 import kmp.shared.base.usecase.UseCaseResultNoParams
-import kmp.shared.domain.model.Location
 import kmp.shared.domain.model.Place
 import kmp.shared.domain.repository.PlaceRepository
 import kmp.shared.domain.usecase.location.GetLocationUseCase

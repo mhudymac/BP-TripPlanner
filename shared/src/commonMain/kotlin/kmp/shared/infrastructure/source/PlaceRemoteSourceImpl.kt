@@ -1,6 +1,5 @@
 package kmp.shared.infrastructure.source
 
-import kmp.shared.base.ErrorResult
 import kmp.shared.base.Result
 import kmp.shared.base.error.domain.TripError
 import kmp.shared.data.source.PlaceRemoteSource
@@ -8,8 +7,8 @@ import kmp.shared.domain.model.Location
 import kmp.shared.infrastructure.model.DistanceMatrixDto
 import kmp.shared.infrastructure.model.GeocodingDto
 import kmp.shared.infrastructure.model.PhotoResponse
-import kmp.shared.infrastructure.model.TextSearchResponse
 import kmp.shared.infrastructure.model.PlaceDto
+import kmp.shared.infrastructure.model.TextSearchResponse
 import kmp.shared.infrastructure.remote.maps.MapsService
 import kmp.shared.infrastructure.remote.places.PlaceService
 

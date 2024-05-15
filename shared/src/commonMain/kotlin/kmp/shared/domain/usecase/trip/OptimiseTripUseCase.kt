@@ -1,13 +1,11 @@
 package kmp.shared.domain.usecase.trip
 
-import kmp.shared.base.ErrorResult
 import kmp.shared.base.Result
 import kmp.shared.base.error.domain.TripError
 import kmp.shared.base.usecase.UseCaseResult
 import kmp.shared.domain.model.Distance
 import kmp.shared.domain.model.Trip
 import kmp.shared.domain.repository.DistanceRepository
-import kmp.shared.system.Log
 
 interface OptimiseTripUseCase: UseCaseResult<Trip, Unit>
 
@@ -79,6 +77,7 @@ internal class OptimiseTripUseCaseImpl(
      */
     private fun twoOpt(distances: Map<Pair<String, String>, Distance>, initialOrder: List<String>): List<String> {
         var bestOrder = initialOrder
+        var bestDistance = calculateTotalDistance(distances, bestOrder)
         var improvement = true
 
         while (improvement) {
@@ -87,10 +86,10 @@ internal class OptimiseTripUseCaseImpl(
                 for (j in i + 1 until bestOrder.size) {
                     val newOrder = bestOrder.toMutableList()
                     newOrder.subList(i + 1, j + 1).reverse()
-                    val currentDistance = calculateTotalDistance(distances, bestOrder)
                     val newDistance = calculateTotalDistance(distances, newOrder)
-                    if (newDistance < currentDistance) {
+                    if (newDistance < bestDistance) {
                         bestOrder = newOrder
+                        bestDistance = newDistance
                         improvement = true
                     }
                 }

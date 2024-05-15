@@ -1,5 +1,3 @@
-import constants.ProjectConstants.Variant.alpha
-
 plugins {
     alias(libs.plugins.devstack.kmm.library)
     alias(libs.plugins.mockmp)

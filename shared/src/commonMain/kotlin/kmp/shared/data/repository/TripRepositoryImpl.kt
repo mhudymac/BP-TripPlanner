@@ -9,9 +9,7 @@ import kmp.shared.extension.asEntity
 import kmp.shared.extension.asPlace
 import kmp.shared.extension.asTrip
 import kmp.shared.infrastructure.local.TripEntity
-import kmp.shared.infrastructure.local.TripWithPlaces
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 internal class TripRepositoryImpl(

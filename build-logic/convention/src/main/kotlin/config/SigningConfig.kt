@@ -30,10 +30,10 @@ internal fun Project.configureSingingConfigs(
             signingConfig = signingConfigs.getByName(ProjectConstants.Variant.debug)
         }
 
-        named(ProjectConstants.Variant.alpha) {
-            applicationIdSuffix = ".${ProjectConstants.Variant.alpha}"
-            signingConfig = signingConfigs.getByName(ProjectConstants.Variant.debug)
-        }
+//        named(ProjectConstants.Variant.alpha) {
+//            applicationIdSuffix = ".${ProjectConstants.Variant.alpha}"
+//            signingConfig = signingConfigs.getByName(ProjectConstants.Variant.debug)
+//        }
 
         getByName("release") {
             isMinifyEnabled = false

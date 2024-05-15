@@ -1,6 +1,5 @@
 package kmp.shared.infrastructure.source
 
-import kmp.shared.base.ErrorResult
 import kmp.shared.base.Result
 import kmp.shared.base.error.domain.TripError
 import kmp.shared.data.source.DistanceLocalSource

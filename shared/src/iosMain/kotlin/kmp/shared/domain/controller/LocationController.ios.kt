@@ -4,9 +4,11 @@ import kmp.shared.domain.model.Location
 import kotlinx.coroutines.flow.Flow
 
 internal actual class LocationController {
-    actual val locationFlow: Flow<Location>
-        get() = TODO("Not yet implemented")
-    private var lastLocation: Location? = null
+    /**
+     * This property represents a flow of location updates.
+     * It is a Flow of Location objects.
+     */
+    actual val locationFlow: Flow<Location?>
         get() = TODO("Not yet implemented")
 
     /**

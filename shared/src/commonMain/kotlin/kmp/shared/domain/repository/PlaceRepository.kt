@@ -1,10 +1,9 @@
 package kmp.shared.domain.repository
 
-import kmp.shared.domain.model.Place
 import kmp.shared.base.Result
 import kmp.shared.domain.model.Distance
 import kmp.shared.domain.model.Location
-import kmp.shared.domain.model.Trip
+import kmp.shared.domain.model.Place
 
 
 /**
@@ -68,7 +67,7 @@ internal interface PlaceRepository {
      * @param destinationPlaces The list of destination places.
      * @return A Result object containing either a list of triples representing the updated distance matrix in case of success or an error.
      */
-    suspend fun updateDistanceMatrix(originPlaces: List<String>, destinationPlaces: List<String>,): Result<List<Triple<String, String, Distance>>>
+    suspend fun updateDistanceMatrix(originPlaces: List<String>, destinationPlaces: List<String>): Result<List<Triple<String, String, Distance>>>
 
     /**
      * This function is used to get places by their id and trip id.
